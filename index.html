@@ -4232,13 +4232,26 @@
     }
     
     function memberControversies(p) {
-      return (p.events || []).filter(function(ev) {
+      const fromData = (p.events || []).filter(function(ev) {
         const t = controversyTheme(ev);
         return t !== null;
-      }).slice().sort(function(a, b) {
+      });
+      const fromLive = (typeof liveControversiesForPerson === "function" ? liveControversiesForPerson(p) : []).map(function(c) {
+        return {
+          year: c.year,
+          month: c.month,
+          type: c.type || "controversy",
+          theme: c.theme || "unprofessionalism",
+          title: c.title,
+          desc: c.desc,
+          sources: c.sources || [],
+          fromNewsVote: true
+        };
+      });
+      return fromData.concat(fromLive).slice().sort(function(a, b) {
         const ya = Number(a.year) || 0;
         const yb = Number(b.year) || 0;
-        if (yb !== ya) return yb - ya; // most recent first
+        if (yb !== ya) return yb - ya;
         const ma = Number(a.month) || 0;
         const mb = Number(b.month) || 0;
         return mb - ma;
@@ -7350,80 +7363,143 @@ function eventSourcesHtml(ev) {
       el.textContent = "News: GitHub worker (" + n + " UTC) · Polls: " + p + " · Controversies: curated";
     }
 
+    
+    const LIVE_CONTROV_KEY = "nzpt_live_controversies_v1";
+
+    function loadLiveControversies() {
+      try {
+        const raw = localStorage.getItem(LIVE_CONTROV_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveLiveControversies(list) {
+      try {
+        localStorage.setItem(LIVE_CONTROV_KEY, JSON.stringify((list || []).slice(0, 200)));
+      } catch (e) {}
+    }
+
+    /** Remember a news-driven controversy on this browser (no login). Used by metro + cards. */
+    function rememberLiveControversyFromHeadline(item, choice) {
+      if (!item || choice !== "reject") return; // unfavourable / reject only
+      const mpIds = item.mpIds || matchMpIdsFromText((item.title || "") + " " + (item.summary || ""));
+      if (!mpIds.length) return;
+      const list = loadLiveControversies();
+      const id = item.id || stableArticleId(item.url, item.title);
+      const d = item.date || item.pubDate || new Date().toISOString();
+      const year = parseInt(String(d).slice(0, 4), 10) || new Date().getFullYear();
+      const month = parseInt(String(d).slice(5, 7), 10) || (new Date().getMonth() + 1);
+      mpIds.forEach(function(mpId) {
+        const key = id + "::" + mpId;
+        if (list.some(function(x) { return x.key === key; })) return;
+        list.unshift({
+          key: key,
+          mpId: mpId,
+          year: year,
+          month: month,
+          type: "controversy",
+          theme: "unprofessionalism",
+          title: item.title || "News controversy",
+          desc: (item.summary || "").slice(0, 220) || "Flagged from news vote on this device.",
+          sources: item.url ? [{ agency: item.agency || "News", url: item.url }] : [],
+          fromNewsVote: true,
+          savedAt: new Date().toISOString()
+        });
+      });
+      saveLiveControversies(list);
+    }
+
+    function liveControversiesForPerson(p) {
+      if (!p || !p.id) return [];
+      return loadLiveControversies().filter(function(c) { return c.mpId === p.id; });
+    }
+
+
+    function stableArticleId(url, title) {
+      const s = String(url || title || "x");
+      let h = 0;
+      for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0;
+      return "gh-" + (h >>> 0).toString(36) + "-" + s.length;
+    }
+
     function githubArticleToHeadline(a) {
-      if (!a || !a.title) return null;
+      if (!a || !a.title || !a.url) return null;
       const summary = a.description || a.summary || "";
       const agency = a.source || a.via || "NZ worker";
-      const h = {
-        id: "gh-" + String(a.url || a.title).slice(0, 120),
+      const text = String(a.title) + " " + String(summary);
+      const mpIds = matchMpIdsFromText(text);
+      // Worker already curated NZ headlines — show them; do not drop on strict vote filter
+      return {
+        id: stableArticleId(a.url, a.title),
         title: String(a.title).trim(),
-        url: a.url || "#",
+        url: a.url,
         agency: agency,
         summary: String(summary).slice(0, 400),
         date: a.publishedAt || a.date || null,
         pubDate: a.publishedAt || null,
-        mpIds: matchMpIdsFromText(String(a.title) + " " + String(summary)),
-        fromGitHub: true
+        mpIds: mpIds,
+        fromGitHub: true,
+        politicalLikely: a.politicalLikely !== false
       };
-      return filterHeadlineForVote(h) || (h.mpIds && h.mpIds.length ? h : null);
     }
 
     function ingestGitHubArticles(articles, publishNew) {
       let n = 0;
       (articles || []).forEach(function(a) {
         const h = githubArticleToHeadline(a);
-        if (!h) {
-          // Still show strongly political worker items even if filter is strict
-          if (a && a.politicalLikely && a.title && a.url) {
-            const soft = {
-              id: "gh-soft-" + String(a.url).slice(0, 100),
-              title: String(a.title).trim(),
-              url: a.url,
-              agency: a.source || a.via || "NZ worker",
-              summary: String(a.description || "").slice(0, 400),
-              date: a.publishedAt || null,
-              pubDate: a.publishedAt || null,
-              mpIds: matchMpIdsFromText(String(a.title) + " " + String(a.description || "")),
-              fromGitHub: true
-            };
-            if (publishNew(soft)) n++;
-          }
-          return;
-        }
+        if (!h) return;
         if (publishNew(h)) n++;
       });
       return n;
     }
 
     async function pullGitHubNews(publishNew) {
-      const urls = [LIVE_LATEST_URL, LIVE_NEWS_URL];
+      // Prefer dedicated news.json, then latest.json merge
+      const urls = [LIVE_NEWS_URL, LIVE_LATEST_URL];
       let added = 0;
+      let lastErr = null;
+      if (typeof location !== "undefined" && location.protocol === "file:") {
+        console.warn("Open this site via GitHub Pages or a local web server — file:// often blocks fetch to GitHub.");
+      }
       for (let i = 0; i < urls.length; i++) {
         try {
-          const res = await fetch(urls[i] + "?t=" + Date.now(), { cache: "no-store" });
-          if (!res.ok) continue;
+          const res = await fetch(urls[i] + "?t=" + Date.now(), { cache: "no-store", mode: "cors" });
+          if (!res.ok) {
+            lastErr = "HTTP " + res.status;
+            continue;
+          }
           const data = await res.json();
+          let articles = [];
           if (data.news && data.news.articles) {
             liveDataMeta.newsAt = data.news.updatedAt || data.updatedAt;
-            added += ingestGitHubArticles(data.news.articles, publishNew);
+            articles = data.news.articles;
           } else if (data.articles) {
             liveDataMeta.newsAt = data.updatedAt;
-            added += ingestGitHubArticles(data.articles, publishNew);
+            articles = data.articles;
           }
           if (data.polls) {
             liveDataMeta.pollsAt = (data.polls && data.polls.updatedAt) || data.updatedAt;
           }
+          if (data.votes && data.votes.byMp) {
+            window.__sharedVoteTallies = data.votes.byMp;
+          }
           liveDataMeta.loadedAt = new Date().toISOString();
           updateDataStatusBanner();
+          added += ingestGitHubArticles(articles, publishNew);
           if (added > 0) break;
         } catch (e) {
+          lastErr = e;
           console.warn("GitHub live data", urls[i], e);
         }
       }
+      if (!added && lastErr) console.warn("No GitHub articles ingested", lastErr);
       return added;
     }
 
-    async function pullGitHubPolls() {
+async function pullGitHubPolls() {
       try {
         const res = await fetch(LIVE_POLLS_URL + "?t=" + Date.now(), { cache: "no-store" });
         if (!res.ok) return;
@@ -7760,6 +7836,7 @@ function eventSourcesHtml(ev) {
           t.history.push({ ts: Date.now(), headlineId: headlineId, choice: choice, net: newsNet(t) });
         });
         data.ballots[headlineId] = choice;
+        try { rememberLiveControversyFromHeadline(item, choice); } catch (e) {}
       }
       saveNewsVotes(data);
       renderNewsVoteUI();
