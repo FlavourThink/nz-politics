@@ -1841,12 +1841,11 @@
 
     .news-vote-layout {
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
+      grid-template-columns: 1fr;
       gap: 1rem;
       align-items: start;
-    }
-    @media (max-width: 900px) {
-      .news-vote-layout { grid-template-columns: 1fr; }
+      max-width: 40rem;
+      margin: 0 auto;
     }
     .news-vote-card, .news-results-card {
       background: var(--surface);
@@ -2130,8 +2129,9 @@
     .news-feed-item {
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 0.85rem 0.95rem;
+      padding: 0;
       background: var(--surface2);
+      overflow: hidden;
     }
     .news-feed-item.is-voted {
       opacity: 0.72;
@@ -2698,19 +2698,20 @@
     }
     .news-item-image-slot {
       width: 100%;
-      height: 140px;
-      border-radius: 8px;
+      height: 160px;
+      border-radius: 0;
       background: #0f172a;
-      border: 1px solid var(--border);
+      border: none;
       overflow: hidden;
       flex-shrink: 0;
     }
     .news-item-image {
       width: 100%;
-      height: 140px;
+      height: 160px;
       object-fit: cover;
       display: block;
       background: #0f172a;
+      border-radius: 0;
     }
     .news-agency-logo {
       height: 18px;
@@ -2760,36 +2761,84 @@
     .news-carousel {
       position: relative;
       width: 100%;
-      max-width: 28rem;
+      max-width: 100%;
       margin: 0 auto;
       overflow: hidden;
       touch-action: pan-y;
+      padding: 0.25rem 0;
     }
     .news-carousel-track {
       display: flex;
-      width: 100%;
-      transition: transform 0.38s cubic-bezier(0.22, 0.61, 0.36, 1);
+      align-items: stretch;
+      transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
       will-change: transform;
     }
     .news-carousel-track.swiping {
       transition: none;
     }
     .news-carousel .news-feed-item {
-      flex: 0 0 100%;
-      width: 100%;
-      max-width: 100%;
+      flex: 0 0 78%;
+      width: 78%;
+      max-width: 78%;
       box-sizing: border-box;
-      margin: 0;
+      margin: 0 1%;
+      opacity: 0.45;
+      transform: scale(0.94);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      padding: 0;
+      overflow: hidden;
     }
+    .news-carousel .news-feed-item.is-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .news-card-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .news-card-link:hover .news-item-headline {
+      color: #38bdf8;
+    }
+    .news-feed-item .news-mp-row {
+      padding: 0.55rem 0.75rem 0.75rem;
+    }
+    .news-feed-item .news-item-meta-line,
+    .news-feed-item .news-item-headline {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+    .news-feed-item .news-item-headline {
+      padding-top: 0.25rem;
+      padding-bottom: 0.15rem;
+    }
+    .news-source-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.65rem;
+      margin: 0.5rem 0 0.65rem;
+      font-size: 0.75rem;
+    }
+    .news-source-toggles label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .news-source-toggles input { accent-color: #38bdf8; }
+
     .news-image-wrap {
       position: relative;
       width: 100%;
     }
     .news-nav-btn {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 3;
+      top: 80px;
+      transform: none;
+      z-index: 6;
       width: 2.4rem;
       height: 2.4rem;
       border-radius: 999px;
@@ -2807,8 +2856,12 @@
     }
     .news-nav-btn:hover { background: rgba(15, 23, 42, 0.92); opacity: 1; }
     .news-nav-btn:disabled { opacity: 0.35; cursor: default; }
-    .news-nav-btn.prev { left: 0.45rem; }
-    .news-nav-btn.next { right: 0.45rem; }
+    .news-nav-btn.prev { left: 0.45rem; top: 80px; }
+    .news-nav-btn.next { right: 0.45rem; top: 80px; }
+    .news-carousel { position: relative; }
+    .news-carousel > .news-nav-fixed {
+      position: absolute; top: 80px; z-index: 5;
+    }
     @media (max-width: 640px) {
       .news-nav-btn { display: none; }
     }
@@ -3196,7 +3249,7 @@
         <section class="news-vote-card" aria-label="Headline vote">
           <div class="news-vote-head">
             <h2 style="margin:0;font-size:1.15rem;">Current news cycle</h2>
-            <p class="news-vote-note">Swipe <strong>left/right</strong> through headlines about <strong>active MPs</strong> only. Vote with ✓ / ✗ next to each MP named in the story (one vote per MP per article). Tallies appear below as you scroll down.</p>
+            <p class="news-vote-note">Swipe <strong>left/right</strong> through headlines about <strong>active MPs</strong>. Tap the story (image, source, date, title) to open the original. Vote <strong>Positive</strong> or <strong>Negative</strong> per MP. Use source toggles to choose outlets.</p>
           </div>
           <div class="news-toolbar">
             <div id="newsVoteProgress" class="news-progress"></div>
@@ -3205,28 +3258,10 @@
               <span id="newsFeedStatus" class="news-feed-status" aria-live="polite"></span>
             </div>
           </div>
+          <div class="news-source-toggles" id="newsSourceToggles" aria-label="News sources"></div>
           <div id="newsFeedList" class="news-feed-list" aria-label="News feed"></div>
         </section>
-        <section class="news-results-card" aria-label="Vote tallies">
-          <h2 style="margin:0 0 0.5rem;font-size:1.05rem;">MP impression scores</h2>
-          <p class="news-vote-note">From <strong>your votes on the last 3 months</strong> of NZ political news only. Cards ordered <strong>least → most favourable</strong>. Click a card to see the headlines you scored about that MP.</p>
-          <div class="news-tally-with-scale">
-            <div class="news-tally-scale" aria-hidden="true">
-              <span class="scale-top">Least favourable</span>
-              <div class="scale-bar"></div>
-              <span class="scale-bot">Most favourable</span>
-            </div>
-            <div id="newsTallyList" class="news-tally-grid"></div>
-          </div>
-          <div id="newsMpVoteDetail" class="news-mp-vote-detail" hidden></div>
-          <h2 style="margin:1rem 0 0.35rem;font-size:1.05rem;">Articles found by source</h2>
-          <p class="news-vote-note">Expand a source for each headline and your vote. Click a headline to change Favourable / Unfavourable / Skip. Refresh only adds items newer than the last check.</p>
-          <div id="newsSourceTally" class="news-source-tally"></div>
-          <div style="margin-top:0.75rem;">
-            <button type="button" class="nv-btn nv-nav" id="newsExportVotes">Export votes (JSON)</button>
-            <button type="button" class="nv-btn nv-nav" id="newsResetVotes">Reset my votes</button>
-          </div>
-        </section>
+        
       </div>
     </div>
 
@@ -8501,10 +8536,80 @@ async function pullGitHubPolls() {
       });
     }
 
+    
+    const NEWS_SOURCE_PREF_KEY = "nz_politics_news_sources_v1";
+
+    function listNewsSourceOptions() {
+      const set = {};
+      (typeof RSS_FEEDS !== "undefined" ? RSS_FEEDS : []).forEach(function(f) {
+        if (f && f.agency) set[f.agency] = true;
+      });
+      // also common worker sources
+      ["RNZ", "1News", "NZ Herald", "Stuff", "The Spinoff", "Newsroom", "Scoop", "NBR"].forEach(function(a) {
+        set[a] = true;
+      });
+      return Object.keys(set).sort();
+    }
+
+    function loadNewsSourcePrefs() {
+      try {
+        const raw = localStorage.getItem(NEWS_SOURCE_PREF_KEY);
+        if (raw) {
+          const o = JSON.parse(raw);
+          if (o && typeof o === "object") return o;
+        }
+      } catch (e) {}
+      const all = {};
+      listNewsSourceOptions().forEach(function(a) { all[a] = true; });
+      return all;
+    }
+
+    function saveNewsSourcePrefs(prefs) {
+      try { localStorage.setItem(NEWS_SOURCE_PREF_KEY, JSON.stringify(prefs)); } catch (e) {}
+    }
+
+    function isSourceEnabled(agency) {
+      const prefs = loadNewsSourcePrefs();
+      const a = String(agency || "News");
+      // if exact match
+      if (prefs.hasOwnProperty(a)) return !!prefs[a];
+      // fuzzy: RNZ Politics under RNZ toggle
+      const keys = Object.keys(prefs);
+      for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
+        if (!prefs[k]) continue;
+        if (a.toLowerCase().indexOf(k.toLowerCase()) >= 0 || k.toLowerCase().indexOf(a.toLowerCase()) >= 0) return true;
+      }
+      // unknown source: show by default
+      return true;
+    }
+
+    function renderNewsSourceToggles() {
+      const host = document.getElementById("newsSourceToggles");
+      if (!host) return;
+      const prefs = loadNewsSourcePrefs();
+      const opts = listNewsSourceOptions();
+      host.innerHTML = opts.map(function(a) {
+        const on = prefs.hasOwnProperty(a) ? !!prefs[a] : true;
+        return '<label><input type="checkbox" data-source="' + a.replace(/"/g, "") + '"' + (on ? " checked" : "") + " /> " + a + "</label>";
+      }).join("");
+      host.querySelectorAll("input[data-source]").forEach(function(inp) {
+        inp.addEventListener("change", function() {
+          const p = loadNewsSourcePrefs();
+          p[inp.getAttribute("data-source")] = inp.checked;
+          saveNewsSourcePrefs(p);
+          newsCarouselIndex = 0;
+          renderNewsHeadline();
+        });
+      });
+    }
+
     function renderNewsHeadline() {
       const host = document.getElementById("newsFeedList");
       const elProg = document.getElementById("newsVoteProgress");
       if (!host) return;
+
+      try { renderNewsSourceToggles(); } catch (e) {}
 
       let list = (NEWS_HEADLINES || []).slice();
       if (!list.length) {
@@ -8523,31 +8628,21 @@ async function pullGitHubPolls() {
       }
       list = filterHeadlinesToActiveMps(list);
       list = filterHeadlinesLastMonths(list, NEWS_MAX_AGE_DAYS);
+      list = list.filter(function(h) { return isSourceEnabled(h.agency); });
       list = sortHeadlinesNewestFirst(list);
-      if (list.length) {
-        NEWS_HEADLINES = sortHeadlinesNewestFirst(
-          filterHeadlinesLastMonths(filterHeadlinesToActiveMps(NEWS_HEADLINES || list), NEWS_MAX_AGE_DAYS)
-        );
-      }
 
-      const display = sortHeadlinesNewestFirst(
-        filterHeadlinesLastMonths(
-          filterHeadlinesToActiveMps((NEWS_HEADLINES || []).length ? NEWS_HEADLINES : list),
-          NEWS_MAX_AGE_DAYS
-        )
-      );
+      const display = list;
       newsCarouselList = display;
 
       if (elProg) {
         elProg.textContent = display.length
-          ? (display.length + " article" + (display.length === 1 ? "" : "s") + " · last 3 months · swipe or use arrows")
-          : "Loading current headlines…";
+          ? (display.length + " article" + (display.length === 1 ? "" : "s") + " · swipe · sources filtered")
+          : "No articles for selected sources…";
       }
 
       if (!display.length) {
-        host.innerHTML = "<p class='news-vote-note'>Loading current headlines…</p>";
+        host.innerHTML = "<p class='news-vote-note'>No headlines for the sources you selected. Turn a source back on or refresh.</p>";
         updateNewsActionButtons();
-        renderMpVoteStrip();
         return;
       }
 
@@ -8580,33 +8675,37 @@ async function pullGitHubPolls() {
         const sourceHtml = logo
           ? '<span class="news-item-source" title="' + String(src).replace(/"/g, "") + '"><img class="news-agency-logo" src="' + logo + '" alt="' + String(src).replace(/"/g, "") + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML=\'' + String(src).replace(/'/g, "") + '\'" /></span>'
           : '<span class="news-item-source">' + src + '</span>';
-        return '<article class="news-feed-item" data-idx="' + idx + '" data-id="' + item.id + '">' +
-          '<div class="news-image-wrap">' +
-            '<div class="news-item-image-slot">' + imgInner + '</div>' +
-            '<button type="button" class="news-nav-btn prev" data-nav="-1" aria-label="Previous article">‹</button>' +
-            '<button type="button" class="news-nav-btn next" data-nav="1" aria-label="Next article">›</button>' +
-          '</div>' +
-          '<p class="news-item-meta-line">' + sourceHtml +
-          ' · <span class="news-item-date">' + dateLabel +
-          '</span> · <a href="' + href + '" target="_blank" rel="noopener noreferrer">Open article</a></p>' +
-          '<h3 class="news-item-headline"><a href="' + href + '" target="_blank" rel="noopener noreferrer">' +
-          (item.title || "Untitled") + '</a></h3>' +
+        // Whole story block is one link; votes sit outside
+        return '<article class="news-feed-item' + (idx === newsCarouselIndex ? " is-active" : "") + '" data-idx="' + idx + '" data-id="' + item.id + '">' +
+          '<a class="news-card-link" href="' + href + '" target="_blank" rel="noopener noreferrer">' +
+            '<div class="news-image-wrap">' +
+              '<div class="news-item-image-slot">' + imgInner + '</div>' +
+            '</div>' +
+            '<p class="news-item-meta-line">' + sourceHtml +
+            ' · <span class="news-item-date">' + dateLabel + '</span></p>' +
+            '<h3 class="news-item-headline">' + (item.title || "Untitled") + '</h3>' +
+          '</a>' +
           (mpsHtml ? '<div class="news-mp-row">' + mpsHtml + '</div>' : '') +
           '</article>';
       }
 
       host.innerHTML =
         '<div class="news-carousel" id="newsCarousel">' +
+          '<button type="button" class="news-nav-btn prev" data-nav="-1" aria-label="Previous article">‹</button>' +
+          '<button type="button" class="news-nav-btn next" data-nav="1" aria-label="Next article">›</button>' +
           '<div class="news-carousel-track" id="newsCarouselTrack">' +
             display.map(cardHtml).join("") +
           '</div>' +
         '</div>' +
         '<div class="news-carousel-dots" id="newsCarouselDots">' +
-          (newsCarouselIndex + 1) + ' / ' + display.length +
-        '</div>';
+          (newsCarouselIndex + 1) + " / " + display.length +
+        "</div>";
 
       const track = document.getElementById("newsCarouselTrack");
       const carousel = document.getElementById("newsCarousel");
+      // 78% card + 1% margin each side => 80% step; 11% left inset centres active card
+      const SLIDE = 80;
+      const INSET = 11;
 
       function goTo(idx, animate) {
         if (!display.length) return;
@@ -8616,8 +8715,13 @@ async function pullGitHubPolls() {
         if (track) {
           if (animate === false) track.classList.add("swiping");
           else track.classList.remove("swiping");
-          track.style.transform = "translateX(-" + (newsCarouselIndex * 100) + "%)";
+          track.style.transform = "translateX(calc(" + INSET + "% - " + (newsCarouselIndex * SLIDE) + "%))";
         }
+        host.querySelectorAll(".news-feed-item").forEach(function(el) {
+          const i = Number(el.getAttribute("data-idx"));
+          if (i === newsCarouselIndex) el.classList.add("is-active");
+          else el.classList.remove("is-active");
+        });
         const dots = document.getElementById("newsCarouselDots");
         if (dots) dots.textContent = (newsCarouselIndex + 1) + " / " + display.length;
         host.querySelectorAll(".news-nav-btn.prev").forEach(function(b) {
@@ -8638,11 +8742,9 @@ async function pullGitHubPolls() {
         btn.addEventListener("click", function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
-          const d = Number(btn.getAttribute("data-nav") || 0);
-          goTo(newsCarouselIndex + d);
+          goTo(newsCarouselIndex + Number(btn.getAttribute("data-nav") || 0));
         });
       });
-
       host.querySelectorAll("[data-mp-vote]").forEach(function(btn) {
         btn.addEventListener("click", function(ev) {
           ev.stopPropagation();
@@ -8650,31 +8752,27 @@ async function pullGitHubPolls() {
         });
       });
       host.querySelectorAll("[data-open-mp]").forEach(function(el) {
-        el.addEventListener("click", function() {
+        el.addEventListener("click", function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
           const id = el.getAttribute("data-open-mp");
           const person = PEOPLE.find(function(p) { return p.id === id; });
           if (person && typeof openPersonModal === "function") openPersonModal(person);
         });
       });
 
-      // Touch / pointer swipe
       if (carousel && !carousel.getAttribute("data-swipe-bound")) {
         carousel.setAttribute("data-swipe-bound", "1");
         let startX = 0, startY = 0, dx = 0, dragging = false, axis = null;
         function onDown(e) {
           const pt = e.touches ? e.touches[0] : e;
-          startX = pt.clientX;
-          startY = pt.clientY;
-          dx = 0;
-          dragging = true;
-          axis = null;
+          startX = pt.clientX; startY = pt.clientY; dx = 0; dragging = true; axis = null;
           if (track) track.classList.add("swiping");
         }
         function onMove(e) {
           if (!dragging || !track) return;
           const pt = e.touches ? e.touches[0] : e;
-          const adx = pt.clientX - startX;
-          const ady = pt.clientY - startY;
+          const adx = pt.clientX - startX, ady = pt.clientY - startY;
           if (!axis) {
             if (Math.abs(adx) < 6 && Math.abs(ady) < 6) return;
             axis = Math.abs(adx) > Math.abs(ady) ? "x" : "y";
@@ -8682,28 +8780,27 @@ async function pullGitHubPolls() {
           if (axis !== "x") return;
           if (e.cancelable) e.preventDefault();
           dx = adx;
-          const base = -newsCarouselIndex * 100;
           const pct = (dx / Math.max(1, carousel.offsetWidth)) * 100;
-          track.style.transform = "translateX(calc(" + base + "% + " + pct + "%))";
+          track.style.transform = "translateX(calc(" + INSET + "% - " + (newsCarouselIndex * SLIDE) + "% + " + pct + "%))";
         }
         function onUp() {
           if (!dragging) return;
           dragging = false;
           if (track) track.classList.remove("swiping");
-          const threshold = Math.max(48, (carousel.offsetWidth || 300) * 0.18);
+          const threshold = Math.max(48, (carousel.offsetWidth || 300) * 0.15);
           if (dx <= -threshold) goTo(newsCarouselIndex + 1);
           else if (dx >= threshold) goTo(newsCarouselIndex - 1);
           else goTo(newsCarouselIndex);
-          dx = 0;
-          axis = null;
+          dx = 0; axis = null;
         }
         carousel.addEventListener("touchstart", onDown, { passive: true });
         carousel.addEventListener("touchmove", onMove, { passive: false });
         carousel.addEventListener("touchend", onUp);
         carousel.addEventListener("touchcancel", onUp);
-        // mouse drag on desktop too
         carousel.addEventListener("mousedown", function(e) {
           if (e.button !== 0) return;
+          // don't start drag from buttons/links
+          if (e.target && e.target.closest && (e.target.closest("a") || e.target.closest("button"))) return;
           onDown(e);
           function mm(ev) { onMove(ev); }
           function mu() {
@@ -8717,7 +8814,6 @@ async function pullGitHubPolls() {
       }
 
       updateNewsActionButtons();
-      renderMpVoteStrip();
     }
 
 function renderMpVoteStrip() {
