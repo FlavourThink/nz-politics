@@ -2690,6 +2690,202 @@
     }
     .polls-top3 { margin-top: 0.25rem; }
 
+
+    .news-feed-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .news-item-image-slot {
+      width: 100%;
+      height: 140px;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .news-item-image {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: #0f172a;
+    }
+    .news-agency-logo {
+      height: 18px;
+      width: auto;
+      max-width: 72px;
+      object-fit: contain;
+      vertical-align: middle;
+      border-radius: 3px;
+      background: #fff;
+      padding: 1px 3px;
+    }
+    .news-item-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 700;
+    }
+    .news-item-meta-line {
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .news-item-meta-line a {
+      color: #38bdf8;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .news-item-meta-line a:hover { text-decoration: underline; }
+    .news-item-headline {
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+    .news-item-headline a {
+      color: var(--text);
+      text-decoration: none;
+    }
+    .news-item-headline a:hover { color: #38bdf8; }
+    .news-item-date {
+      font-weight: 800;
+      color: var(--text);
+    }
+
+
+    .news-carousel {
+      position: relative;
+      width: 100%;
+      max-width: 28rem;
+      margin: 0 auto;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .news-carousel-track {
+      display: flex;
+      width: 100%;
+      transition: transform 0.38s cubic-bezier(0.22, 0.61, 0.36, 1);
+      will-change: transform;
+    }
+    .news-carousel-track.swiping {
+      transition: none;
+    }
+    .news-carousel .news-feed-item {
+      flex: 0 0 100%;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    .news-image-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .news-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 999px;
+      border: none;
+      background: rgba(15, 23, 42, 0.72);
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.92;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .news-nav-btn:hover { background: rgba(15, 23, 42, 0.92); opacity: 1; }
+    .news-nav-btn:disabled { opacity: 0.35; cursor: default; }
+    .news-nav-btn.prev { left: 0.45rem; }
+    .news-nav-btn.next { right: 0.45rem; }
+    @media (max-width: 640px) {
+      .news-nav-btn { display: none; }
+    }
+    .news-carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.3rem;
+      margin-top: 0.55rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .news-mp-vote {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 0.25rem 0;
+    }
+    .news-mp-vote .mp-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      min-width: 5rem;
+      cursor: pointer;
+    }
+    .nv-banner {
+      border: none;
+      border-radius: 10px;
+      padding: 0.38rem 0.85rem 0.38rem 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      line-height: 1;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.12);
+      position: relative;
+      opacity: 0.88;
+      transition: transform 0.12s, opacity 0.12s, filter 0.12s;
+    }
+    .nv-banner:hover { opacity: 1; transform: translateY(-1px); }
+    .nv-banner .nv-badge {
+      width: 1.15rem;
+      height: 1.15rem;
+      border-radius: 4px;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 900;
+      margin-top: -0.55rem;
+      margin-bottom: -0.15rem;
+    }
+    .nv-banner.positive {
+      background: #22c55e;
+    }
+    .nv-banner.positive .nv-badge { color: #16a34a; }
+    .nv-banner.negative {
+      background: #ef4444;
+    }
+    .nv-banner.negative .nv-badge { color: #dc2626; }
+    .nv-banner.is-on {
+      opacity: 1;
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+      filter: brightness(1.08);
+    }
+    .nv-banner.positive.is-on { box-shadow: 0 0 0 2px rgba(34,197,94,0.45); }
+    .nv-banner.negative.is-on { box-shadow: 0 0 0 2px rgba(239,68,68,0.45); }
+
   </style>
 </head>
 <body>
@@ -3013,7 +3209,7 @@
         </section>
         <section class="news-results-card" aria-label="Vote tallies">
           <h2 style="margin:0 0 0.5rem;font-size:1.05rem;">MP impression scores</h2>
-          <p class="news-vote-note">From <strong>your votes on the last 4 weeks</strong> of NZ political news only. Cards ordered <strong>least → most favourable</strong>. Click a card to see the headlines you scored about that MP.</p>
+          <p class="news-vote-note">From <strong>your votes on the last 3 months</strong> of NZ political news only. Cards ordered <strong>least → most favourable</strong>. Click a card to see the headlines you scored about that MP.</p>
           <div class="news-tally-with-scale">
             <div class="news-tally-scale" aria-hidden="true">
               <span class="scale-top">Least favourable</span>
@@ -7263,6 +7459,7 @@ function eventSourcesHtml(ev) {
         url: h.url,
         agency: h.agency || "News",
         date: h.date || "",
+        image: h.image || null,
         mpIds: h.mpIds || [],
         summary: (h.summary || "").slice(0, 200),
         foundAt: Date.now()
@@ -7307,7 +7504,7 @@ function eventSourcesHtml(ev) {
     let newsVoteIndex = 0;
     let newsBrowseList = []; // session order for prev/next through seen+unvoted
     let newsPageLoadTs = Date.now(); // when this page session started
-    let newsInitialFetchDone = false; // first fetch = full 4 weeks; later = since page load
+    let newsInitialFetchDone = false; // first fetch = full 3 months; later = since page load
 
 
     const RSS_FEEDS = [
@@ -7386,7 +7583,9 @@ function eventSourcesHtml(ev) {
 
     
     const NEWS_TARGET_COUNT = 40;
-    const NEWS_MAX_AGE_DAYS = 28; // last 4 weeks
+    const NEWS_MAX_AGE_DAYS = 90; // last 3 months
+    let newsCarouselIndex = 0;
+    let newsCarouselList = [];
 
     function parseHeadlineDate(h) {
       if (!h) return null;
@@ -7437,6 +7636,73 @@ function eventSourcesHtml(ev) {
       return next;
     }
 
+    
+    function extractImageFromHtml(html) {
+      const s = String(html || "");
+      let m = s.match(/<img[^>]+src=["']([^"']+)["']/i);
+      if (m && m[1] && !/^data:/i.test(m[1])) return m[1];
+      m = s.match(/url\(["']?([^"')]+)["']?\)/i);
+      if (m && m[1] && /\.(jpg|jpeg|png|webp|gif)/i.test(m[1])) return m[1];
+      return null;
+    }
+
+    
+    function agencyDomain(agency, url) {
+      const map = {
+        "RNZ": "rnz.co.nz",
+        "RNZ Politics": "rnz.co.nz",
+        "1News": "1news.co.nz",
+        "NZ Herald": "nzherald.co.nz",
+        "Herald": "nzherald.co.nz",
+        "Stuff": "stuff.co.nz",
+        "The Spinoff": "thespinoff.co.nz",
+        "Newsroom": "newsroom.co.nz",
+        "NBR": "nbr.co.nz",
+        "Newshub": "newshub.co.nz",
+        "TVNZ": "tvnz.co.nz",
+        "Scoop": "scoop.co.nz",
+        "Interest": "interest.co.nz",
+        "Post": "thepost.co.nz",
+        "The Post": "thepost.co.nz",
+        "Listener": "listener.co.nz",
+        "Google News NZ": null
+      };
+      if (agency && map[agency]) return map[agency];
+      // fuzzy
+      const a = String(agency || "").toLowerCase();
+      if (a.indexOf("rnz") >= 0) return "rnz.co.nz";
+      if (a.indexOf("1news") >= 0 || a.indexOf("one news") >= 0) return "1news.co.nz";
+      if (a.indexOf("herald") >= 0) return "nzherald.co.nz";
+      if (a.indexOf("stuff") >= 0) return "stuff.co.nz";
+      if (a.indexOf("spinoff") >= 0) return "thespinoff.co.nz";
+      if (a.indexOf("newsroom") >= 0) return "newsroom.co.nz";
+      if (a.indexOf("nbr") >= 0) return "nbr.co.nz";
+      if (url) {
+        try {
+          return new URL(url).hostname.replace(/^www\./i, "");
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    function agencyLogoUrl(agency, url) {
+      const domain = agencyDomain(agency, url);
+      if (!domain) return null;
+      return "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(domain) + "&sz=64";
+    }
+
+    function pickArticleImage(item) {
+      if (!item) return null;
+      const direct = item.image || item.imageUrl || item.urlToImage || item.thumbnail || item.enclosureUrl || null;
+      if (direct && /^https?:\/\//i.test(String(direct))) return String(direct);
+      // media fields
+      if (item.enclosure && item.enclosure.url && /image/i.test(item.enclosure.type || "image")) return item.enclosure.url;
+      if (item.mediaContent) return item.mediaContent;
+      if (item.mediaThumbnail) return item.mediaThumbnail;
+      const fromHtml = extractImageFromHtml(item.description || item.content || item.summary || "");
+      return fromHtml;
+    }
+
     function rssItemToHeadline(item, agency) {
       const title = (item.title || "Untitled").replace(/\s+-\s+1News\s*$/i, "").replace(/\s+-\s+NZ Herald\s*$/i, "").replace(/\s+-\s+Stuff\s*$/i, "").trim();
       let link = item.link || item.url || "#";
@@ -7470,6 +7736,7 @@ function eventSourcesHtml(ev) {
         .slice(0, 280);
       const mpIds = matchMpIdsFromText(title + " " + summary);
       const id = "rss-" + String(link || title).toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 80);
+      const image = pickArticleImage(item) || extractImageFromHtml(item.description || item.content || "");
       return {
         id: id,
         date: date,
@@ -7477,6 +7744,7 @@ function eventSourcesHtml(ev) {
         url: link,
         title: title,
         summary: summary || title,
+        image: image || null,
         mpIds: mpIds,
         live: true
       };
@@ -7696,6 +7964,7 @@ function eventSourcesHtml(ev) {
         summary: String(summary).slice(0, 400),
         date: a.publishedAt || a.date || null,
         pubDate: a.publishedAt || null,
+        image: a.image || a.urlToImage || a.thumbnail || pickArticleImage(a) || null,
         mpIds: mpIds,
         fromGitHub: true,
         politicalLikely: a.politicalLikely !== false
@@ -7770,7 +8039,7 @@ function eventSourcesHtml(ev) {
         return db - da;
       });
       if (out.length) {
-        NEWS_HEADLINES = out.slice(0, 80);
+        NEWS_HEADLINES = out.slice(0, 200);
         try {
           newsBrowseList = NEWS_HEADLINES.map(function(h) { return h.id; });
         } catch (e) {}
@@ -7837,11 +8106,11 @@ async function pullGitHubPolls() {
         btn.classList.add("busy");
       }
 
-      // First fetch this page session: full last 4 weeks.
+      // First fetch this page session: full last 3 months.
       // Later refreshes: only articles newer than initial page load.
       const checkStarted = Date.now();
       const lastCheckTs = newsInitialFetchDone ? (newsPageLoadTs || getLastCheckTs()) : 0;
-      const modeLabel = newsInitialFetchDone ? "since page load" : "last 4 weeks";
+      const modeLabel = newsInitialFetchDone ? "since page load" : "last 3 months";
       if (!silent) setStatus("Loading current headlines…");
 
       const collected = loadCollectedKeys();
@@ -7901,7 +8170,29 @@ async function pullGitHubPolls() {
             const link = (node.querySelector("link") && node.querySelector("link").textContent) || "#";
             const pub = (node.querySelector("pubDate") && node.querySelector("pubDate").textContent) || "";
             const desc = (node.querySelector("description") && node.querySelector("description").textContent) || "";
-            if (considerRaw({ title: title, link: link, pubDate: pub, description: desc }, agency)) added++;
+            const contentEnc = (node.querySelector("content\\:encoded") && node.querySelector("content\\:encoded").textContent)
+              || (node.getElementsByTagName("content:encoded")[0] && node.getElementsByTagName("content:encoded")[0].textContent)
+              || "";
+            let image = null;
+            const enc = node.querySelector("enclosure");
+            if (enc) {
+              const et = enc.getAttribute("type") || "";
+              const eu = enc.getAttribute("url") || "";
+              if (eu && (/image/i.test(et) || /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(eu))) image = eu;
+            }
+            // media:content / media:thumbnail (getElementsByTagName works better with namespaces)
+            const mediaContent = node.getElementsByTagName("media:content")[0] || node.getElementsByTagName("content")[0];
+            if (!image && mediaContent && mediaContent.getAttribute) {
+              const mu = mediaContent.getAttribute("url");
+              if (mu) image = mu;
+            }
+            const mediaThumb = node.getElementsByTagName("media:thumbnail")[0] || node.getElementsByTagName("thumbnail")[0];
+            if (!image && mediaThumb && mediaThumb.getAttribute) {
+              const tu = mediaThumb.getAttribute("url");
+              if (tu) image = tu;
+            }
+            if (!image) image = extractImageFromHtml(desc + " " + contentEnc);
+            if (considerRaw({ title: title, link: link, pubDate: pub, description: desc, content: contentEnc, image: image }, agency)) added++;
           });
           return added;
         } catch (e) {
@@ -8183,6 +8474,33 @@ async function pullGitHubPolls() {
     }
 
 
+    function formatNewsDate(h) {
+      const d = parseHeadlineDate(h);
+      if (!d) return h && h.date ? String(h.date) : "Date unknown";
+      try {
+        return d.toLocaleDateString("en-NZ", { day: "numeric", month: "short", year: "numeric" });
+      } catch (e) {
+        return d.toISOString().slice(0, 10);
+      }
+    }
+
+    function sortHeadlinesNewestFirst(list) {
+      return (list || []).slice().sort(function(a, b) {
+        const da = parseHeadlineDate(a);
+        const db = parseHeadlineDate(b);
+        const ta = da ? da.getTime() : 0;
+        const tb = db ? db.getTime() : 0;
+        return tb - ta;
+      });
+    }
+
+    function filterHeadlinesLastMonths(list, days) {
+      days = days || NEWS_MAX_AGE_DAYS;
+      return (list || []).filter(function(h) {
+        try { return isWithinLastWeeks(h, days); } catch (e) { return true; }
+      });
+    }
+
     function renderNewsHeadline() {
       const host = document.getElementById("newsFeedList");
       const elProg = document.getElementById("newsVoteProgress");
@@ -8197,19 +8515,32 @@ async function pullGitHubPolls() {
             url: h.url,
             agency: h.agency,
             date: h.date,
+            image: h.image || null,
             mpIds: h.mpIds || [],
             summary: h.summary || h.title
           };
         });
       }
       list = filterHeadlinesToActiveMps(list);
-      if (list.length) NEWS_HEADLINES = (NEWS_HEADLINES || []).length ? NEWS_HEADLINES : list;
+      list = filterHeadlinesLastMonths(list, NEWS_MAX_AGE_DAYS);
+      list = sortHeadlinesNewestFirst(list);
+      if (list.length) {
+        NEWS_HEADLINES = sortHeadlinesNewestFirst(
+          filterHeadlinesLastMonths(filterHeadlinesToActiveMps(NEWS_HEADLINES || list), NEWS_MAX_AGE_DAYS)
+        );
+      }
 
-      const display = filterHeadlinesToActiveMps((NEWS_HEADLINES || []).length ? NEWS_HEADLINES : list);
+      const display = sortHeadlinesNewestFirst(
+        filterHeadlinesLastMonths(
+          filterHeadlinesToActiveMps((NEWS_HEADLINES || []).length ? NEWS_HEADLINES : list),
+          NEWS_MAX_AGE_DAYS
+        )
+      );
+      newsCarouselList = display;
 
       if (elProg) {
         elProg.textContent = display.length
-          ? (display.length + " article" + (display.length === 1 ? "" : "s") + " · active MPs only · swipe sideways")
+          ? (display.length + " article" + (display.length === 1 ? "" : "s") + " · last 3 months · swipe or use arrows")
           : "Loading current headlines…";
       }
 
@@ -8220,7 +8551,10 @@ async function pullGitHubPolls() {
         return;
       }
 
-      host.innerHTML = display.map(function(item, idx) {
+      if (newsCarouselIndex >= display.length) newsCarouselIndex = display.length - 1;
+      if (newsCarouselIndex < 0) newsCarouselIndex = 0;
+
+      function cardHtml(item, idx) {
         const mpsHtml = (item.mpIds || []).map(function(mpId) {
           const person = PEOPLE.find(function(p) { return p.id === mpId; });
           const name = person ? person.name : mpId;
@@ -8229,25 +8563,86 @@ async function pullGitHubPolls() {
           const crossOn = v === "reject" ? " is-on" : "";
           return '<div class="news-mp-vote" data-mp="' + mpId + '">' +
             '<span class="mp-label" data-open-mp="' + mpId + '">' + name + '</span>' +
-            '<button type="button" class="tick' + tickOn + '" data-mp-vote="accept" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Favourable">✓</button>' +
-            '<button type="button" class="cross' + crossOn + '" data-mp-vote="reject" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Unfavourable">✗</button>' +
+            '<button type="button" class="nv-banner positive' + tickOn + '" data-mp-vote="accept" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Positive">' +
+              '<span class="nv-badge">✓</span> Positive</button>' +
+            '<button type="button" class="nv-banner negative' + crossOn + '" data-mp-vote="reject" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Negative">' +
+              '<span class="nv-badge">✕</span> Negative</button>' +
             '</div>';
         }).join("");
-        return '<article class="news-feed-item" id="news-item-' + idx + '" data-id="' + item.id + '">' +
-          '<div class="news-meta">' + (item.date || "") + (item.agency ? " · " + item.agency : "") + '</div>' +
-          '<h3 data-url="' + (item.url || "") + '">' + (item.title || "Untitled") + '</h3>' +
-          '<p class="news-summary">' + (item.summary || "") + '</p>' +
-          (mpsHtml ? '<div class="news-mp-row">' + mpsHtml + '</div>' : '<p class="news-vote-note">No active MP matched</p>') +
+        const src = item.agency || "Source";
+        const dateLabel = formatNewsDate(item);
+        const href = item.url || "#";
+        const img = item.image ? String(item.image).replace(/"/g, "") : "";
+        const imgInner = img
+          ? '<img class="news-item-image" src="' + img + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'" />'
+          : "";
+        const logo = agencyLogoUrl(src, href);
+        const sourceHtml = logo
+          ? '<span class="news-item-source" title="' + String(src).replace(/"/g, "") + '"><img class="news-agency-logo" src="' + logo + '" alt="' + String(src).replace(/"/g, "") + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML=\'' + String(src).replace(/'/g, "") + '\'" /></span>'
+          : '<span class="news-item-source">' + src + '</span>';
+        return '<article class="news-feed-item" data-idx="' + idx + '" data-id="' + item.id + '">' +
+          '<div class="news-image-wrap">' +
+            '<div class="news-item-image-slot">' + imgInner + '</div>' +
+            '<button type="button" class="news-nav-btn prev" data-nav="-1" aria-label="Previous article">‹</button>' +
+            '<button type="button" class="news-nav-btn next" data-nav="1" aria-label="Next article">›</button>' +
+          '</div>' +
+          '<p class="news-item-meta-line">' + sourceHtml +
+          ' · <span class="news-item-date">' + dateLabel +
+          '</span> · <a href="' + href + '" target="_blank" rel="noopener noreferrer">Open article</a></p>' +
+          '<h3 class="news-item-headline"><a href="' + href + '" target="_blank" rel="noopener noreferrer">' +
+          (item.title || "Untitled") + '</a></h3>' +
+          (mpsHtml ? '<div class="news-mp-row">' + mpsHtml + '</div>' : '') +
           '</article>';
-      }).join("");
+      }
 
-      host.querySelectorAll(".news-feed-item h3[data-url]").forEach(function(h) {
-        h.style.cursor = "pointer";
-        h.addEventListener("click", function() {
-          const u = h.getAttribute("data-url");
-          if (u) window.open(u, "_blank", "noopener,noreferrer");
+      host.innerHTML =
+        '<div class="news-carousel" id="newsCarousel">' +
+          '<div class="news-carousel-track" id="newsCarouselTrack">' +
+            display.map(cardHtml).join("") +
+          '</div>' +
+        '</div>' +
+        '<div class="news-carousel-dots" id="newsCarouselDots">' +
+          (newsCarouselIndex + 1) + ' / ' + display.length +
+        '</div>';
+
+      const track = document.getElementById("newsCarouselTrack");
+      const carousel = document.getElementById("newsCarousel");
+
+      function goTo(idx, animate) {
+        if (!display.length) return;
+        if (idx < 0) idx = 0;
+        if (idx >= display.length) idx = display.length - 1;
+        newsCarouselIndex = idx;
+        if (track) {
+          if (animate === false) track.classList.add("swiping");
+          else track.classList.remove("swiping");
+          track.style.transform = "translateX(-" + (newsCarouselIndex * 100) + "%)";
+        }
+        const dots = document.getElementById("newsCarouselDots");
+        if (dots) dots.textContent = (newsCarouselIndex + 1) + " / " + display.length;
+        host.querySelectorAll(".news-nav-btn.prev").forEach(function(b) {
+          b.disabled = newsCarouselIndex <= 0;
+        });
+        host.querySelectorAll(".news-nav-btn.next").forEach(function(b) {
+          b.disabled = newsCarouselIndex >= display.length - 1;
+        });
+      }
+
+      window.__newsGoTo = goTo;
+      window.__newsNext = function() { goTo(newsCarouselIndex + 1); };
+      window.__newsPrev = function() { goTo(newsCarouselIndex - 1); };
+
+      goTo(newsCarouselIndex, false);
+
+      host.querySelectorAll(".news-nav-btn").forEach(function(btn) {
+        btn.addEventListener("click", function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const d = Number(btn.getAttribute("data-nav") || 0);
+          goTo(newsCarouselIndex + d);
         });
       });
+
       host.querySelectorAll("[data-mp-vote]").forEach(function(btn) {
         btn.addEventListener("click", function(ev) {
           ev.stopPropagation();
@@ -8261,11 +8656,71 @@ async function pullGitHubPolls() {
           if (person && typeof openPersonModal === "function") openPersonModal(person);
         });
       });
+
+      // Touch / pointer swipe
+      if (carousel && !carousel.getAttribute("data-swipe-bound")) {
+        carousel.setAttribute("data-swipe-bound", "1");
+        let startX = 0, startY = 0, dx = 0, dragging = false, axis = null;
+        function onDown(e) {
+          const pt = e.touches ? e.touches[0] : e;
+          startX = pt.clientX;
+          startY = pt.clientY;
+          dx = 0;
+          dragging = true;
+          axis = null;
+          if (track) track.classList.add("swiping");
+        }
+        function onMove(e) {
+          if (!dragging || !track) return;
+          const pt = e.touches ? e.touches[0] : e;
+          const adx = pt.clientX - startX;
+          const ady = pt.clientY - startY;
+          if (!axis) {
+            if (Math.abs(adx) < 6 && Math.abs(ady) < 6) return;
+            axis = Math.abs(adx) > Math.abs(ady) ? "x" : "y";
+          }
+          if (axis !== "x") return;
+          if (e.cancelable) e.preventDefault();
+          dx = adx;
+          const base = -newsCarouselIndex * 100;
+          const pct = (dx / Math.max(1, carousel.offsetWidth)) * 100;
+          track.style.transform = "translateX(calc(" + base + "% + " + pct + "%))";
+        }
+        function onUp() {
+          if (!dragging) return;
+          dragging = false;
+          if (track) track.classList.remove("swiping");
+          const threshold = Math.max(48, (carousel.offsetWidth || 300) * 0.18);
+          if (dx <= -threshold) goTo(newsCarouselIndex + 1);
+          else if (dx >= threshold) goTo(newsCarouselIndex - 1);
+          else goTo(newsCarouselIndex);
+          dx = 0;
+          axis = null;
+        }
+        carousel.addEventListener("touchstart", onDown, { passive: true });
+        carousel.addEventListener("touchmove", onMove, { passive: false });
+        carousel.addEventListener("touchend", onUp);
+        carousel.addEventListener("touchcancel", onUp);
+        // mouse drag on desktop too
+        carousel.addEventListener("mousedown", function(e) {
+          if (e.button !== 0) return;
+          onDown(e);
+          function mm(ev) { onMove(ev); }
+          function mu() {
+            onUp();
+            window.removeEventListener("mousemove", mm);
+            window.removeEventListener("mouseup", mu);
+          }
+          window.addEventListener("mousemove", mm);
+          window.addEventListener("mouseup", mu);
+        });
+      }
+
       updateNewsActionButtons();
       renderMpVoteStrip();
     }
 
-    function renderMpVoteStrip() {
+function renderMpVoteStrip() {
       const host = document.getElementById("newsMpTallyStrip") || document.getElementById("newsTallyHost");
       // Prefer dedicated strip under feed
       let strip = document.getElementById("newsMpTallyStrip");
