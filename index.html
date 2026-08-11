@@ -7456,48 +7456,87 @@ function eventSourcesHtml(ev) {
       return n;
     }
 
-    async function pullGitHubNews(publishNew) {
-      const urls = [LIVE_NEWS_URL, LIVE_LATEST_URL];
-      let added = 0;
-      let ok = false;
+    async function fetchWorkerNewsJson() {
+      const urls = [
+        LIVE_NEWS_URL,
+        LIVE_LATEST_URL,
+        "https://raw.githubusercontent.com/flavourthink/nz-politics-workers-collection/main/data/news.json",
+        "https://raw.githubusercontent.com/FlavourThink/nz-politics-workers-collection/main/data/latest.json"
+      ];
       let lastErr = null;
-      if (typeof location !== "undefined" && location.protocol === "file:") {
-        lastErr = "file:// blocked";
-        console.warn("Open via GitHub Pages or a local web server — file:// often blocks fetch to GitHub.");
-      }
-      for (let u = 0; u < urls.length; u++) {
+      for (let i = 0; i < urls.length; i++) {
         try {
-          const res = await fetch(urls[u] + "?t=" + Date.now(), { cache: "no-store", mode: "cors" });
+          const res = await fetch(urls[i] + (urls[i].indexOf("?") >= 0 ? "&" : "?") + "t=" + Date.now(), {
+            cache: "no-store",
+            mode: "cors"
+          });
           if (!res.ok) {
             lastErr = "HTTP " + res.status;
             continue;
           }
           const data = await res.json();
-          ok = true;
           let articles = [];
-          if (data.news && data.news.articles) {
-            liveDataMeta.newsAt = data.news.updatedAt || data.updatedAt;
-            articles = data.news.articles;
-          } else if (data.articles) {
-            liveDataMeta.newsAt = data.updatedAt;
+          if (data.articles && data.articles.length) {
             articles = data.articles;
+            liveDataMeta.newsAt = data.updatedAt || null;
+          } else if (data.news && data.news.articles) {
+            articles = data.news.articles;
+            liveDataMeta.newsAt = data.news.updatedAt || data.updatedAt || null;
           }
-          if (data.polls) {
-            liveDataMeta.pollsAt = (data.polls && data.polls.updatedAt) || data.updatedAt;
-          }
-          if (data.votes && data.votes.byMp) {
-            window.__sharedVoteTallies = data.votes.byMp;
-          }
+          if (data.polls) liveDataMeta.pollsAt = data.polls.updatedAt || data.updatedAt || null;
+          if (data.votes && data.votes.byMp) window.__sharedVoteTallies = data.votes.byMp;
           liveDataMeta.loadedAt = new Date().toISOString();
           updateDataStatusBanner();
-          added += ingestGitHubArticles(articles, publishNew);
-          if (articles.length) break;
+          return { ok: true, articles: articles || [], error: null, url: urls[i] };
         } catch (e) {
           lastErr = e && e.message ? e.message : String(e);
-          console.warn("GitHub live data", urls[u], e);
         }
       }
-      return { added: added, ok: ok, error: lastErr };
+      return { ok: false, articles: [], error: lastErr, url: null };
+    }
+
+    /** Put worker articles straight on screen (ignore prior "collected" blocks). */
+    function applyWorkerArticlesToFeed(articles) {
+      const out = [];
+      const seen = {};
+      (articles || []).forEach(function(a) {
+        const h = githubArticleToHeadline(a);
+        if (!h) return;
+        const k = dedupeKey(h);
+        if (!k || seen[k]) return;
+        seen[k] = true;
+        out.push(h);
+        try { upsertArchiveHeadline(h); } catch (e) {}
+      });
+      out.sort(function(a, b) {
+        const da = parseHeadlineDate(a) ? parseHeadlineDate(a).getTime() : 0;
+        const db = parseHeadlineDate(b) ? parseHeadlineDate(b).getTime() : 0;
+        return db - da;
+      });
+      if (out.length) {
+        NEWS_HEADLINES = out.slice(0, 80);
+        try {
+          newsBrowseList = NEWS_HEADLINES.map(function(h) { return h.id; });
+        } catch (e) {}
+        renderNewsVoteUI();
+      }
+      return out.length;
+    }
+
+    async function pullGitHubNews(publishNew) {
+      const result = await fetchWorkerNewsJson();
+      if (!result.ok) return { added: 0, ok: false, error: result.error };
+      // If the feed is empty, force-apply full worker list (fixes stuck "collected" keys)
+      if (!(NEWS_HEADLINES && NEWS_HEADLINES.length)) {
+        const n = applyWorkerArticlesToFeed(result.articles);
+        return { added: n, ok: true, error: null };
+      }
+      let added = 0;
+      (result.articles || []).forEach(function(a) {
+        const h = githubArticleToHeadline(a);
+        if (h && publishNew(h)) added++;
+      });
+      return { added: added, ok: true, error: null };
     }
 
 async function pullGitHubPolls() {
@@ -8724,9 +8763,31 @@ async function pullGitHubPolls() {
 
     wireNewsVotes();
     try { renderOpinionPolls(); } catch (e) {}
-    setTimeout(function() {
+    // Immediately show worker headlines already collected on GitHub (do not wait for RSS)
+    setTimeout(async function() {
+      const status = document.getElementById("newsFeedStatus");
+      function setStatus(msg) { if (status) status.textContent = msg || ""; }
+      setStatus("Loading current headlines…");
+      try {
+        const result = await fetchWorkerNewsJson();
+        if (result.ok && result.articles && result.articles.length) {
+          const n = applyWorkerArticlesToFeed(result.articles);
+          setStatus("Loaded " + n + " headline" + (n === 1 ? "" : "s") + " from workers");
+          newsInitialFetchDone = true;
+          if (!newsPageLoadTs) newsPageLoadTs = Date.now();
+          return;
+        }
+        if (!result.ok) {
+          setStatus("Failed to connect to service… Loading from backup sources");
+        } else {
+          setStatus("Worker connected but no headlines yet — trying backup sources…");
+        }
+      } catch (e) {
+        console.warn(e);
+        setStatus("Failed to connect to service… Loading from backup sources");
+      }
       fetchNewsHeadlines({ silent: true, merge: true, replace: false });
-    }, 250);
+    }, 50);
 
     filterCards();
     renderPartyScores();
