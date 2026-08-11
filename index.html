@@ -2681,6 +2681,29 @@
       z-index: 1;
     }
 
+
+    .polls-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem 1rem;
+      align-items: center;
+      margin: 0.35rem 0 0.65rem;
+      font-size: 0.78rem;
+    }
+    .polls-controls label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .polls-party-picks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.65rem;
+    }
+    .polls-top3 { margin-top: 0.25rem; }
+
   </style>
 </head>
 <body>
@@ -2904,20 +2927,18 @@
     
     <div class="view" id="view-polls">
       <section class="polls-panel">
-        <div class="polls-head">
-          <h2 style="margin:0;font-size:1.2rem;">Who’s ahead in the polls?</h2>
-          <p class="polls-plain">A simple look at recent party support for the <strong>2026 election</strong>. Numbers are from public opinion polls (people surveyed about how they would vote).</p>
-        </div>
-
-        <div id="pollsHeadline" class="polls-headline"></div>
         <p class="polls-checked" id="pollsLastCheck">Last data check: …</p>
         <div id="pollsTop3" class="polls-top3"></div>
-        <h3 class="polls-sub">Party support over time</h3>
-        <p class="polls-plain muted">One line per party from recent public polls (worker + curated snapshot). Click a party name or line to open Party Stats.</p>
+        <div class="polls-controls">
+          <div class="polls-party-picks" id="pollsPartyPicks"></div>
+          <label><input type="checkbox" id="pollsShowTrend" /> Show trend lines</label>
+          <label><input type="checkbox" id="pollsShowPredict" /> Next-month prediction</label>
+        </div>
         <div class="polls-chart-wrap">
-          <svg id="pollsLineChart" viewBox="0 0 640 280" role="img" aria-label="Party poll support over time"></svg>
+          <svg id="pollsLineChart" viewBox="0 0 640 300" role="img" aria-label="Party poll support over time"></svg>
           <div class="polls-chart-legend" id="pollsChartLegend"></div>
         </div>
+        <div id="pollsHeadline" class="polls-headline" hidden></div>
         <div id="pollsBlocks" class="polls-blocks" hidden></div>
         <div id="pollsPeriods" class="polls-periods" hidden></div>
         <div id="pollsLatest" class="polls-bars-simple" hidden></div>
@@ -8563,15 +8584,65 @@ function renderNewsVoteUI() {
       return { avg: out, period: lastEnd, firms: use.map(function(u) { return u.firm; }) };
     }
 
+    function linearTrend(ys) {
+      // ys: array of numbers (skip nulls with index)
+      const pts = [];
+      for (let i = 0; i < ys.length; i++) {
+        if (ys[i] != null && !isNaN(ys[i])) pts.push({ x: i, y: Number(ys[i]) });
+      }
+      if (pts.length < 2) return null;
+      const n = pts.length;
+      let sx = 0, sy = 0, sxx = 0, sxy = 0;
+      pts.forEach(function(p) {
+        sx += p.x; sy += p.y; sxx += p.x * p.x; sxy += p.x * p.y;
+      });
+      const den = n * sxx - sx * sx;
+      if (!den) return null;
+      const slope = (n * sxy - sx * sy) / den;
+      const intercept = (sy - slope * sx) / n;
+      return { slope: slope, intercept: intercept, predict: function(x) { return intercept + slope * x; } };
+    }
+
+    function monthLabel(key) {
+      // key YYYY-MM → "Jul 26"
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const parts = String(key || "").split("-");
+      if (parts.length < 2) return key;
+      const mi = Number(parts[1]) - 1;
+      const yy = String(parts[0]).slice(-2);
+      if (mi < 0 || mi > 11) return key;
+      return months[mi] + " " + yy;
+    }
+
+    function nextMonthKey(key) {
+      const parts = String(key || "").split("-");
+      let y = Number(parts[0]), m = Number(parts[1]);
+      if (!y || !m) return null;
+      m += 1;
+      if (m > 12) { m = 1; y += 1; }
+      return y + "-" + String(m).padStart(2, "0");
+    }
+
+    function getSelectedPollParties(partyKeys, top3Names) {
+      const box = document.getElementById("pollsPartyPicks");
+      if (!box) return top3Names.slice();
+      const checked = [];
+      box.querySelectorAll("input[type=checkbox][data-party]").forEach(function(inp) {
+        if (inp.checked) checked.push(inp.getAttribute("data-party"));
+      });
+      if (!checked.length) return top3Names.slice();
+      return checked;
+    }
+
     function renderOpinionPolls() {
-      const headline = document.getElementById("pollsHeadline");
       const top3el = document.getElementById("pollsTop3");
       const checkEl = document.getElementById("pollsLastCheck");
       const svg = document.getElementById("pollsLineChart");
       const legend = document.getElementById("pollsChartLegend");
       const foot = document.getElementById("pollsFootnote");
+      const picks = document.getElementById("pollsPartyPicks");
+      const tableBody = document.getElementById("pollsTableBody");
 
-      // Refresh worker polls meta
       try { if (typeof pullGitHubPolls === "function") pullGitHubPolls(); } catch (e) {}
 
       const series = getPollSeries();
@@ -8579,31 +8650,29 @@ function renderNewsVoteUI() {
       const rows = series.rows;
       const latest = latestPollAverage(rows, partyKeys);
 
-      // Last check note
       if (checkEl) {
         const remote = (window.__livePollsRemote && window.__livePollsRemote.updatedAt)
-          || (liveDataMeta && liveDataMeta.pollsAt)
-          || null;
-        const local = new Date().toISOString();
+          || (liveDataMeta && liveDataMeta.pollsAt) || null;
         if (remote) {
-          checkEl.textContent = "Last worker poll data: " + String(remote).slice(0, 19).replace("T", " ") + " UTC · Chart uses structured public poll rows";
+          checkEl.textContent = "Last worker poll data: " + String(remote).slice(0, 19).replace("T", " ") + " UTC";
         } else {
-          checkEl.textContent = "Last data check on this page: " + local.slice(0, 19).replace("T", " ") + " UTC · Worker polls not loaded yet";
+          checkEl.textContent = "Last data check: " + new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
         }
       }
 
-      // Top 3
+      // Top 3 ranking
+      let top3Names = [];
       if (top3el && latest) {
         const ranked = partyKeys.map(function(name) {
           return { name: name, pct: latest.avg[name] };
         }).filter(function(x) { return x.pct != null; })
-          .sort(function(a, b) { return b.pct - a.pct; })
-          .slice(0, 3);
-        top3el.innerHTML = ranked.map(function(r, i) {
+          .sort(function(a, b) { return b.pct - a.pct; });
+        top3Names = ranked.slice(0, 3).map(function(r) { return r.name; });
+        top3el.innerHTML = ranked.slice(0, 3).map(function(r, i) {
           const col = pollsPartyColor(r.name);
           const place = i === 0 ? "1st" : (i === 1 ? "2nd" : "3rd");
           return '<div class="polls-top3-card" data-party="' + r.name + '" title="Open Party Stats">' +
-            '<div class="polls-top3-rank">' + place + ' place</div>' +
+            '<div class="polls-top3-rank">' + place + '</div>' +
             '<div class="polls-top3-name" style="color:' + col + '">' + r.name + '</div>' +
             '<div class="polls-top3-pct">' + r.pct + '%</div></div>';
         }).join("");
@@ -8614,90 +8683,185 @@ function renderNewsVoteUI() {
         });
       }
 
-      if (headline && latest) {
-        const top = partyKeys.map(function(n) { return { n: n, v: latest.avg[n] }; })
-          .filter(function(x) { return x.v != null; })
-          .sort(function(a, b) { return b.v - a.v; })[0];
-        headline.innerHTML = top
-          ? ('<strong style="color:' + pollsPartyColor(top.n) + '">' + top.n + '</strong> leads the latest averaged period at <strong>' + top.v + '%</strong>.')
-          : "Party support from recent public polls.";
+      // Party pick checkboxes (default = top 3)
+      if (picks && !picks.getAttribute("data-ready")) {
+        picks.innerHTML = partyKeys.map(function(name) {
+          const on = top3Names.indexOf(name) >= 0 ? " checked" : "";
+          const col = pollsPartyColor(name);
+          return '<label style="color:' + col + '"><input type="checkbox" data-party="' + name + '"' + on + ' /> ' + name + '</label>';
+        }).join("");
+        picks.setAttribute("data-ready", "1");
+        picks.querySelectorAll("input").forEach(function(inp) {
+          inp.addEventListener("change", function() { renderOpinionPolls(); });
+        });
+        const tr = document.getElementById("pollsShowTrend");
+        const pr = document.getElementById("pollsShowPredict");
+        if (tr) tr.addEventListener("change", function() { renderOpinionPolls(); });
+        if (pr) pr.addEventListener("change", function() { renderOpinionPolls(); });
+      } else if (picks && !picks.querySelector("input") && top3Names.length) {
+        picks.innerHTML = partyKeys.map(function(name) {
+          const on = top3Names.indexOf(name) >= 0 ? " checked" : "";
+          const col = pollsPartyColor(name);
+          return '<label style="color:' + col + '"><input type="checkbox" data-party="' + name + '"' + on + ' /> ' + name + '</label>';
+        }).join("");
+        picks.querySelectorAll("input").forEach(function(inp) {
+          inp.addEventListener("change", function() { renderOpinionPolls(); });
+        });
       }
 
-      // Line chart
-      if (svg && rows.length) {
-        const W = 640, H = 280, padL = 36, padR = 12, padT = 16, padB = 36;
-        const plotW = W - padL - padR, plotH = H - padT - padB;
-        // One point per month average
-        const byMonth = {};
-        rows.forEach(function(p) {
-          const k = String(p.end || p.start || "").slice(0, 7);
-          if (!k) return;
-          if (!byMonth[k]) byMonth[k] = [];
-          byMonth[k].push(p);
-        });
-        const months = Object.keys(byMonth).sort();
-        const points = months.map(function(k) {
-          const list = byMonth[k];
-          const avg = {};
-          partyKeys.forEach(function(name) {
-            let sum = 0, n = 0;
-            list.forEach(function(p) {
-              if (p[name] != null && p[name] !== "") { sum += Number(p[name]); n++; }
-            });
-            avg[name] = n ? sum / n : null;
+      const showTrend = !!(document.getElementById("pollsShowTrend") && document.getElementById("pollsShowTrend").checked);
+      const showPredict = !!(document.getElementById("pollsShowPredict") && document.getElementById("pollsShowPredict").checked);
+      const selected = getSelectedPollParties(partyKeys, top3Names);
+
+      // Monthly averages
+      const byMonth = {};
+      rows.forEach(function(p) {
+        const k = String(p.end || p.start || "").slice(0, 7);
+        if (!k) return;
+        if (!byMonth[k]) byMonth[k] = [];
+        byMonth[k].push(p);
+      });
+      const months = Object.keys(byMonth).sort();
+      const points = months.map(function(k) {
+        const list = byMonth[k];
+        const avg = {};
+        partyKeys.forEach(function(name) {
+          let sum = 0, n = 0;
+          list.forEach(function(p) {
+            if (p[name] != null && p[name] !== "") { sum += Number(p[name]); n++; }
           });
-          return { key: k, avg: avg };
+          avg[name] = n ? sum / n : null;
         });
-        const yMax = 45;
-        function xAt(i) { return padL + (points.length <= 1 ? plotW / 2 : (i / (points.length - 1)) * plotW); }
-        function yAt(v) { return padT + plotH - (Math.max(0, Math.min(yMax, v)) / yMax) * plotH; }
+        return { key: k, avg: avg };
+      });
+
+      // Line chart
+      if (svg && points.length) {
+        const W = 640, H = 300, padL = 36, padR = 18, padT = 16, padB = 42;
+        const plotW = W - padL - padR, plotH = H - padT - padB;
+        let yMax = 45;
+        selected.forEach(function(name) {
+          points.forEach(function(p) {
+            if (p.avg[name] != null) yMax = Math.max(yMax, p.avg[name] + 5);
+          });
+        });
+        yMax = Math.ceil(yMax / 5) * 5;
+
+        function xAt(i, n) {
+          n = n != null ? n : points.length;
+          return padL + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+        }
+        function yAt(v) {
+          return padT + plotH - (Math.max(0, Math.min(yMax, v)) / yMax) * plotH;
+        }
 
         let grid = "";
-        [0, 10, 20, 30, 40].forEach(function(v) {
+        for (let v = 0; v <= yMax; v += 10) {
           const y = yAt(v);
           grid += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="rgba(148,163,184,0.25)" stroke-width="1" />';
           grid += '<text x="' + (padL - 4) + '" y="' + (y + 3) + '" text-anchor="end" fill="#94a3b8" font-size="10">' + v + '%</text>';
-        });
+        }
         let xlabels = "";
         points.forEach(function(p, i) {
-          if (points.length > 8 && i % 2) return;
-          xlabels += '<text x="' + xAt(i) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#94a3b8" font-size="10">' + p.key.slice(2) + '</text>';
+          if (points.length > 10 && i % 2) return;
+          xlabels += '<text x="' + xAt(i) + '" y="' + (H - 12) + '" text-anchor="middle" fill="#94a3b8" font-size="10">' + monthLabel(p.key) + '</text>';
         });
 
         let paths = "";
-        partyKeys.forEach(function(name) {
+        selected.forEach(function(name) {
           const col = pollsPartyColor(name);
+          const ys = points.map(function(p) { return p.avg[name]; });
           let d = "";
           let started = false;
           points.forEach(function(p, i) {
             const v = p.avg[name];
             if (v == null) { started = false; return; }
-            const x = xAt(i), y = yAt(v);
-            d += (started ? " L " : "M ") + x + " " + y;
+            d += (started ? " L " : "M ") + xAt(i) + " " + yAt(v);
             started = true;
+            paths += '<circle cx="' + xAt(i) + '" cy="' + yAt(v) + '" r="4" fill="' + col + '" stroke="#0f172a" stroke-width="1" data-party="' + name + '" class="poll-dot" style="cursor:pointer">' +
+              '<title>' + name + " · " + monthLabel(p.key) + " · " + (Math.round(v * 10) / 10) + '%</title></circle>';
           });
           if (d) {
             paths += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-linejoin="round" data-party="' + name + '" class="poll-line" style="cursor:pointer" />';
           }
+          // Trend + prediction
+          if (showTrend || showPredict) {
+            const tr = linearTrend(ys);
+            if (tr) {
+              if (showTrend) {
+                const y0 = tr.predict(0), y1 = tr.predict(points.length - 1);
+                paths += '<line x1="' + xAt(0) + '" y1="' + yAt(y0) + '" x2="' + xAt(points.length - 1) + '" y2="' + yAt(y1) +
+                  '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.85" />';
+              }
+              if (showPredict) {
+                const pred = tr.predict(points.length);
+                const lastKey = points[points.length - 1].key;
+                const nk = nextMonthKey(lastKey);
+                const xPred = padL + plotW + 4;
+                // place prediction just past last point
+                const x2 = points.length <= 1 ? xAt(0) + 40 : xAt(points.length - 1) + (plotW / Math.max(1, points.length - 1));
+                const xClamp = Math.min(W - padR, x2);
+                const yPred = yAt(pred);
+                paths += '<line x1="' + xAt(points.length - 1) + '" y1="' + yAt(ys[ys.length - 1] != null ? ys[ys.length - 1] : pred) +
+                  '" x2="' + xClamp + '" y2="' + yPred + '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.7" />';
+                paths += '<circle cx="' + xClamp + '" cy="' + yPred + '" r="4.5" fill="none" stroke="' + col + '" stroke-width="2" />';
+                paths += '<text x="' + xClamp + '" y="' + (yPred - 8) + '" text-anchor="middle" fill="' + col + '" font-size="9" font-weight="700">' +
+                  (Math.round(pred * 10) / 10) + '%</text>';
+                if (nk) {
+                  paths += '<text x="' + xClamp + '" y="' + (H - 12) + '" text-anchor="middle" fill="#94a3b8" font-size="9">' + monthLabel(nk) + '*</text>';
+                }
+              }
+            }
+          }
         });
 
+        // draw paths under dots: rebuild order - lines first then dots already mixed; OK
         svg.innerHTML = grid + xlabels + paths;
-        svg.querySelectorAll(".poll-line").forEach(function(path) {
-          path.addEventListener("click", function() {
-            showPartiesView(path.getAttribute("data-party"));
+        svg.querySelectorAll(".poll-line, .poll-dot").forEach(function(el) {
+          el.addEventListener("click", function() {
+            showPartiesView(el.getAttribute("data-party"));
           });
         });
 
         if (legend) {
-          legend.innerHTML = partyKeys.map(function(name) {
+          legend.innerHTML = selected.map(function(name) {
             const col = pollsPartyColor(name);
             return '<span data-party="' + name + '"><i style="background:' + col + '"></i>' + name + '</span>';
-          }).join("");
-          legend.querySelectorAll("span").forEach(function(el) {
+          }).join("") + (showPredict ? '<span style="color:var(--muted);font-weight:600">* predicted</span>' : "");
+          legend.querySelectorAll("span[data-party]").forEach(function(el) {
             el.addEventListener("click", function() {
               showPartiesView(el.getAttribute("data-party"));
             });
           });
+        }
+      }
+
+      // Full table — See all recent polls
+      if (tableBody) {
+        const tableRows = rows.slice().sort(function(a, b) {
+          return String(b.end || b.start).localeCompare(String(a.end || a.start));
+        });
+        if (!tableRows.length) {
+          tableBody.innerHTML = '<tr><td colspan="6">No poll rows available yet.</td></tr>';
+        } else {
+          tableBody.innerHTML = tableRows.map(function(p) {
+            function cell(name) {
+              const v = p[name];
+              return v != null && v !== "" ? v : "—";
+            }
+            const when = (p.start && p.end && p.start !== p.end)
+              ? (p.start + " → " + p.end)
+              : (p.end || p.start || "—");
+            return '<tr>' +
+              '<td>' + (p.firm || "—") + '</td>' +
+              '<td>' + when + '</td>' +
+              '<td>' + cell("National") + '</td>' +
+              '<td>' + cell("Labour") + '</td>' +
+              '<td>' + cell("Green") + '</td>' +
+              '<td>' + cell("ACT") + '</td>' +
+              '<td>' + cell("NZ First") + '</td>' +
+              '</tr>';
+          }).join("");
         }
       }
 
@@ -8706,7 +8870,7 @@ function renderNewsVoteUI() {
         if (window.__livePollsRemote && window.__livePollsRemote.updatedAt) {
           extra = "Worker polls file updated " + String(window.__livePollsRemote.updatedAt).slice(0, 19).replace("T", " ") + " UTC. ";
         }
-        foot.innerHTML = extra + "Line chart from public poll snapshots. Live worker file: <a href=\"" + LIVE_POLLS_URL +
+        foot.innerHTML = extra + "Chart averages public poll snapshots by month. <a href=\"" + LIVE_POLLS_URL +
           "\" target=\"_blank\" rel=\"noopener noreferrer\">polls.json</a> · <a href=\"" + OPINION_POLLS_SOURCE +
           "\" target=\"_blank\" rel=\"noopener noreferrer\">Wikipedia</a>.";
       }
