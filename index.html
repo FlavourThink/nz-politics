@@ -7346,8 +7346,6 @@ function eventSourcesHtml(ev) {
         live: true
       };
     }
-
-    async 
     const LIVE_DATA_BASE = "https://raw.githubusercontent.com/FlavourThink/nz-politics-workers-collection/main/data";
     const LIVE_LATEST_URL = LIVE_DATA_BASE + "/latest.json";
     const LIVE_NEWS_URL = LIVE_DATA_BASE + "/news.json";
@@ -8764,29 +8762,29 @@ async function pullGitHubPolls() {
     wireNewsVotes();
     try { renderOpinionPolls(); } catch (e) {}
     // Immediately show worker headlines already collected on GitHub (do not wait for RSS)
-    setTimeout(async function() {
+    setTimeout(function() {
       const status = document.getElementById("newsFeedStatus");
       function setStatus(msg) { if (status) status.textContent = msg || ""; }
       setStatus("Loading current headlines…");
-      try {
-        const result = await fetchWorkerNewsJson();
-        if (result.ok && result.articles && result.articles.length) {
+      fetchWorkerNewsJson().then(function(result) {
+        if (result && result.ok && result.articles && result.articles.length) {
           const n = applyWorkerArticlesToFeed(result.articles);
           setStatus("Loaded " + n + " headline" + (n === 1 ? "" : "s") + " from workers");
           newsInitialFetchDone = true;
           if (!newsPageLoadTs) newsPageLoadTs = Date.now();
           return;
         }
-        if (!result.ok) {
+        if (result && !result.ok) {
           setStatus("Failed to connect to service… Loading from backup sources");
         } else {
           setStatus("Worker connected but no headlines yet — trying backup sources…");
         }
-      } catch (e) {
+        fetchNewsHeadlines({ silent: true, merge: true, replace: false });
+      }).catch(function(e) {
         console.warn(e);
         setStatus("Failed to connect to service… Loading from backup sources");
-      }
-      fetchNewsHeadlines({ silent: true, merge: true, replace: false });
+        fetchNewsHeadlines({ silent: true, merge: true, replace: false });
+      });
     }, 50);
 
     filterCards();
