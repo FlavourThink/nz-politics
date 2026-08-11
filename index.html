@@ -2604,6 +2604,83 @@
     }
 
 
+
+    .polls-top3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+      margin: 0.75rem 0 1rem;
+    }
+    .polls-top3-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .polls-top3-card:hover { border-color: var(--text); transform: translateY(-1px); }
+    .polls-top3-rank {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .polls-top3-name { font-weight: 800; font-size: 1.05rem; margin-top: 0.15rem; }
+    .polls-top3-pct { font-size: 1.35rem; font-weight: 900; margin-top: 0.15rem; }
+    .polls-checked {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: 0.25rem 0 0.75rem;
+    }
+    .polls-chart-wrap {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem 0.5rem 0.5rem;
+      overflow-x: auto;
+    }
+    .polls-chart-wrap svg { display: block; width: 100%; min-width: 520px; height: 280px; }
+    .polls-chart-legend {
+      display: flex; flex-wrap: wrap; gap: 0.45rem 0.85rem;
+      margin-top: 0.55rem; font-size: 0.72rem; font-weight: 700;
+    }
+    .polls-chart-legend span {
+      display: inline-flex; align-items: center; gap: 0.3rem; cursor: pointer;
+    }
+    .polls-chart-legend i {
+      width: 12px; height: 3px; border-radius: 2px; display: inline-block;
+    }
+    .member-bubbles {
+      display: flex; flex-wrap: wrap; gap: 0.55rem;
+      margin-top: 0.75rem; padding-top: 0.65rem;
+      border-top: 1px solid var(--border);
+    }
+    .member-bubble {
+      width: 4.6rem; height: 4.6rem; border-radius: 50%;
+      position: relative; overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: #1e293b;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .member-bubble .liquid {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      transition: height 0.35s ease;
+      opacity: 0.9;
+    }
+    .member-bubble .mb-name {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      font-size: 0.58rem; font-weight: 800; line-height: 1.1;
+      padding: 0.25rem;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.75);
+      z-index: 1;
+    }
+
   </style>
 </head>
 <body>
@@ -2833,12 +2910,16 @@
         </div>
 
         <div id="pollsHeadline" class="polls-headline"></div>
-
-        <h3 class="polls-sub">Averaged by time period</h3>
-        <p class="polls-plain muted">Polls taken around the same time are averaged so one loud result does not dominate. Each block lists who was included.</p>
-        <div id="pollsPeriods" class="polls-periods"></div>
-
-        <div id="pollsBlocks" class="polls-blocks"></div>
+        <p class="polls-checked" id="pollsLastCheck">Last data check: …</p>
+        <div id="pollsTop3" class="polls-top3"></div>
+        <h3 class="polls-sub">Party support over time</h3>
+        <p class="polls-plain muted">One line per party from recent public polls (worker + curated snapshot). Click a party name or line to open Party Stats.</p>
+        <div class="polls-chart-wrap">
+          <svg id="pollsLineChart" viewBox="0 0 640 280" role="img" aria-label="Party poll support over time"></svg>
+          <div class="polls-chart-legend" id="pollsChartLegend"></div>
+        </div>
+        <div id="pollsBlocks" class="polls-blocks" hidden></div>
+        <div id="pollsPeriods" class="polls-periods" hidden></div>
         <div id="pollsLatest" class="polls-bars-simple" hidden></div>
         <p class="polls-plain muted" id="pollsLatestMeta" hidden></p>
 
@@ -2912,7 +2993,7 @@
         <section class="news-vote-card" aria-label="Headline vote">
           <div class="news-vote-head">
             <h2 style="margin:0;font-size:1.15rem;">Current news cycle</h2>
-            <p class="news-vote-note">Scrollable feed of controversial NZ political headlines (last 4 weeks, named subjects). Articles <strong>stay in the list</strong> after you vote. Voting scrolls to the next unscored item. Loads automatically on open; Refresh adds items since the last check.</p>
+            <p class="news-vote-note">Swipe <strong>left/right</strong> through headlines about <strong>active MPs</strong> only. Vote with ✓ / ✗ next to each MP named in the story (one vote per MP per article). Tallies appear below as you scroll down.</p>
           </div>
           <div class="news-toolbar">
             <div id="newsVoteProgress" class="news-progress"></div>
@@ -4122,8 +4203,8 @@
     function openMembersForParty(partyName) {
       document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
       document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-      const tab = document.querySelector('.tab[data-view="news"]');
-      const view = document.getElementById("view-news");
+      const tab = document.querySelector('.tab[data-view="cards"]');
+      const view = document.getElementById("view-cards");
       if (tab) tab.classList.add("active");
       if (view) view.classList.add("active");
       const pf = document.getElementById("partyFilter");
@@ -4343,6 +4424,31 @@ function eventSourcesHtml(ev) {
       return h;
     }
 
+    
+    function memberPublicApproval(mpId) {
+      // 0–100 style score: green fill = approval share, red = disapproval
+      // Uses local news votes on this browser + optional shared worker tallies
+      let fav = 0, unfav = 0;
+      try {
+        const data = loadNewsVotes();
+        const t = (data.mp && data.mp[mpId]) || {};
+        fav += Number(t.accept) || 0;
+        unfav += Number(t.reject) || 0;
+      } catch (e) {}
+      try {
+        const shared = window.__sharedVoteTallies && window.__sharedVoteTallies[mpId];
+        if (shared) {
+          fav += Number(shared.favourable) || 0;
+          unfav += Number(shared.unfavourable) || 0;
+        }
+      } catch (e) {}
+      const total = fav + unfav;
+      if (!total) return { fill: 50, color: "#64748b", label: "No public votes yet", fav: 0, unfav: 0 };
+      const pct = Math.round((fav / total) * 100);
+      const color = pct >= 50 ? "#22c55e" : "#ef4444";
+      return { fill: pct, color: color, label: fav + " fav · " + unfav + " unfav", fav: fav, unfav: unfav };
+    }
+
     function renderPartyScores() {
       const fromEl = document.getElementById("partyRangeFrom");
       const toEl = document.getElementById("partyRangeTo");
@@ -4401,7 +4507,20 @@ function eventSourcesHtml(ev) {
         const lrCol = scoreColor(100 - lrPct);
         const names = members.map(function(m) { return m.name; }).join(", ") || "No members in this range";
 
-        card.innerHTML =
+
+        // Active members only for bubbles
+        const activeMembers = members.filter(function(m) {
+          try { return isActiveMember(m, CURRENT_YEAR); } catch (e) { return true; }
+        });
+        let bubblesH = activeMembers.map(function(m) {
+          const ap = memberPublicApproval(m.id);
+          const shortName = (m.name || "").split(/\s+/).slice(-2).join(" ") || m.name;
+          return '<div class="member-bubble" data-id="' + m.id + '" title="' + (m.name || "") + " — " + ap.label + '">' +
+            '<div class="liquid" style="height:' + ap.fill + '%;background:' + ap.color + '"></div>' +
+            '<div class="mb-name">' + shortName + '</div></div>';
+        }).join("") || '<span style="font-size:0.75rem;color:var(--muted)">No active members in range</span>';
+
+                card.innerHTML =
           '<h3 style="color:' + party.color + '">' + party.name + '</h3>' +
           '<div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.35rem;">' + fromY + '–' + toY + ' · member count ' + members.length + '</div>' +
           '<div class="score-row" style="margin-bottom:0.5rem;" title="' + (lr.note || "").replace(/"/g, "&quot;") + '">' +
@@ -4415,9 +4534,18 @@ function eventSourcesHtml(ev) {
           scoresH +
           '<div class="section-title" style="margin-top:0.65rem;">Controversies by type</div>' +
           controversyTallyHtml(party.id, toY, "range:" + fromY + "-" + toY) +
-          '<div class="party-members-list"><strong>Members counted:</strong> ' + names + '</div>';
+          '<div class="section-title" style="margin-top:0.65rem;">Active members · public approval</div>' +
+          '<p style="font-size:0.68rem;color:var(--muted);margin:0 0 0.35rem;">Liquid fill = share of favourable news votes on this site (green approval, red disapproval). Click a circle for that MP.</p>' +
+          '<div class="member-bubbles">' + bubblesH + '</div>';
 
-        card.addEventListener("click", function() { openMembersForParty(party.name); });
+        card.querySelectorAll(".member-bubble").forEach(function(b) {
+          b.addEventListener("click", function(ev) {
+            ev.stopPropagation();
+            const id = b.getAttribute("data-id");
+            const person = PEOPLE.find(function(x) { return x.id === id; });
+            if (person && typeof openPersonModal === "function") openPersonModal(person);
+          });
+        });
         grid.appendChild(card);
       });
     }
@@ -7350,6 +7478,9 @@ function eventSourcesHtml(ev) {
     const LIVE_LATEST_URL = LIVE_DATA_BASE + "/latest.json";
     const LIVE_NEWS_URL = LIVE_DATA_BASE + "/news.json";
     const LIVE_POLLS_URL = LIVE_DATA_BASE + "/polls.json";
+    const LIVE_MPS_URL = LIVE_DATA_BASE + "/mps.json";
+    let ACTIVE_MP_IDS = null; // Set from worker roster when loaded
+    let WORKER_MPS = [];
 
     let liveDataMeta = { newsAt: null, pollsAt: null, loadedAt: null };
 
@@ -7413,6 +7544,126 @@ function eventSourcesHtml(ev) {
     function liveControversiesForPerson(p) {
       if (!p || !p.id) return [];
       return loadLiveControversies().filter(function(c) { return c.mpId === p.id; });
+    }
+
+
+    
+    function loadWorkerMps() {
+      return fetch(LIVE_MPS_URL + "?t=" + Date.now(), { cache: "no-store", mode: "cors" })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (!data || !data.members) return null;
+          WORKER_MPS = data.members || [];
+          const active = {};
+          WORKER_MPS.forEach(function(m) {
+            if (m && m.status === "active" && m.id) active[m.id] = m;
+            // also map by name to local PEOPLE ids
+          });
+          // Build set of active ids matched to local PEOPLE
+          const ids = {};
+          PEOPLE.forEach(function(p) {
+            if (!p || !p.id) return;
+            const activeLocal = (typeof isActiveMember === "function") ? isActiveMember(p, CURRENT_YEAR) : true;
+            const w = WORKER_MPS.find(function(m) {
+              return m.id === p.id || (m.name && p.name && m.name.toLowerCase() === p.name.toLowerCase());
+            });
+            if (w && w.status === "active") ids[p.id] = true;
+            else if (!WORKER_MPS.length && activeLocal) ids[p.id] = true;
+            else if (activeLocal && w && w.status !== "inactive") ids[p.id] = true;
+            else if (activeLocal && !w) ids[p.id] = true; // keep local active until roster mature
+          });
+          // If roster has many actives, prefer intersection name-match
+          if (WORKER_MPS.filter(function(m) { return m.status === "active"; }).length >= 20) {
+            const strict = {};
+            PEOPLE.forEach(function(p) {
+              const w = WORKER_MPS.find(function(m) {
+                return m.status === "active" && (
+                  m.id === p.id ||
+                  (m.name && p.name && m.name.toLowerCase() === p.name.toLowerCase()) ||
+                  (m.name && p.name && m.name.toLowerCase().indexOf(p.name.split(" ").pop().toLowerCase()) >= 0)
+                );
+              });
+              if (w) strict[p.id] = true;
+            });
+            if (Object.keys(strict).length >= 5) {
+              ACTIVE_MP_IDS = strict;
+            } else {
+              ACTIVE_MP_IDS = ids;
+            }
+          } else {
+            ACTIVE_MP_IDS = ids;
+          }
+          return data;
+        })
+        .catch(function(e) {
+          console.warn("mps roster", e);
+          return null;
+        });
+    }
+
+    function isActiveMpId(mpId) {
+      if (!mpId) return false;
+      if (ACTIVE_MP_IDS) return !!ACTIVE_MP_IDS[mpId];
+      const p = PEOPLE.find(function(x) { return x.id === mpId; });
+      if (!p) return false;
+      try { return isActiveMember(p, CURRENT_YEAR); } catch (e) { return true; }
+    }
+
+    function filterHeadlinesToActiveMps(list) {
+      return (list || []).map(function(h) {
+        const mpIds = (h.mpIds || []).filter(isActiveMpId);
+        return Object.assign({}, h, { mpIds: mpIds });
+      }).filter(function(h) {
+        return h.mpIds && h.mpIds.length > 0;
+      });
+    }
+
+    function mpBallotKey(headlineId, mpId) {
+      return String(headlineId) + "::" + String(mpId);
+    }
+
+    function getMpBallot(headlineId, mpId) {
+      const data = loadNewsVotes();
+      if (!data.mpBallots) data.mpBallots = {};
+      return data.mpBallots[mpBallotKey(headlineId, mpId)] || null;
+    }
+
+    function castMpNewsVote(headlineId, mpId, choice) {
+      // choice: accept | reject | null to clear
+      const data = loadNewsVotes();
+      if (!data.mpBallots) data.mpBallots = {};
+      if (!data.mp) data.mp = {};
+      const key = mpBallotKey(headlineId, mpId);
+      const prev = data.mpBallots[key] || null;
+      const tally = data.mp[mpId] || { accept: 0, reject: 0, history: [] };
+      if (prev === "accept") tally.accept = Math.max(0, (tally.accept || 0) - 1);
+      if (prev === "reject") tally.reject = Math.max(0, (tally.reject || 0) - 1);
+      if (prev === choice || choice == null) {
+        delete data.mpBallots[key];
+        data.mp[mpId] = tally;
+        saveNewsVotes(data);
+        renderNewsVoteUI();
+        return;
+      }
+      if (choice === "accept") tally.accept = (tally.accept || 0) + 1;
+      if (choice === "reject") tally.reject = (tally.reject || 0) + 1;
+      tally.history = tally.history || [];
+      tally.history.push({ ts: Date.now(), headlineId: headlineId, choice: choice });
+      data.mpBallots[key] = choice;
+      data.mp[mpId] = tally;
+      saveNewsVotes(data);
+      // unfavourable still records local controversy note
+      try {
+        if (choice === "reject") {
+          const item = (NEWS_HEADLINES || []).find(function(h) { return h.id === headlineId; }) ||
+            loadNewsArchive().find(function(h) { return h.id === headlineId; });
+          if (item) {
+            const one = Object.assign({}, item, { mpIds: [mpId] });
+            rememberLiveControversyFromHeadline(one, "reject");
+          }
+        }
+      } catch (e) {}
+      renderNewsVoteUI();
     }
 
 
@@ -7526,7 +7777,9 @@ function eventSourcesHtml(ev) {
       if (!result.ok) return { added: 0, ok: false, error: result.error };
       // If the feed is empty, force-apply full worker list (fixes stuck "collected" keys)
       if (!(NEWS_HEADLINES && NEWS_HEADLINES.length)) {
-        const n = applyWorkerArticlesToFeed(result.articles);
+        let arts = result.articles || [];
+          const n = applyWorkerArticlesToFeed(arts);
+          NEWS_HEADLINES = filterHeadlinesToActiveMps(NEWS_HEADLINES || []);
         return { added: n, ok: true, error: null };
       }
       let added = 0;
@@ -7823,14 +8076,15 @@ async function pullGitHubPolls() {
     function loadNewsVotes() {
       try {
         const raw = localStorage.getItem(NEWS_VOTE_KEY);
-        if (!raw) return { ballots: {}, mp: {} };
+        if (!raw) return { ballots: {}, mp: {}, mpBallots: {} };
         const data = JSON.parse(raw);
         return {
           ballots: data.ballots || {},
-          mp: data.mp || {}
+          mp: data.mp || {},
+          mpBallots: data.mpBallots || {}
         };
       } catch (e) {
-        return { ballots: {}, mp: {} };
+        return { ballots: {}, mp: {}, mpBallots: {} };
       }
     }
 
@@ -7923,12 +8177,10 @@ async function pullGitHubPolls() {
 
 
     function renderNewsHeadline() {
-      // Vertical feed of all articles (nothing removed after voting)
       const host = document.getElementById("newsFeedList");
       const elProg = document.getElementById("newsVoteProgress");
       if (!host) return;
 
-      // Prefer live list; fall back to archive so items never "vanish"
       let list = (NEWS_HEADLINES || []).slice();
       if (!list.length) {
         list = loadNewsArchive().map(function(h) {
@@ -7942,283 +8194,118 @@ async function pullGitHubPolls() {
             summary: h.summary || h.title
           };
         });
-        if (list.length) NEWS_HEADLINES = list.slice();
       }
+      list = filterHeadlinesToActiveMps(list);
+      if (list.length) NEWS_HEADLINES = (NEWS_HEADLINES || []).length ? NEWS_HEADLINES : list;
 
-      // Keep browse order stable
-      syncNewsBrowseList();
-      const ballots = getVotedBallotMap();
-      const unvoted = list.filter(function(h) {
-        const v = ballots[h.id];
-        return v !== "accept" && v !== "reject" && v !== "skip";
-      }).length;
+      const display = filterHeadlinesToActiveMps((NEWS_HEADLINES || []).length ? NEWS_HEADLINES : list);
 
       if (elProg) {
-        elProg.textContent = list.length
-          ? (list.length + " article" + (list.length === 1 ? "" : "s") + " · " + unvoted + " still to score")
+        elProg.textContent = display.length
+          ? (display.length + " article" + (display.length === 1 ? "" : "s") + " · active MPs only · swipe sideways")
           : "Loading current headlines…";
       }
 
-      if (!list.length) {
+      if (!display.length) {
         host.innerHTML = "<p class='news-vote-note'>Loading current headlines…</p>";
         updateNewsActionButtons();
+        renderMpVoteStrip();
         return;
       }
 
-      host.innerHTML = list.map(function(item, idx) {
-        const v = ballots[item.id];
-        const voted = (v === "accept" || v === "reject" || v === "skip");
-        const voteLabel = v === "accept" ? "Favourable" : v === "reject" ? "Unfavourable" : v === "skip" ? "Skipped" : "Not voted";
-        const voteCls = v === "accept" ? "fav" : v === "reject" ? "unfav" : v === "skip" ? "skip" : "none";
-        const mps = (item.mpIds || []).map(function(mpId) {
+      host.innerHTML = display.map(function(item, idx) {
+        const mpsHtml = (item.mpIds || []).map(function(mpId) {
           const person = PEOPLE.find(function(p) { return p.id === mpId; });
-          return '<button type="button" class="news-mp-chip" data-mp="' + mpId + '">' + (person ? person.name : mpId) + '</button>';
+          const name = person ? person.name : mpId;
+          const v = getMpBallot(item.id, mpId);
+          const tickOn = v === "accept" ? " is-on" : "";
+          const crossOn = v === "reject" ? " is-on" : "";
+          return '<div class="news-mp-vote" data-mp="' + mpId + '">' +
+            '<span class="mp-label" data-open-mp="' + mpId + '">' + name + '</span>' +
+            '<button type="button" class="tick' + tickOn + '" data-mp-vote="accept" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Favourable">✓</button>' +
+            '<button type="button" class="cross' + crossOn + '" data-mp-vote="reject" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Unfavourable">✗</button>' +
+            '</div>';
         }).join("");
-        return '<article class="news-feed-item' + (voted ? " is-voted" : "") + '" id="news-item-' + idx + '" data-id="' + item.id + '">' +
-          '<div class="news-meta">' + (item.date || "") + (item.agency ? " · " + item.agency : "") +
-            ' · <span class="nv-vote-tag ' + voteCls + '">' + voteLabel + '</span></div>' +
+        return '<article class="news-feed-item" id="news-item-' + idx + '" data-id="' + item.id + '">' +
+          '<div class="news-meta">' + (item.date || "") + (item.agency ? " · " + item.agency : "") + '</div>' +
           '<h3 data-url="' + (item.url || "") + '">' + (item.title || "Untitled") + '</h3>' +
           '<p class="news-summary">' + (item.summary || "") + '</p>' +
-          (mps ? '<div class="news-mps">' + mps + '</div>' : '') +
-          '<div class="news-vote-actions">' +
-            '<button type="button" class="nv-btn nv-accept" data-vote="accept">Favourable</button>' +
-            '<button type="button" class="nv-btn nv-reject" data-vote="reject">Unfavourable</button>' +
-            '<button type="button" class="nv-btn nv-skip" data-vote="skip">Skip</button>' +
-          '</div></article>';
+          (mpsHtml ? '<div class="news-mp-row">' + mpsHtml + '</div>' : '<p class="news-vote-note">No active MP matched</p>') +
+          '</article>';
       }).join("");
 
-      host.querySelectorAll(".news-feed-item").forEach(function(row) {
-        const id = row.getAttribute("data-id");
-        row.querySelectorAll(".news-vote-actions button[data-vote]").forEach(function(btn) {
-          btn.addEventListener("click", function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            const choice = btn.getAttribute("data-vote");
-            castNewsVote(id, choice);
-            renderNewsVoteUI();
-            scrollFeedToNextUnvoted(id);
-            queueBackgroundNewsFetch();
-          });
-        });
-        const title = row.querySelector("h3");
-        if (title) {
-          title.addEventListener("click", function() {
-            const url = title.getAttribute("data-url");
-            if (url && url !== "#") window.open(url, "_blank", "noopener,noreferrer");
-          });
-        }
-        row.querySelectorAll(".news-mp-chip").forEach(function(chip) {
-          chip.addEventListener("click", function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            const person = PEOPLE.find(function(p) { return p.id === chip.getAttribute("data-mp"); });
-            if (person) openPersonModal(person);
-          });
+      host.querySelectorAll(".news-feed-item h3[data-url]").forEach(function(h) {
+        h.style.cursor = "pointer";
+        h.addEventListener("click", function() {
+          const u = h.getAttribute("data-url");
+          if (u) window.open(u, "_blank", "noopener,noreferrer");
         });
       });
-
+      host.querySelectorAll("[data-mp-vote]").forEach(function(btn) {
+        btn.addEventListener("click", function(ev) {
+          ev.stopPropagation();
+          castMpNewsVote(btn.getAttribute("data-hid"), btn.getAttribute("data-mp"), btn.getAttribute("data-mp-vote"));
+        });
+      });
+      host.querySelectorAll("[data-open-mp]").forEach(function(el) {
+        el.addEventListener("click", function() {
+          const id = el.getAttribute("data-open-mp");
+          const person = PEOPLE.find(function(p) { return p.id === id; });
+          if (person && typeof openPersonModal === "function") openPersonModal(person);
+        });
+      });
       updateNewsActionButtons();
+      renderMpVoteStrip();
     }
 
-    function scrollFeedToNextUnvoted(afterId) {
-      const host = document.getElementById("newsFeedList");
-      if (!host) return;
-      const ballots = getVotedBallotMap();
-      const items = Array.prototype.slice.call(host.querySelectorAll(".news-feed-item"));
-      let start = 0;
-      if (afterId) {
-        const at = items.findIndex(function(el) { return el.getAttribute("data-id") === afterId; });
-        if (at >= 0) start = at + 1;
-      }
-      let target = null;
-      for (let i = start; i < items.length; i++) {
-        const v = ballots[items[i].getAttribute("data-id")];
-        if (v !== "accept" && v !== "reject" && v !== "skip") { target = items[i]; break; }
-      }
-      if (!target) {
-        for (let i = 0; i < start; i++) {
-          const v = ballots[items[i].getAttribute("data-id")];
-          if (v !== "accept" && v !== "reject" && v !== "skip") { target = items[i]; break; }
+    function renderMpVoteStrip() {
+      const host = document.getElementById("newsMpTallyStrip") || document.getElementById("newsTallyHost");
+      // Prefer dedicated strip under feed
+      let strip = document.getElementById("newsMpTallyStrip");
+      if (!strip) {
+        const feed = document.getElementById("newsFeedList");
+        if (feed && feed.parentNode) {
+          strip = document.createElement("div");
+          strip.id = "newsMpTallyStrip";
+          strip.className = "news-mp-tallies";
+          feed.parentNode.insertBefore(strip, feed.nextSibling);
         }
       }
-      if (target) {
-        items.forEach(function(el) { el.classList.remove("is-focus"); });
-        target.classList.add("is-focus");
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }
-
-
-
-    
-    function renderSourceTally() {
-      const host = document.getElementById("newsSourceTally");
-      if (!host) return;
-      const archive = loadNewsArchive();
-      const ballots = getVotedBallotMap();
-      if (!archive.length) {
-        host.innerHTML = "<p class='news-vote-note'>No articles collected yet. Refresh headlines to start.</p>";
+      if (!strip) return;
+      const data = loadNewsVotes();
+      const mp = data.mp || {};
+      const ids = Object.keys(mp).filter(function(id) {
+        const t = mp[id];
+        return t && ((t.accept || 0) + (t.reject || 0) > 0);
+      });
+      if (!ids.length) {
+        strip.innerHTML = '<p class="news-vote-note">MP votes from the articles above will show here.</p>';
         return;
       }
-      const byAgency = {};
-      archive.forEach(function(h) {
-        const a = h.agency || "News";
-        if (!byAgency[a]) byAgency[a] = [];
-        byAgency[a].push(h);
+      ids.sort(function(a, b) {
+        const na = (mp[a].accept || 0) - (mp[a].reject || 0);
+        const nb = (mp[b].accept || 0) - (mp[b].reject || 0);
+        return na - nb;
       });
-      const agencies = Object.keys(byAgency).sort(function(a, b) {
-        return byAgency[b].length - byAgency[a].length;
-      });
-      const total = archive.length;
-      host.innerHTML = '<p class="news-vote-note" style="margin-top:0"><strong>' + total + '</strong> article' + (total === 1 ? '' : 's') + ' across <strong>' + agencies.length + '</strong> source' + (agencies.length === 1 ? '' : 's') + '</p>' +
-        agencies.map(function(agency) {
-          const items = byAgency[agency].slice().sort(function(a, b) {
-            return String(b.date).localeCompare(String(a.date));
-          });
-          const inner = items.map(function(h) {
-            const v = ballots[h.id];
-            const tag = v === "accept" ? "Favourable" : v === "reject" ? "Unfavourable" : v === "skip" ? "Skip" : "Not voted";
-            const cls = v === "accept" ? "fav" : v === "reject" ? "unfav" : v === "skip" ? "skip" : "none";
-            return '<div class="news-source-item" data-id="' + h.id + '">' +
-              '<span class="nv-vote-tag ' + cls + '">' + tag + '</span>' +
-              (h.date ? h.date + " · " : "") + h.title +
-              '<div class="nv-change">' +
-                '<button type="button" class="nv-btn nv-accept" data-vote="accept">Favourable</button>' +
-                '<button type="button" class="nv-btn nv-reject" data-vote="reject">Unfavourable</button>' +
-                '<button type="button" class="nv-btn nv-skip" data-vote="skip">Skip</button>' +
-                (h.url ? '<a class="nv-btn nv-link" href="' + h.url + '" target="_blank" rel="noopener noreferrer">Open</a>' : '') +
-              '</div></div>';
-          }).join("");
-          return '<details class="news-source-details"><summary>' + agency + ' · ' + items.length + '</summary>' + inner + '</details>';
-        }).join("");
-
-      host.querySelectorAll(".news-source-item").forEach(function(row) {
-        row.addEventListener("click", function(ev) {
-          if (ev.target.closest && ev.target.closest(".nv-change")) return;
-          if (ev.target.closest && ev.target.closest("a")) return;
-          host.querySelectorAll(".news-source-item.open").forEach(function(x) {
-            if (x !== row) x.classList.remove("open");
-          });
-          row.classList.toggle("open");
-        });
-        row.querySelectorAll(".nv-change button[data-vote]").forEach(function(btn) {
-          btn.addEventListener("click", function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            const id = row.getAttribute("data-id");
-            const choice = btn.getAttribute("data-vote");
-            if (id && choice) {
-              castNewsVote(id, choice);
-              renderSourceTally();
-              renderNewsTallies();
-              renderNewsVoteUI();
-            }
-          });
+      strip.innerHTML = '<h3 style="margin:0 0 0.5rem;font-size:0.95rem;">Your MP votes (this browser)</h3><div class="member-bubbles">' +
+        ids.map(function(id) {
+          const person = PEOPLE.find(function(p) { return p.id === id; });
+          const name = person ? person.name : id;
+          const ap = memberPublicApproval(id);
+          const shortName = name.split(/\s+/).slice(-2).join(" ");
+          return '<div class="member-bubble" data-id="' + id + '" title="' + name + " — " + ap.label + '">' +
+            '<div class="liquid" style="height:' + ap.fill + '%;background:' + ap.color + '"></div>' +
+            '<div class="mb-name">' + shortName + '</div></div>';
+        }).join("") + '</div>';
+      strip.querySelectorAll(".member-bubble").forEach(function(b) {
+        b.addEventListener("click", function() {
+          const person = PEOPLE.find(function(p) { return p.id === b.getAttribute("data-id"); });
+          if (person && typeof openPersonModal === "function") openPersonModal(person);
         });
       });
     }
 
-    function renderNewsTallies() {
-      const host = document.getElementById("newsTallyList");
-      const detail = document.getElementById("newsMpVoteDetail");
-      if (!host) return;
-      const data = loadNewsVotes();
-      const rows = [];
-      Object.keys(data.mp || {}).forEach(function(mpId) {
-        const tally = data.mp[mpId];
-        const pos = tally.accept || 0;
-        const neg = tally.reject || 0;
-        if (pos + neg === 0) return;
-        rows.push({ mpId: mpId, pos: pos, neg: neg, net: pos - neg, history: tally.history || [] });
-      });
-      if (!rows.length) {
-        host.innerHTML = "<p class='news-vote-note'>No scored votes yet on the last 4 weeks of coverage.</p>";
-        if (detail) { detail.hidden = true; detail.innerHTML = ""; }
-        return;
-      }
-      rows.sort(function(a, b) { return a.net - b.net; }); // least favourable first
-
-      host.innerHTML = rows.map(function(r) {
-        const person = PEOPLE.find(function(p) { return p.id === r.mpId; });
-        const name = person ? person.name : r.mpId;
-        // Pure red (least) → pure green (most)
-        const tnorm = Math.max(-6, Math.min(6, r.net));
-        const u = (tnorm + 6) / 12; // 0 = worst, 1 = best
-        const red = Math.round(255 * (1 - u));
-        const green = Math.round(255 * u);
-        const blue = 0;
-        const bg = "rgb(" + red + "," + green + "," + blue + ")";
-        const scoreLabel = "+" + r.pos + " / −" + r.neg;
-        return '<button type="button" class="news-mp-score-card" data-mp="' + r.mpId + '" style="background:' + bg + '">' +
-          '<div class="news-mp-score-name">' + name + '</div>' +
-          '<div class="news-mp-score-val">' + scoreLabel + '</div>' +
-          '</button>';
-      }).join("");
-
-      host.querySelectorAll(".news-mp-score-card").forEach(function(btn) {
-        btn.addEventListener("click", function() {
-          showMpVotedArticles(btn.getAttribute("data-mp"));
-        });
-      });
-    }
-
-    function showMpVotedArticles(mpId) {
-      const detail = document.getElementById("newsMpVoteDetail");
-      if (!detail) return;
-      const data = loadNewsVotes();
-      const person = PEOPLE.find(function(p) { return p.id === mpId; });
-      const tally = data.mp[mpId] || { history: [] };
-      const ballots = data.ballots || {};
-      // History entries + headlines linked to this mp that were voted
-      const items = [];
-      const seen = {};
-      (tally.history || []).forEach(function(h) {
-        if (h.choice !== "accept" && h.choice !== "reject") return;
-        if (seen[h.headlineId]) return;
-        seen[h.headlineId] = true;
-        const art = (NEWS_HEADLINES || []).find(function(x) { return x.id === h.headlineId; });
-        items.push({
-          id: h.headlineId,
-          choice: h.choice,
-          title: art ? art.title : h.headlineId,
-          url: art ? art.url : "",
-          date: art ? art.date : "",
-          agency: art ? art.agency : ""
-        });
-      });
-      // Also any ballot-matched headlines that name this MP
-      Object.keys(ballots).forEach(function(hid) {
-        if (seen[hid]) return;
-        if (ballots[hid] !== "accept" && ballots[hid] !== "reject") return;
-        const art = (NEWS_HEADLINES || []).find(function(x) { return x.id === hid; });
-        if (!art || !(art.mpIds || []).includes(mpId)) return;
-        seen[hid] = true;
-        items.push({
-          id: hid,
-          choice: ballots[hid],
-          title: art.title,
-          url: art.url,
-          date: art.date,
-          agency: art.agency
-        });
-      });
-
-      detail.hidden = false;
-      detail.innerHTML = "<h3>" + (person ? person.name : mpId) + " — headlines you scored</h3>" +
-        (items.length ? items.map(function(it) {
-          const label = it.choice === "accept" ? "Favourable" : "Unfavourable";
-          const col = it.choice === "accept" ? "#4ade80" : "#f87171";
-          const link = it.url ? ('<a href="' + it.url + '" target="_blank" rel="noopener noreferrer">Open article</a>') : "";
-          return '<div class="nv-item"><strong style="color:' + col + '">' + label + '</strong> · ' +
-            (it.date ? it.date + " · " : "") + (it.agency ? it.agency + " · " : "") +
-            it.title + (link ? " · " + link : "") + "</div>";
-        }).join("") : "<p class='news-vote-note'>No linked headlines still in this session list. Votes are kept; refresh may drop old titles from the detail list.</p>");
-      detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-
-
-
-    function renderNewsVoteUI() {
+function renderNewsVoteUI() {
       renderNewsHeadline();
       renderNewsTallies();
       renderSourceTally();
@@ -8414,274 +8501,204 @@ async function pullGitHubPolls() {
 
 
 
+    function showPartiesView(focusPartyName) {
+      document.querySelectorAll(".tab").forEach(function(b) { b.classList.remove("active"); });
+      document.querySelectorAll(".view").forEach(function(v) { v.classList.remove("active"); });
+      const tab = document.querySelector('.tab[data-view="parties"]');
+      const view = document.getElementById("view-parties");
+      if (tab) tab.classList.add("active");
+      if (view) view.classList.add("active");
+      try { renderPartyScores(); } catch (e) {}
+      if (focusPartyName) {
+        setTimeout(function() {
+          const cards = document.querySelectorAll(".party-score-card");
+          cards.forEach(function(c) {
+            const title = (c.querySelector(".party-score-title, h3, .party-name") || {}).textContent || "";
+            if (title.toLowerCase().indexOf(String(focusPartyName).toLowerCase()) >= 0) {
+              c.scrollIntoView({ behavior: "smooth", block: "center" });
+              c.style.outline = "2px solid #38bdf8";
+              setTimeout(function() { c.style.outline = ""; }, 1600);
+            }
+          });
+        }, 120);
+      }
+    }
+
+    function pollsPartyColor(name) {
+      const map = {
+        "National": partyColor("National"),
+        "Labour": partyColor("Labour"),
+        "Green": partyColor("Green"),
+        "ACT": partyColor("ACT"),
+        "NZ First": partyColor("NZ First"),
+        "Te Pāti Māori": partyColor("Te Pāti Māori"),
+        "TOP": partyColor("TOP") || "#64748b"
+      };
+      return map[name] || "#94a3b8";
+    }
+
+    function getPollSeries() {
+      // Prefer curated OPINION_POLLS (structured). Merge worker timestamp separately.
+      const partyKeys = ["National", "Labour", "Green", "ACT", "NZ First", "Te Pāti Māori", "TOP"];
+      const rows = (OPINION_POLLS || []).filter(function(p) { return !p.isResult; }).slice().sort(function(a, b) {
+        return String(a.end || a.start).localeCompare(String(b.end || b.start));
+      });
+      return { partyKeys: partyKeys, rows: rows };
+    }
+
+    function latestPollAverage(rows, partyKeys) {
+      if (!rows.length) return null;
+      // average all polls in the latest month key
+      const lastEnd = String(rows[rows.length - 1].end || "").slice(0, 7);
+      const group = rows.filter(function(r) { return String(r.end || "").slice(0, 7) === lastEnd; });
+      const use = group.length ? group : [rows[rows.length - 1]];
+      const out = {};
+      partyKeys.forEach(function(name) {
+        let sum = 0, n = 0;
+        use.forEach(function(p) {
+          if (p[name] != null && p[name] !== "") { sum += Number(p[name]); n++; }
+        });
+        out[name] = n ? Math.round((sum / n) * 10) / 10 : null;
+      });
+      return { avg: out, period: lastEnd, firms: use.map(function(u) { return u.firm; }) };
+    }
+
     function renderOpinionPolls() {
-      const body = document.getElementById("pollsTableBody");
-      const periodsEl = document.getElementById("pollsPeriods");
       const headline = document.getElementById("pollsHeadline");
-      const blocks = document.getElementById("pollsBlocks");
+      const top3el = document.getElementById("pollsTop3");
+      const checkEl = document.getElementById("pollsLastCheck");
+      const svg = document.getElementById("pollsLineChart");
+      const legend = document.getElementById("pollsChartLegend");
       const foot = document.getElementById("pollsFootnote");
 
-      const partyKeys = ["National", "Labour", "Green", "ACT", "NZ First", "Te Pāti Māori", "TOP"];
-      const allControv = collectTimelineControversies();
+      // Refresh worker polls meta
+      try { if (typeof pullGitHubPolls === "function") pullGitHubPolls(); } catch (e) {}
 
-      const polls = OPINION_POLLS.filter(function(p) { return !p.isResult; }).slice().sort(function(a, b) {
-        return String(b.end).localeCompare(String(a.end));
-      });
-      const result = OPINION_POLLS.find(function(p) { return p.isResult; });
+      const series = getPollSeries();
+      const partyKeys = series.partyKeys;
+      const rows = series.rows;
+      const latest = latestPollAverage(rows, partyKeys);
 
-      function periodKey(p) {
-        const d = String(p.end || p.start || "");
-        return d.slice(0, 7);
-      }
-      function periodLabel(key) {
-        const parts = key.split("-");
-        const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        const mi = Number(parts[1]) - 1;
-        const year = parts[0];
-        if (mi >= 0 && mi < 12) return months[mi] + " " + year;
-        return key;
-      }
-
-      const groups = {};
-      polls.forEach(function(p) {
-        const k = periodKey(p);
-        if (!groups[k]) groups[k] = [];
-        groups[k].push(p);
-      });
-      const keys = Object.keys(groups).sort(function(a, b) { return b.localeCompare(a); });
-
-      function averageGroup(list) {
-        const out = {};
-        partyKeys.forEach(function(name) {
-          let sum = 0, n = 0;
-          list.forEach(function(p) {
-            if (p[name] != null && p[name] !== "") {
-              sum += Number(p[name]);
-              n++;
-            }
-          });
-          out[name] = n ? (Math.round((sum / n) * 10) / 10) : null;
-        });
-        return out;
-      }
-
-      const avgs = {};
-      keys.forEach(function(k) { avgs[k] = averageGroup(groups[k]); });
-
-      if (headline && keys.length) {
-        const avg = avgs[keys[0]];
-        const nat = Number(avg.National) || 0;
-        const lab = Number(avg.Labour) || 0;
-        const gap = Math.round(Math.abs(lab - nat) * 10) / 10;
-        const firms = groups[keys[0]].map(function(p) { return p.firm; });
-        const uniqueFirms = firms.filter(function(f, i) { return firms.indexOf(f) === i; });
-        let who = "";
-        if (lab > nat) {
-          who = '<div class="polls-callout"><span class="tag lab">Labour ahead</span> Averaging polls in <strong>' +
-            periodLabel(keys[0]) + '</strong>, Labour is about <strong>' + fmtPollNum(lab) +
-            '%</strong> and National about <strong>' + fmtPollNum(nat) + '%</strong> (gap ~' + gap + ' points).</div>';
-        } else if (nat > lab) {
-          who = '<div class="polls-callout"><span class="tag nat">National ahead</span> Averaging polls in <strong>' +
-            periodLabel(keys[0]) + '</strong>, National is about <strong>' + fmtPollNum(nat) +
-            '%</strong> and Labour about <strong>' + fmtPollNum(lab) + '%</strong> (gap ~' + gap + ' points).</div>';
+      // Last check note
+      if (checkEl) {
+        const remote = (window.__livePollsRemote && window.__livePollsRemote.updatedAt)
+          || (liveDataMeta && liveDataMeta.pollsAt)
+          || null;
+        const local = new Date().toISOString();
+        if (remote) {
+          checkEl.textContent = "Last worker poll data: " + String(remote).slice(0, 19).replace("T", " ") + " UTC · Chart uses structured public poll rows";
         } else {
-          who = '<div class="polls-callout"><span class="tag tie">Neck and neck</span> In <strong>' +
-            periodLabel(keys[0]) + '</strong>, Labour and National average about the same.</div>';
+          checkEl.textContent = "Last data check on this page: " + local.slice(0, 19).replace("T", " ") + " UTC · Worker polls not loaded yet";
         }
-        const nBloc = nat + (Number(avg.ACT) || 0) + (Number(avg["NZ First"]) || 0);
-        const lBloc = lab + (Number(avg.Green) || 0) + (Number(avg["Te Pāti Māori"]) || 0);
-        who += '<div class="polls-callout" style="font-size:0.95rem;font-weight:600">Rough blocs from that average: ' +
-          '<strong>National + ACT + NZ First ≈ ' + fmtPollNum(nBloc) + '%</strong> · ' +
-          '<strong>Labour + Green + Te Pāti Māori ≈ ' + fmtPollNum(lBloc) + '%</strong>. ' +
-          'Polls used: ' + uniqueFirms.join(", ") + '.</div>';
-        headline.innerHTML = who;
       }
 
-      if (periodsEl) {
-        periodsEl.innerHTML = keys.map(function(k, idx) {
-          const list = groups[k];
-          const avg = avgs[k];
-          const prevKey = keys[idx + 1];
-          const prevAvg = prevKey ? avgs[prevKey] : null;
-          const drops = detectPollDrops(avg, prevAvg, 2);
-          const y = Number(k.slice(0, 4));
-          const m = Number(k.slice(5, 7));
-          let controv = allControv.filter(function(c) {
-            if (c.year !== y) return false;
-            if (c.month != null) return c.month === m;
-            // year-only: only if we have a drop this month
-            return drops.length > 0;
-          });
-          // If drop exists but no month-specific hit, keep year-level ones limited
-          if (drops.length && !controv.length) {
-            controv = allControv.filter(function(c) { return c.year === y; }).slice(0, 8);
-          }
-
-          const firms = list.map(function(p) { return p.firm; });
-          const uniqueFirms = firms.filter(function(f, i) { return firms.indexOf(f) === i; });
-          const rows = partyKeys.map(function(name) {
-            return { name: name, val: avg[name] };
-          }).filter(function(r) { return r.val != null; })
-            .sort(function(a, b) { return Number(b.val) - Number(a.val); });
-
-          const moves = detectPollMoves(avg, prevAvg, 0.3);
-          // Controversies for this period, grouped loosely by party name
-          const periodControv = controv.slice();
-          function controvForParty(partyName) {
-            const pn = String(partyName || "").toLowerCase();
-            return periodControv.filter(function(c) {
-              const cp = String(c.party || "").toLowerCase();
-              if (!cp) return false;
-              if (cp === pn) return true;
-              if (pn === "nz first" && (cp.indexOf("nz first") >= 0 || cp.indexOf("nzfirst") >= 0)) return true;
-              if (pn === "te pāti māori" && (cp.indexOf("māori") >= 0 || cp.indexOf("maori") >= 0)) return true;
-              if (pn.indexOf(cp) >= 0 || cp.indexOf(pn) >= 0) return true;
-              return false;
-            });
-          }
-          const bars = rows.map(function(r) {
-            const col = POLL_PARTY_COLORS[r.name] || "#94a3b8";
-            const w = Math.max(2, Math.min(100, Number(r.val)));
-            const move = moves.find(function(d) { return d.party === r.name; });
-            const label = r.name + " · " + fmtPollNum(r.val) + "%";
-            let arrow = "—";
-            let arrowCls = "flat";
-            let ptsTxt = "0";
-            let arrowTitle = "No change vs previous period";
-            if (move) {
-              ptsTxt = String(Math.abs(move.delta));
-              if (move.dir === "up") {
-                arrow = "↑";
-                arrowCls = "up";
-                arrowTitle = "Up " + Math.abs(move.delta) + " pts vs previous period";
-              } else if (move.dir === "down") {
-                arrow = "↓";
-                arrowCls = "down";
-                arrowTitle = "Down " + Math.abs(move.delta) + " pts vs previous period";
-              } else {
-                arrow = ""; // CSS draws a 2px yellow line
-                arrowCls = "flat";
-                ptsTxt = "0";
-                arrowTitle = "No change (0 pts)";
-              }
-            } else if (!prevAvg) {
-              arrow = "";
-              arrowCls = "flat";
-              ptsTxt = "0";
-              arrowTitle = "No previous period to compare";
-            }
-            const isDrop = move && move.dir === "down";
-            const partyC = controvForParty(r.name);
-            let controvCell;
-            if (partyC.length) {
-              controvCell = '<button type="button" class="poll-flag" data-kind="party-controv" data-period="' + k +
-                '" data-party="' + r.name.replace(/"/g, "") + '" title="Controversies linked to ' + r.name + ' in this period">' +
-                "⚑ " + partyC.length + "</button>";
-            } else {
-              controvCell = '<span class="poll-flag-none">—</span>';
-            }
-            return '<div class="poll-bar-row">' +
-              '<div class="poll-bar-solid' + (isDrop ? " is-drop" : "") + '" title="' + label + '">' +
-                '<div class="poll-bar-label-out" style="color:' + col + '">' + label + '</div>' +
-                '<div class="poll-bar-track"><div class="poll-bar-inner" style="width:' + w + '%;background:' + col + '"></div></div>' +
-              '</div>' +
-              '<div class="poll-bar-change ' + arrowCls + '" title="' + arrowTitle + '">' +
-                '<span class="arr">' + arrow + '</span>' +
-                '<span class="pts">' + ptsTxt + '</span>' +
-              '</div>' +
-              '<div class="poll-bar-controv">' + controvCell + '</div>' +
-              '</div>';
-          }).join("");
-
-          const firmLine = list.length === 1
-            ? ("1 poll · " + uniqueFirms[0])
-            : (list.length + " polls averaged · " + uniqueFirms.join(" · "));
-
-
-          return '<div class="poll-period" data-period="' + k + '">' +
-            '<div class="poll-period-date">' + periodLabel(k) + '</div>' +
-            '<div class="poll-period-firms">' + firmLine + '</div>' +
-            '<div class="poll-period-bars">' + bars + '</div>' +
-            '</div>';
+      // Top 3
+      if (top3el && latest) {
+        const ranked = partyKeys.map(function(name) {
+          return { name: name, pct: latest.avg[name] };
+        }).filter(function(x) { return x.pct != null; })
+          .sort(function(a, b) { return b.pct - a.pct; })
+          .slice(0, 3);
+        top3el.innerHTML = ranked.map(function(r, i) {
+          const col = pollsPartyColor(r.name);
+          const place = i === 0 ? "1st" : (i === 1 ? "2nd" : "3rd");
+          return '<div class="polls-top3-card" data-party="' + r.name + '" title="Open Party Stats">' +
+            '<div class="polls-top3-rank">' + place + ' place</div>' +
+            '<div class="polls-top3-name" style="color:' + col + '">' + r.name + '</div>' +
+            '<div class="polls-top3-pct">' + r.pct + '%</div></div>';
         }).join("");
-
-        // Wire flag clicks
-        periodsEl.querySelectorAll(".poll-flag").forEach(function(btn) {
-          btn.addEventListener("click", function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            const k = btn.getAttribute("data-period");
-            const kind = btn.getAttribute("data-kind");
-            const avg = avgs[k];
-            const prevKey = keys[keys.indexOf(k) + 1];
-            const drops = detectPollDrops(avg, prevKey ? avgs[prevKey] : null, 2);
-            const y = Number(k.slice(0, 4));
-            const m = Number(k.slice(5, 7));
-            let controv = allControv.filter(function(c) {
-              if (c.year !== y) return false;
-              if (c.month != null) return c.month === m;
-              return drops.length > 0;
-            });
-            if (drops.length && !controv.length) {
-              controv = allControv.filter(function(c) { return c.year === y; }).slice(0, 8);
-            }
-            if (kind === "drop") {
-              const items = drops.map(function(d) {
-                return {
-                  person: d.party,
-                  party: d.party,
-                  title: d.party + " average moved " + d.delta + " points",
-                  desc: "From about " + fmtPollNum(d.from) + "% in the previous period to " + fmtPollNum(d.to) + "% in " + periodLabel(k) + ".",
-                  theme: "poll_drop"
-                };
-              }).concat(controv);
-              openPollControversyPop(btn, "Poll movement · " + periodLabel(k), items);
-            } else if (kind === "party-controv") {
-              const partyName = btn.getAttribute("data-party") || "";
-              const pn = partyName.toLowerCase();
-              const partyItems = controv.filter(function(c) {
-                const cp = String(c.party || "").toLowerCase();
-                if (!cp) return false;
-                if (cp === pn) return true;
-                if (pn === "nz first" && cp.indexOf("nz first") >= 0) return true;
-                if (pn.indexOf("māori") >= 0 && (cp.indexOf("māori") >= 0 || cp.indexOf("maori") >= 0)) return true;
-                return pn.indexOf(cp) >= 0 || cp.indexOf(pn) >= 0;
-              });
-              openPollControversyPop(btn, partyName + " · " + periodLabel(k), partyItems.length ? partyItems : controv);
-            } else {
-              openPollControversyPop(btn, "Controversies around " + periodLabel(k), controv);
-            }
+        top3el.querySelectorAll(".polls-top3-card").forEach(function(card) {
+          card.addEventListener("click", function() {
+            showPartiesView(card.getAttribute("data-party"));
           });
         });
       }
 
-      if (blocks) {
-        const topAvg = keys.length ? avgs[keys[0]] : {};
-        const over5 = partyKeys.filter(function(n) { return topAvg[n] != null && Number(topAvg[n]) >= 5; });
-        blocks.innerHTML =
-          '<div class="poll-block"><h4>What “averaged” means</h4><p>If several companies polled in the same month, we take a simple average of their party-vote %. Orange/red flags appear when a party drops by about 2+ points versus the previous month — click to see timeline controversies from around then.</p></div>' +
-          '<div class="poll-block"><h4>The 5% rule (simple)</h4><p>Parties usually need about <strong>5%</strong> of the party vote (or an electorate seat) to get into Parliament. On the latest month average, on or above 5%: <strong>' +
-          (over5.length ? over5.join(", ") : "—") + '</strong>.</p></div>' +
-          '<div class="poll-block"><h4>Compared with 2023</h4><p>' +
-          (result
-            ? ('At the last election National was on <strong>' + fmtPollNum(result.National) + '%</strong> and Labour on <strong>' + fmtPollNum(result.Labour) + '%</strong>. Averages still move month to month.')
-            : 'Polls move around between elections.') +
-          '</p></div>';
+      if (headline && latest) {
+        const top = partyKeys.map(function(n) { return { n: n, v: latest.avg[n] }; })
+          .filter(function(x) { return x.v != null; })
+          .sort(function(a, b) { return b.v - a.v; })[0];
+        headline.innerHTML = top
+          ? ('<strong style="color:' + pollsPartyColor(top.n) + '">' + top.n + '</strong> leads the latest averaged period at <strong>' + top.v + '%</strong>.')
+          : "Party support from recent public polls.";
       }
 
-      if (body) {
-        body.innerHTML = polls.map(function(p) {
-          const field = p.start === p.end ? p.end : (p.start.slice(5) + " – " + p.end.slice(5));
-          return "<tr>" +
-            "<td>" + p.firm + "</td>" +
-            "<td>" + field + "</td>" +
-            "<td class='num'>" + fmtPollNum(p.National) + "</td>" +
-            "<td class='num'>" + fmtPollNum(p.Labour) + "</td>" +
-            "<td class='num'>" + fmtPollNum(p.Green) + "</td>" +
-            "<td class='num'>" + fmtPollNum(p.ACT) + "</td>" +
-            "<td class='num'>" + fmtPollNum(p["NZ First"]) + "</td>" +
-            "</tr>";
-        }).join("");
+      // Line chart
+      if (svg && rows.length) {
+        const W = 640, H = 280, padL = 36, padR = 12, padT = 16, padB = 36;
+        const plotW = W - padL - padR, plotH = H - padT - padB;
+        // One point per month average
+        const byMonth = {};
+        rows.forEach(function(p) {
+          const k = String(p.end || p.start || "").slice(0, 7);
+          if (!k) return;
+          if (!byMonth[k]) byMonth[k] = [];
+          byMonth[k].push(p);
+        });
+        const months = Object.keys(byMonth).sort();
+        const points = months.map(function(k) {
+          const list = byMonth[k];
+          const avg = {};
+          partyKeys.forEach(function(name) {
+            let sum = 0, n = 0;
+            list.forEach(function(p) {
+              if (p[name] != null && p[name] !== "") { sum += Number(p[name]); n++; }
+            });
+            avg[name] = n ? sum / n : null;
+          });
+          return { key: k, avg: avg };
+        });
+        const yMax = 45;
+        function xAt(i) { return padL + (points.length <= 1 ? plotW / 2 : (i / (points.length - 1)) * plotW); }
+        function yAt(v) { return padT + plotH - (Math.max(0, Math.min(yMax, v)) / yMax) * plotH; }
+
+        let grid = "";
+        [0, 10, 20, 30, 40].forEach(function(v) {
+          const y = yAt(v);
+          grid += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="rgba(148,163,184,0.25)" stroke-width="1" />';
+          grid += '<text x="' + (padL - 4) + '" y="' + (y + 3) + '" text-anchor="end" fill="#94a3b8" font-size="10">' + v + '%</text>';
+        });
+        let xlabels = "";
+        points.forEach(function(p, i) {
+          if (points.length > 8 && i % 2) return;
+          xlabels += '<text x="' + xAt(i) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#94a3b8" font-size="10">' + p.key.slice(2) + '</text>';
+        });
+
+        let paths = "";
+        partyKeys.forEach(function(name) {
+          const col = pollsPartyColor(name);
+          let d = "";
+          let started = false;
+          points.forEach(function(p, i) {
+            const v = p.avg[name];
+            if (v == null) { started = false; return; }
+            const x = xAt(i), y = yAt(v);
+            d += (started ? " L " : "M ") + x + " " + y;
+            started = true;
+          });
+          if (d) {
+            paths += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-linejoin="round" data-party="' + name + '" class="poll-line" style="cursor:pointer" />';
+          }
+        });
+
+        svg.innerHTML = grid + xlabels + paths;
+        svg.querySelectorAll(".poll-line").forEach(function(path) {
+          path.addEventListener("click", function() {
+            showPartiesView(path.getAttribute("data-party"));
+          });
+        });
+
+        if (legend) {
+          legend.innerHTML = partyKeys.map(function(name) {
+            const col = pollsPartyColor(name);
+            return '<span data-party="' + name + '"><i style="background:' + col + '"></i>' + name + '</span>';
+          }).join("");
+          legend.querySelectorAll("span").forEach(function(el) {
+            el.addEventListener("click", function() {
+              showPartiesView(el.getAttribute("data-party"));
+            });
+          });
+        }
       }
 
       if (foot) {
@@ -8689,13 +8706,11 @@ async function pullGitHubPolls() {
         if (window.__livePollsRemote && window.__livePollsRemote.updatedAt) {
           extra = "Worker polls file updated " + String(window.__livePollsRemote.updatedAt).slice(0, 19).replace("T", " ") + " UTC. ";
         }
-        foot.innerHTML = extra + "Display table uses curated Wikipedia-based averages. Live worker file: <a href=\"" + LIVE_POLLS_URL +
+        foot.innerHTML = extra + "Line chart from public poll snapshots. Live worker file: <a href=\"" + LIVE_POLLS_URL +
           "\" target=\"_blank\" rel=\"noopener noreferrer\">polls.json</a> · <a href=\"" + OPINION_POLLS_SOURCE +
           "\" target=\"_blank\" rel=\"noopener noreferrer\">Wikipedia</a>.";
       }
     }
-
-
 
 
     function wireNewsVotes() {
@@ -8766,9 +8781,13 @@ async function pullGitHubPolls() {
       const status = document.getElementById("newsFeedStatus");
       function setStatus(msg) { if (status) status.textContent = msg || ""; }
       setStatus("Loading current headlines…");
-      fetchWorkerNewsJson().then(function(result) {
+      loadWorkerMps().then(function() {
+      return fetchWorkerNewsJson();
+      }).then(function(result) {
         if (result && result.ok && result.articles && result.articles.length) {
-          const n = applyWorkerArticlesToFeed(result.articles);
+          let arts = result.articles || [];
+          const n = applyWorkerArticlesToFeed(arts);
+          NEWS_HEADLINES = filterHeadlinesToActiveMps(NEWS_HEADLINES || []);
           setStatus("Loaded " + n + " headline" + (n === 1 ? "" : "s") + " from workers");
           newsInitialFetchDone = true;
           if (!newsPageLoadTs) newsPageLoadTs = Date.now();
