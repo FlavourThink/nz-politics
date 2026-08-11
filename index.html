@@ -7457,21 +7457,23 @@ function eventSourcesHtml(ev) {
     }
 
     async function pullGitHubNews(publishNew) {
-      // Prefer dedicated news.json, then latest.json merge
       const urls = [LIVE_NEWS_URL, LIVE_LATEST_URL];
       let added = 0;
+      let ok = false;
       let lastErr = null;
       if (typeof location !== "undefined" && location.protocol === "file:") {
-        console.warn("Open this site via GitHub Pages or a local web server — file:// often blocks fetch to GitHub.");
+        lastErr = "file:// blocked";
+        console.warn("Open via GitHub Pages or a local web server — file:// often blocks fetch to GitHub.");
       }
-      for (let i = 0; i < urls.length; i++) {
+      for (let u = 0; u < urls.length; u++) {
         try {
-          const res = await fetch(urls[i] + "?t=" + Date.now(), { cache: "no-store", mode: "cors" });
+          const res = await fetch(urls[u] + "?t=" + Date.now(), { cache: "no-store", mode: "cors" });
           if (!res.ok) {
             lastErr = "HTTP " + res.status;
             continue;
           }
           const data = await res.json();
+          ok = true;
           let articles = [];
           if (data.news && data.news.articles) {
             liveDataMeta.newsAt = data.news.updatedAt || data.updatedAt;
@@ -7489,14 +7491,13 @@ function eventSourcesHtml(ev) {
           liveDataMeta.loadedAt = new Date().toISOString();
           updateDataStatusBanner();
           added += ingestGitHubArticles(articles, publishNew);
-          if (added > 0) break;
+          if (articles.length) break;
         } catch (e) {
-          lastErr = e;
-          console.warn("GitHub live data", urls[i], e);
+          lastErr = e && e.message ? e.message : String(e);
+          console.warn("GitHub live data", urls[u], e);
         }
       }
-      if (!added && lastErr) console.warn("No GitHub articles ingested", lastErr);
-      return added;
+      return { added: added, ok: ok, error: lastErr };
     }
 
 async function pullGitHubPolls() {
@@ -7544,7 +7545,7 @@ async function pullGitHubPolls() {
       const checkStarted = Date.now();
       const lastCheckTs = newsInitialFetchDone ? (newsPageLoadTs || getLastCheckTs()) : 0;
       const modeLabel = newsInitialFetchDone ? "since page load" : "last 4 weeks";
-      if (!silent) setStatus("checking GitHub workers + feeds (" + modeLabel + ")…");
+      if (!silent) setStatus("Loading current headlines…");
 
       const collected = loadCollectedKeys();
       const seen = {};
@@ -7612,47 +7613,71 @@ async function pullGitHubPolls() {
       }
 
       try {
-        // 1) Live worker data from GitHub (primary)
-        if (!silent) setStatus("checking GitHub workers…");
+        // 1) Worker file first (already collected on GitHub) — always tell the user
+        setStatus("Loading current headlines…");
+        let gh = { added: 0, ok: false, error: null };
         try {
-          const ghAdded = await pullGitHubNews(publishNew);
-          if (!silent) setStatus("GitHub news +" + ghAdded + " · checking RSS…");
+          gh = await pullGitHubNews(publishNew);
         } catch (ghErr) {
+          gh = { added: 0, ok: false, error: (ghErr && ghErr.message) || String(ghErr) };
           console.warn(ghErr);
         }
         try { await pullGitHubPolls(); } catch (e) {}
 
-        for (let f = 0; f < totalFeeds; f++) {
-          const feed = RSS_FEEDS[f];
-          const feedUrl = typeof feed === "string" ? feed : feed.url;
-          const agency = typeof feed === "string" ? "News" : (feed.agency || "News");
-          setStatus("checking " + agency + "… " + (f + 1) + " of " + totalFeeds);
-
-          let got = false;
-          try {
-            const res = await fetch(RSS_PROXIES[0](feedUrl));
-            if (res.ok) {
-              const data = await res.json();
-              if (data && data.items && data.items.length) {
-                data.items.forEach(function(it) { considerRaw(it, agency); });
-                got = true;
-              }
-            }
-          } catch (e1) {}
-
-          if (!got) {
-            try {
-              const res = await fetch(RSS_PROXIES[1](feedUrl));
-              if (res.ok) {
-                const xmlText = await res.text();
-                parseRssXml(xmlText, agency);
-              }
-            } catch (e2) {}
-          }
-          await new Promise(function(r) { setTimeout(r, 15); });
+        if (gh.ok && gh.added > 0) {
+          setStatus("Loaded " + gh.added + " headline" + (gh.added === 1 ? "" : "s") + " from workers");
+          // Worker succeeded — skip slow RSS on this pass
+        } else if (gh.ok && gh.added === 0) {
+          setStatus("Worker connected but no new headlines — trying backup sources…");
+        } else {
+          setStatus("Failed to connect to service… Loading from backup sources");
         }
 
-        rememberCollected(newlyRemember);
+        // 2) RSS only if worker failed or returned nothing useful
+        const needBackup = !gh.ok || gh.added === 0;
+        if (needBackup) {
+          const BATCH = 5;
+          for (let startF = 0; startF < totalFeeds; startF += BATCH) {
+            const endF = Math.min(startF + BATCH, totalFeeds);
+            setStatus("Backup sources " + (startF + 1) + "–" + endF + " of " + totalFeeds + "…");
+
+            // Run this batch in parallel (faster)
+            const batch = [];
+            for (let f = startF; f < endF; f++) batch.push(f);
+            await Promise.all(batch.map(async function(f) {
+              const feed = RSS_FEEDS[f];
+              const feedUrl = typeof feed === "string" ? feed : feed.url;
+              const agency = typeof feed === "string" ? "News" : (feed.agency || "News");
+              let got = false;
+              try {
+                const res = await fetch(RSS_PROXIES[0](feedUrl));
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data && data.items && data.items.length) {
+                    data.items.forEach(function(it) { considerRaw(it, agency); });
+                    got = true;
+                  }
+                }
+              } catch (e1) {}
+              if (!got) {
+                try {
+                  const res = await fetch(RSS_PROXIES[1](feedUrl));
+                  if (res.ok) {
+                    const xmlText = await res.text();
+                    parseRssXml(xmlText, agency);
+                  }
+                } catch (e2) {}
+              }
+            }));
+            // If this batch produced headlines, stop (quick path)
+            if (newThisRun > 0) {
+              setStatus("Backup loaded " + newThisRun + " headline" + (newThisRun === 1 ? "" : "s"));
+              break;
+            }
+          }
+        }
+
+                rememberCollected(newlyRemember);
         if (!newsInitialFetchDone) {
           newsInitialFetchDone = true;
           // Floor for later refreshes = when this page was opened (not each refresh)
@@ -7894,11 +7919,11 @@ async function pullGitHubPolls() {
       if (elProg) {
         elProg.textContent = list.length
           ? (list.length + " article" + (list.length === 1 ? "" : "s") + " · " + unvoted + " still to score")
-          : "No articles yet — loading or press Refresh.";
+          : "Loading current headlines…";
       }
 
       if (!list.length) {
-        host.innerHTML = "<p class='news-vote-note'>Looking for controversial NZ political headlines…</p>";
+        host.innerHTML = "<p class='news-vote-note'>Loading current headlines…</p>";
         updateNewsActionButtons();
         return;
       }
