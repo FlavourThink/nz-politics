@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NZ Politics Metro Timeline</title>
+  <title>NZ Politics Timeline</title>
   <style>
     :root {
       --bg: #0b0f14;
@@ -3215,6 +3215,15 @@
     .nv-bar-neg { height: 100%; background: #ef4444; }
     .nv-bar-nums { font-size: 0.7rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
 
+
+    .nv-banner:not(.is-on) {
+      opacity: 0.5 !important;
+    }
+    .nv-banner.is-on {
+      opacity: 1 !important;
+    }
+    .sources-interp { font-size: 0.78rem; line-height: 1.45; color: var(--muted); }
+    .sources-interp .oed { margin-top: 0.4rem; }
   </style>
 </head>
 <body>
@@ -3222,10 +3231,8 @@
     <div class="header-inner">
       <div class="header-row">
         <div>
-          <h1>NZ Politics Metro Timeline</h1>
-          <span class="badge">Static snapshot · ~ July 2026 · pure HTML / CSS / JS</span>
-          <div class="data-status" id="dataStatusBanner">News: live from GitHub workers · Polls: live when available · Controversies: curated</div>
-        </div>
+          <h1>NZ Politics Timeline</h1>
+          </div>
         <div class="header-actions">
           <button type="button" class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav">
             <span></span><span></span><span></span>
@@ -3246,68 +3253,7 @@
 
   <main>
 
-    <div class="def-box def-box-collapsible">
-      <details class="def-details">
-        <summary class="def-summary">Interpretive standard — Oxford Dictionaries / OED &amp; statistics terms <span class="legend-hint">click to expand</span></summary>
-        <div class="def-body">
-          <div class="oed">
-            <strong>racist</strong> (n. &amp; adj., Oxford / OED sense used on this site): A person who shows or feels discrimination or prejudice against people of other races, or who believes that a particular race is superior to another; showing or feeling such discrimination or prejudice.
-          </div>
-          <div class="oed" style="margin-top:0.4rem;">
-            <strong>sexism</strong> (n., ordinary dictionary sense): Prejudice, stereotyping, or discrimination, typically against women, on the basis of sex.
-          </div>
-          <div class="oed" style="margin-top:0.4rem;">
-            <strong>discrimination</strong> (n.): The unjust or prejudicial treatment of different categories of people, especially on the grounds of race, age, sex, or disability.
-          </div>
-          <p style="margin-top:0.55rem;">Map markers and score bars record <em>reported claims and public record</em>. This site does <strong>not</strong> adjudicate whether any event meets a dictionary definition — it surfaces contemporaneous reporting and official records so readers can judge.</p>
-
-          <h3 class="def-h3">Controversy themes (map triangles)</h3>
-          <ul class="def-list">
-            <li><strong>Race-relations</strong> — Prejudice, stereotyping, or hierarchy language about race or ethnicity (OED “racist” lens).</li>
-            <li><strong>MaoriTreaty</strong> — Remarks or actions framed in public debate as hostile, dismissive, or discriminatory toward Māori or Te Tiriti / Treaty settlements and policy.</li>
-            <li><strong>WomenSexism</strong> — Remarks or conduct treating women as inferior, or reducing women to a demeaning political “problem” (dictionary “sexism”).</li>
-            <li><strong>QueerRainbow</strong> — Remarks or high-profile positions publicly framed as punching down on LGBTQI+ people or rights.</li>
-            <li><strong>Climate</strong> — Climate-science denial or equivalent high-profile dismissal of climate risk in political speech or portfolio conduct.</li>
-            <li><strong>Crime</strong> — Documented criminal convictions or court findings on the public record (not mere allegation or charge alone).</li>
-            <li><strong>Other</strong> — Controversies in mainstream coverage that do not fit the theme buckets above.</li>
-            <li><strong>Bill</strong> — A bill linked to a member or party on the timeline, with passed or defeated where recorded.</li>
-          </ul>
-
-          <h3 class="def-h3">Sensitivity scores (0–100 bars on cards &amp; party pages)</h3>
-          <ul class="def-list">
-            <li><strong>Rainbow</strong> — Heuristic of how supportive vs hostile the public record (House speech + news) looks toward rainbow communities. Higher ≈ more supportive in this snapshot.</li>
-            <li><strong>Race-relations</strong> — Heuristic of race-relations sensitivity. Higher ≈ more progressive / less hostile in the snapshot.</li>
-            <li><strong>Climate</strong> — Heuristic of climate-policy / science alignment in the public record. Higher ≈ more climate-aligned.</li>
-            <li><strong>Women’s equality</strong> — Heuristic of women’s-equality sensitivity in speech and coverage. Higher ≈ more equality-aligned.</li>
-            <li><strong>Immigrant</strong> — Heuristic of immigration / migrant-community sensitivity. Higher ≈ more migrant-supportive in the snapshot.</li>
-            <li><strong>Colour scale</strong> — Fill is red at 0, yellow at 50; green appears only above 50 through 100. Tick marks at 25 / 50 / 75.</li>
-            <li><strong>How built</strong> — Drawn from parliamentary record and news about that person in the snapshot dataset — not a poll, not an official ranking.</li>
-          </ul>
-
-          <h3 class="def-h3">Party Stats &amp; left–right</h3>
-          <ul class="def-list">
-            <li><strong>Party averages</strong> — Mean of member sensitivity heuristics for everyone included by the current filter (active only, selected year, election term, or all-time).</li>
-            <li><strong>Left–right (0–100)</strong> — Site heuristic of overall ideological placement (0 = left, 100 = right). Not an official party ideology score.</li>
-            <li><strong>Member count</strong> — Number of people in the party cohort used for that average under the active filter.</li>
-            <li><strong>Controversy tallies</strong> — Counts of themed events for members in scope, only while they were in that party and inside the filter’s year window.</li>
-          </ul>
-
-          <h3 class="def-h3">Map symbols</h3>
-          <ul class="def-list">
-            <li><strong>Solid square</strong> — Joined a party / entered Parliament on that line.</li>
-            <li><strong>Empty square</strong> — Left a party or left Parliament.</li>
-            <li><strong>Circle</strong> — Other station on the line (e.g. role marker).</li>
-            <li><strong>Dotted path</strong> — Party switch (colour fades from previous party to new party); hover shows who moved where.</li>
-            <li><strong>Orange / themed triangle</strong> — Controversy, crime, or related marker above the line.</li>
-            <li><strong>Orange numbered bubble</strong> — Overlapping controversies / crimes / bills grouped by proximity.</li>
-            <li><strong>Indigo numbered bubble</strong> — Overlapping MP name labels; open list shows ■ join, □ leave, or ● role for each person.</li>
-          </ul>
-
-          <p>Attribution is only to the <strong>speaker or actor</strong>, not to those who called them out. Prefer Hansard and multi-outlet citations where available. Use <strong>Sources &amp; fairness</strong> for outlet lean indicators.</p>
-          <p class="disclaimer">Disclaimer: Snapshot only. Not exhaustive. Lean labels and sensitivity scores are approximate heuristics. Always verify primary sources.</p>
-        </div>
-      </details>
-    </div>
+    
 
     <!-- Sources modal -->
     <div class="overlay" id="sourcesOverlay" aria-hidden="true">
@@ -3443,7 +3389,14 @@
         <div class="polls-controls">
           <div class="polls-party-picks" id="pollsPartyPicks"></div>
           <label><input type="checkbox" id="pollsShowTrend" /> Show trend lines</label>
-          <label><input type="checkbox" id="pollsShowPredict" /> Next-month prediction</label>
+          <label><input type="checkbox" id="pollsShowPredict" /> Prediction</label>
+          <label>Months ahead
+            <select id="pollsPredictMonths" style="margin-left:0.25rem;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:0.2rem 0.35rem;">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+            </select>
+          </label>
         </div>
         <div class="polls-chart-wrap">
           <svg id="pollsLineChart" viewBox="0 0 640 300" role="img" aria-label="Party poll support over time"></svg>
@@ -9864,15 +9817,32 @@ function renderNewsTallies() {
 
       const showTrend = !!(document.getElementById("pollsShowTrend") && document.getElementById("pollsShowTrend").checked);
       const showPredict = !!(document.getElementById("pollsShowPredict") && document.getElementById("pollsShowPredict").checked);
-      // Always extend axis with next month after last data month
+      let predictMonths = 1;
+      const monthsEl = document.getElementById("pollsPredictMonths");
+      if (monthsEl) {
+        predictMonths = Math.max(1, Math.min(3, parseInt(monthsEl.value, 10) || 1));
+        if (!monthsEl.getAttribute("data-bound")) {
+          monthsEl.setAttribute("data-bound", "1");
+          monthsEl.addEventListener("change", function() { renderOpinionPolls(); });
+        }
+      }
       const selected = getSelectedPollParties(partyKeys, top3Names);
       const axisKeys = points.map(function(p) { return p.key; });
-      let futureKey = null;
-      if (axisKeys.length) {
-        futureKey = nextMonthKey(axisKeys[axisKeys.length - 1]);
-        if (futureKey) axisKeys.push(futureKey);
+      const futureKeys = [];
+      // Extend axis by 1–3 months when prediction and/or trend needs the runway
+      const monthsToShow = (showPredict || showTrend) ? predictMonths : 0;
+      if (axisKeys.length && monthsToShow > 0) {
+        let k = axisKeys[axisKeys.length - 1];
+        for (let m = 0; m < monthsToShow; m++) {
+          k = nextMonthKey(k);
+          if (!k) break;
+          futureKeys.push(k);
+          axisKeys.push(k);
+        }
       }
       const axisLen = axisKeys.length;
+      const futureKeySet = {};
+      futureKeys.forEach(function(k) { futureKeySet[k] = true; });
 
       if (svg && points.length) {
         const W = 640, H = 300, padL = 36, padR = 52, padT = 18, padB = 42;
@@ -9887,7 +9857,11 @@ function renderNewsTallies() {
         selected.forEach(function(name) {
           const ys = points.map(function(p) { return p.avg[name]; });
           const tr = linearTrend(ys);
-          if (tr) yMax = Math.max(yMax, tr.predict(points.length) + 3);
+          if (tr) {
+            for (let fi = 0; fi < Math.max(1, futureKeys.length); fi++) {
+              yMax = Math.max(yMax, tr.predict(points.length + fi) + 3);
+            }
+          }
         });
         yMax = Math.max(45, Math.ceil(yMax / 5) * 5);
 
@@ -9939,32 +9913,47 @@ function renderNewsTallies() {
               '<title>' + name + " · " + monthLabel(p.key) + " · " + (Math.round(v * 10) / 10) + "%</title></circle>";
           });
 
-          // Trend through data and into next month slot
-          if (tr && (showTrend || showPredict)) {
+          // Trend through data and into predicted months (1–3)
+          if (tr && (showTrend || showPredict) && futureKeys.length) {
             const yStart = tr.predict(0);
             const yLast = tr.predict(points.length - 1);
-            const yFuture = tr.predict(points.length);
             if (showTrend) {
-              // solid trend across data
               html += '<line x1="' + xAt(0) + '" y1="' + yAt(yStart) + '" x2="' + xAt(points.length - 1) + '" y2="' + yAt(yLast) +
                 '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.85" />';
-              // continue into next month
-              html += '<line x1="' + xAt(points.length - 1) + '" y1="' + yAt(yLast) + '" x2="' + xAt(points.length) + '" y2="' + yAt(yFuture) +
-                '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.7" />';
+              // continue trend across each future month slot
+              let prevX = xAt(points.length - 1), prevY = yAt(yLast);
+              for (let fi = 0; fi < futureKeys.length; fi++) {
+                const yF = tr.predict(points.length + fi);
+                const xF = xAt(points.length + fi);
+                html += '<line x1="' + prevX + '" y1="' + prevY + '" x2="' + xF + '" y2="' + yAt(yF) +
+                  '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.7" />';
+                prevX = xF; prevY = yAt(yF);
+              }
             }
             if (showPredict) {
-              html += '<line x1="' + xAt(points.length - 1) + '" y1="' + yAt(ys[ys.length - 1] != null ? ys[ys.length - 1] : yLast) +
-                '" x2="' + xAt(points.length) + '" y2="' + yAt(yFuture) +
-                '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.75" />';
-              html += '<circle cx="' + xAt(points.length) + '" cy="' + yAt(yFuture) + '" r="5" fill="#ffffff" stroke="' + col + '" stroke-width="2.5" />';
-              predLabels.push({
-                name: name,
-                col: col,
-                x: xAt(points.length),
-                y: yAt(yFuture),
-                text: (Math.round(yFuture * 10) / 10) + "%"
-              });
+              let prevX = xAt(points.length - 1);
+              let prevY = yAt(ys[ys.length - 1] != null ? ys[ys.length - 1] : yLast);
+              for (let fi = 0; fi < futureKeys.length; fi++) {
+                const yF = tr.predict(points.length + fi);
+                const xF = xAt(points.length + fi);
+                html += '<line x1="' + prevX + '" y1="' + prevY + '" x2="' + xF + '" y2="' + yAt(yF) +
+                  '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.75" />';
+                html += '<circle cx="' + xF + '" cy="' + yAt(yF) + '" r="5" fill="#ffffff" stroke="' + col + '" stroke-width="2.5" />';
+                predLabels.push({
+                  name: name,
+                  col: col,
+                  x: xF,
+                  y: yAt(yF),
+                  text: (Math.round(yF * 10) / 10) + "%"
+                });
+                prevX = xF; prevY = yAt(yF);
+              }
             }
+          } else if (tr && showTrend) {
+            const yStart = tr.predict(0);
+            const yLast = tr.predict(points.length - 1);
+            html += '<line x1="' + xAt(0) + '" y1="' + yAt(yStart) + '" x2="' + xAt(points.length - 1) + '" y2="' + yAt(yLast) +
+              '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.85" />';
           }
         });
 
@@ -10235,6 +10224,7 @@ function renderNewsTallies() {
         '<li>Sensitivity scores are <strong style="color:var(--text)">heuristic snapshots</strong>, not scientific polls — hover score bars for methodology.</li>' +
         '<li>Lean positions reflect commonly published media-bias charts and public perception in NZ; they will not match every story.</li>' +
         '</ul>';
+      html += "<div class=\"section-title\">Interpretive standard \u2014 Oxford / OED &amp; statistics</div><div class=\"def-body sources-interp\"><div class=\"oed\">\n            <strong>racist</strong> (n. &amp; adj., Oxford / OED sense used on this site): A person who shows or feels discrimination or prejudice against people of other races, or who believes that a particular race is superior to another; showing or feeling such discrimination or prejudice.\n          </div>\n          <div class=\"oed\" style=\"margin-top:0.4rem;\">\n            <strong>sexism</strong> (n., ordinary dictionary sense): Prejudice, stereotyping, or discrimination, typically against women, on the basis of sex.\n          </div>\n          <div class=\"oed\" style=\"margin-top:0.4rem;\">\n            <strong>discrimination</strong> (n.): The unjust or prejudicial treatment of different categories of people, especially on the grounds of race, age, sex, or disability.\n          </div>\n          <p style=\"margin-top:0.55rem;\">Map markers and score bars record <em>reported claims and public record</em>. This site does <strong>not</strong> adjudicate whether any event meets a dictionary definition \u2014 it surfaces contemporaneous reporting and official records so readers can judge.</p>\n\n          <h3 class=\"def-h3\">Controversy themes (map triangles)</h3>\n          <ul class=\"def-list\">\n            <li><strong>Race-relations</strong> \u2014 Prejudice, stereotyping, or hierarchy language about race or ethnicity (OED \u201cracist\u201d lens).</li>\n            <li><strong>MaoriTreaty</strong> \u2014 Remarks or actions framed in public debate as hostile, dismissive, or discriminatory toward M\u0101ori or Te Tiriti / Treaty settlements and policy.</li>\n            <li><strong>WomenSexism</strong> \u2014 Remarks or conduct treating women as inferior, or reducing women to a demeaning political \u201cproblem\u201d (dictionary \u201csexism\u201d).</li>\n            <li><strong>QueerRainbow</strong> \u2014 Remarks or high-profile positions publicly framed as punching down on LGBTQI+ people or rights.</li>\n            <li><strong>Climate</strong> \u2014 Climate-science denial or equivalent high-profile dismissal of climate risk in political speech or portfolio conduct.</li>\n            <li><strong>Crime</strong> \u2014 Documented criminal convictions or court findings on the public record (not mere allegation or charge alone).</li>\n            <li><strong>Other</strong> \u2014 Controversies in mainstream coverage that do not fit the theme buckets above.</li>\n            <li><strong>Bill</strong> \u2014 A bill linked to a member or party on the timeline, with passed or defeated where recorded.</li>\n          </ul>\n\n          <h3 class=\"def-h3\">Sensitivity scores (0\u2013100 bars on cards &amp; party pages)</h3>\n          <ul class=\"def-list\">\n            <li><strong>Rainbow</strong> \u2014 Heuristic of how supportive vs hostile the public record (House speech + news) looks toward rainbow communities. Higher \u2248 more supportive in this snapshot.</li>\n            <li><strong>Race-relations</strong> \u2014 Heuristic of race-relations sensitivity. Higher \u2248 more progressive / less hostile in the snapshot.</li>\n            <li><strong>Climate</strong> \u2014 Heuristic of climate-policy / science alignment in the public record. Higher \u2248 more climate-aligned.</li>\n            <li><strong>Women\u2019s equality</strong> \u2014 Heuristic of women\u2019s-equality sensitivity in speech and coverage. Higher \u2248 more equality-aligned.</li>\n            <li><strong>Immigrant</strong> \u2014 Heuristic of immigration / migrant-community sensitivity. Higher \u2248 more migrant-supportive in the snapshot.</li>\n            <li><strong>Colour scale</strong> \u2014 Fill is red at 0, yellow at 50; green appears only above 50 through 100. Tick marks at 25 / 50 / 75.</li>\n            <li><strong>How built</strong> \u2014 Drawn from parliamentary record and news about that person in the snapshot dataset \u2014 not a poll, not an official ranking.</li>\n          </ul>\n\n          <h3 class=\"def-h3\">Party Stats &amp; left\u2013right</h3>\n          <ul class=\"def-list\">\n            <li><strong>Party averages</strong> \u2014 Mean of member sensitivity heuristics for everyone included by the current filter (active only, selected year, election term, or all-time).</li>\n            <li><strong>Left\u2013right (0\u2013100)</strong> \u2014 Site heuristic of overall ideological placement (0 = left, 100 = right). Not an official party ideology score.</li>\n            <li><strong>Member count</strong> \u2014 Number of people in the party cohort used for that average under the active filter.</li>\n            <li><strong>Controversy tallies</strong> \u2014 Counts of themed events for members in scope, only while they were in that party and inside the filter\u2019s year window.</li>\n          </ul>\n\n          <h3 class=\"def-h3\">Map symbols</h3>\n          <ul class=\"def-list\">\n            <li><strong>Solid square</strong> \u2014 Joined a party / entered Parliament on that line.</li>\n            <li><strong>Empty square</strong> \u2014 Left a party or left Parliament.</li>\n            <li><strong>Circle</strong> \u2014 Other station on the line (e.g. role marker).</li>\n            <li><strong>Dotted path</strong> \u2014 Party switch (colour fades from previous party to new party); hover shows who moved where.</li>\n            <li><strong>Orange / themed triangle</strong> \u2014 Controversy, crime, or related marker above the line.</li>\n            <li><strong>Orange numbered bubble</strong> \u2014 Overlapping controversies / crimes / bills grouped by proximity.</li>\n            <li><strong>Indigo numbered bubble</strong> \u2014 Overlapping MP name labels; open list shows \u25a0 join, \u25a1 leave, or \u25cf role for each person.</li>\n          </ul>\n\n          <p>Attribution is only to the <strong>speaker or actor</strong>, not to those who called them out. Prefer Hansard and multi-outlet citations where available. Use <strong>Sources &amp; fairness</strong> for outlet lean indicators.</p>\n          <p class=\"disclaimer\">Disclaimer: Snapshot only. Not exhaustive. Lean labels and sensitivity scores are approximate heuristics. Always verify primary sources.</p></div>";
       html += '<p style="font-size:0.72rem;color:#fbbf24;margin-top:0.75rem;">Always open the linked article or Hansard extract before drawing a firm conclusion.</p>';
       body.innerHTML = html;
     }
