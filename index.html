@@ -7873,10 +7873,49 @@ function eventSourcesHtml(ev) {
       return age <= (days * 24 * 60 * 60 * 1000) && age >= -(2 * 24 * 60 * 60 * 1000);
     }
 
+    function normalizeTitleForDedupe(title) {
+      return String(title || "")
+        .toLowerCase()
+        .replace(/[\u2018\u2019\u201c\u201d]/g, "'")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 160);
+    }
+
     function dedupeKey(h) {
-      const link = String(h.url || h.link || "").toLowerCase().replace(/\/$/, "").split("?")[0];
+      // Prefer canonical URL (no query/hash); also key by source+title so same story from same outlet merges
+      let link = String(h.url || h.link || "").toLowerCase().trim();
+      link = link.split("#")[0].split("?")[0].replace(/\/$/, "");
+      // strip common tracking junk already removed by split; also google news wrappers keep full path
       if (link && link !== "#" && link.length > 12) return "u:" + link;
-      return "t:" + String(h.title || "").toLowerCase().replace(/\s+/g, " ").trim().slice(0, 140);
+      const agency = (typeof normalizeNewsAgency === "function"
+        ? (normalizeNewsAgency(h.agency, h.url) || h.agency || "")
+        : (h.agency || "")).toLowerCase();
+      const title = normalizeTitleForDedupe(h.title);
+      if (agency && title) return "s:" + agency + "|" + title;
+      return "t:" + title;
+    }
+
+    function dedupeHeadlineList(list) {
+      const seen = {};
+      const out = [];
+      (list || []).forEach(function(h) {
+        if (!h) return;
+        const k = dedupeKey(h);
+        if (!k || seen[k]) return;
+        // secondary: same outlet + near-identical title even if URL differs slightly
+        const agency = (typeof normalizeNewsAgency === "function"
+          ? (normalizeNewsAgency(h.agency, h.url) || h.agency || "")
+          : (h.agency || "")).toLowerCase();
+        const title = normalizeTitleForDedupe(h.title);
+        const sk = agency && title ? ("s:" + agency + "|" + title) : null;
+        if (sk && seen[sk]) return;
+        seen[k] = true;
+        if (sk) seen[sk] = true;
+        out.push(h);
+      });
+      return out;
     }
 
     function filterHeadlineForVote(h) {
@@ -8001,7 +8040,7 @@ function eventSourcesHtml(ev) {
         .trim()
         .slice(0, 280);
       const mpIds = matchMpIdsFromText(title + " " + summary);
-      const id = "rss-" + String(link || title).toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 80);
+      const id = "rss-" + String(link || title).toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 200);
       const image = pickArticleImage(item) || extractImageFromHtml(item.description || item.content || "");
       const agencyNorm = normalizeNewsAgency(agency || "RNZ", link) || normalizeNewsAgency(agency, "") || null;
       return {
@@ -8422,19 +8461,144 @@ function eventSourcesHtml(ev) {
         out.push(h);
         try { upsertArchiveHeadline(h); } catch (e) {}
       });
-      out.sort(function(a, b) {
+      const deduped = dedupeHeadlineList(out);
+      deduped.sort(function(a, b) {
         const da = parseHeadlineDate(a) ? parseHeadlineDate(a).getTime() : 0;
         const db = parseHeadlineDate(b) ? parseHeadlineDate(b).getTime() : 0;
         return db - da;
       });
-      if (out.length) {
-        NEWS_HEADLINES = out.slice(0, 200);
+      if (deduped.length) {
+        NEWS_HEADLINES = deduped.slice(0, 200);
         try {
           newsBrowseList = NEWS_HEADLINES.map(function(h) { return h.id; });
         } catch (e) {}
         renderNewsVoteUI();
       }
       return out.length;
+    }
+
+    
+    const NEWS_WORKER_REPO = "FlavourThink/nz-politics-workers-collection";
+    const NEWS_WORKER_DISPATCH_TYPE = "refresh-news";
+
+    /**
+     * Ask GitHub Actions to run the news worker (repository_dispatch).
+     * Needs a PAT with "actions: write" — set once in the browser console:
+     *   localStorage.setItem("nzpt_gha_dispatch_token", "ghp_...");
+     * Or set window.__newsDispatchUrl to your Cloudflare "door" that posts the dispatch.
+     * Without either, refresh still pulls existing news.json + client RSS.
+     */
+    async function triggerNewsWorker() {
+      if (window.__newsDispatchUrl) {
+        try {
+          const res = await fetch(window.__newsDispatchUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ event_type: NEWS_WORKER_DISPATCH_TYPE })
+          });
+          return { ok: res.ok, via: "door", status: res.status };
+        } catch (e) {
+          return { ok: false, via: "door", error: String(e.message || e) };
+        }
+      }
+      let token = null;
+      try { token = localStorage.getItem("nzpt_gha_dispatch_token"); } catch (e) {}
+      if (!token && window.__GHA_DISPATCH_TOKEN) token = window.__GHA_DISPATCH_TOKEN;
+      if (!token) {
+        return { ok: false, via: "none", error: "no dispatch token (optional)" };
+      }
+      try {
+        const res = await fetch("https://api.github.com/repos/" + NEWS_WORKER_REPO + "/dispatches", {
+          method: "POST",
+          headers: {
+            "Accept": "application/vnd.github+json",
+            "Authorization": "Bearer " + token,
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ event_type: NEWS_WORKER_DISPATCH_TYPE, client_payload: { source: "site-refresh" } })
+        });
+        // 204 = accepted
+        return { ok: res.status === 204 || res.ok, via: "github", status: res.status };
+      } catch (e) {
+        return { ok: false, via: "github", error: String(e.message || e) };
+      }
+    }
+
+    async function waitForWorkerNewsUpdate(prevUpdatedAt, setStatus, maxMs) {
+      maxMs = maxMs || 90000;
+      const start = Date.now();
+      let attempt = 0;
+      while (Date.now() - start < maxMs) {
+        attempt++;
+        if (setStatus) setStatus("Worker running… checking results (" + attempt + ")");
+        try {
+          const res = await fetch(LIVE_NEWS_URL + "?t=" + Date.now(), { cache: "no-store", mode: "cors" });
+          if (res.ok) {
+            const data = await res.json();
+            const u = data && data.updatedAt;
+            if (u && u !== prevUpdatedAt) {
+              return { ok: true, data: data, updatedAt: u };
+            }
+          }
+        } catch (e) {}
+        await new Promise(function(r) { setTimeout(r, 4000); });
+      }
+      return { ok: false, timeout: true };
+    }
+
+    async function refreshHeadlinesWithWorker(opts) {
+      opts = opts || {};
+      const status = document.getElementById("newsFeedStatus");
+      const btn = document.getElementById("newsRefreshFeed");
+      function setStatus(msg) { if (status) status.textContent = msg || ""; }
+
+      if (window.__newsFetchBusy) {
+        setStatus("already checking…");
+        return;
+      }
+      window.__newsFetchBusy = true;
+      if (btn) { btn.disabled = true; btn.classList.add("busy"); }
+
+      let prevUpdated = null;
+      try {
+        const cur = await fetch(LIVE_NEWS_URL + "?t=" + Date.now(), { cache: "no-store", mode: "cors" });
+        if (cur.ok) {
+          const j = await cur.json();
+          prevUpdated = j.updatedAt || null;
+        }
+      } catch (e) {}
+
+      setStatus("Calling news worker…");
+      const trig = await triggerNewsWorker();
+      if (trig.ok) {
+        setStatus("Worker started — collecting RSS in background…");
+        const waited = await waitForWorkerNewsUpdate(prevUpdated, setStatus, 90000);
+        if (waited.ok && waited.data) {
+          try {
+            applyWorkerArticlesToFeed(waited.data.articles || []);
+            setStatus("Worker updated · " + (waited.data.count || (waited.data.articles || []).length) + " articles");
+          } catch (e) {
+            setStatus("Worker finished but apply failed — loading feed…");
+          }
+        } else {
+          setStatus("Worker still running or unchanged — loading latest file + RSS…");
+        }
+      } else {
+        if (trig.via === "none") {
+          setStatus("Loading headlines (worker auto-runs every 3h; optional token can trigger now)…");
+        } else {
+          setStatus("Worker trigger failed — loading latest file + RSS…");
+        }
+      }
+
+      window.__newsFetchBusy = false;
+      try {
+        await fetchNewsHeadlines({ silent: false, merge: true, replace: false });
+      } catch (e) {
+        setStatus("Refresh error");
+        if (btn) { btn.disabled = false; btn.classList.remove("busy"); }
+      }
     }
 
     async function pullGitHubNews(publishNew) {
@@ -8533,7 +8697,7 @@ async function pullGitHubPolls() {
           const db = parseHeadlineDate(b) ? parseHeadlineDate(b).getTime() : 0;
           return db - da;
         });
-        if (NEWS_HEADLINES.length > 80) NEWS_HEADLINES = NEWS_HEADLINES.slice(0, 80);
+        if (NEWS_HEADLINES.length > 80) NEWS_HEADLINES = dedupeHeadlineList(NEWS_HEADLINES || []).slice(0, 200);
         renderNewsVoteUI();
         return true;
       }
@@ -8944,21 +9108,24 @@ async function pullGitHubPolls() {
       if (!pool.length) {
         try { pool = loadNewsArchive() || []; } catch (e) { pool = []; }
       }
+      // Only count real articles that would appear after active-MP / age filters if possible
+      try {
+        pool = filterHeadlinesToActiveMps(pool);
+        pool = filterHeadlinesLastMonths(pool, NEWS_MAX_AGE_DAYS);
+      } catch (e) {}
+      pool = dedupeHeadlineList(pool);
       const counts = {};
-      CANONICAL_NEWS_SOURCES.forEach(function(s) { counts[s] = 0; });
       pool.forEach(function(h) {
         const norm = normalizeNewsAgency(h.agency, h.url);
         if (!norm) return;
+        if (CANONICAL_NEWS_SOURCES.indexOf(norm) < 0) return;
         counts[norm] = (counts[norm] || 0) + 1;
       });
-      (typeof RSS_FEEDS !== "undefined" ? RSS_FEEDS : []).forEach(function(f) {
-        const norm = normalizeNewsAgency(f.agency, f.url);
-        if (norm && counts[norm] == null) counts[norm] = 0;
-      });
+      // Only sources with at least one article
       return Object.keys(counts).map(function(a) {
         return { agency: a, count: counts[a] || 0 };
       }).filter(function(r) {
-        return CANONICAL_NEWS_SOURCES.indexOf(r.agency) >= 0;
+        return r.count > 0;
       }).sort(function(x, y) {
         if (y.count !== x.count) return y.count - x.count;
         return x.agency.localeCompare(y.agency);
@@ -9078,6 +9245,7 @@ let newsLayoutResizeBound = false;
       list = filterHeadlinesToActiveMps(list);
       list = filterHeadlinesLastMonths(list, NEWS_MAX_AGE_DAYS);
       list = list.filter(function(h) { return isSourceEnabled(h.agency, h.url); });
+      list = dedupeHeadlineList(list);
       list = sortHeadlinesNewestFirst(list);
 
       const display = list;
@@ -10055,7 +10223,7 @@ function renderNewsTallies() {
       const refresh = document.getElementById("newsRefreshFeed");
 
       window.__nvRefresh = function() {
-        fetchNewsHeadlines({ silent: false, merge: true, replace: false });
+        refreshHeadlinesWithWorker({ silent: false });
       };
 
       if (exp) exp.addEventListener("click", function() {
