@@ -2699,7 +2699,7 @@
     }
     .news-item-image-slot {
       width: 100%;
-      height: 160px;
+      height: 250px;
       border-radius: 0;
       background: #0f172a;
       border: none;
@@ -2708,7 +2708,7 @@
     }
     .news-item-image {
       width: 100%;
-      height: 160px;
+      height: 250px;
       object-fit: cover;
       display: block;
       background: #0f172a;
@@ -2919,7 +2919,7 @@
     }
     .news-item-image-slot,
     .news-item-image {
-      height: min(160px, 28vh);
+      height: 250px;
     }
     .news-item-headline {
       font-size: clamp(0.85rem, 2.8vw, 0.98rem);
@@ -3112,6 +3112,7 @@
       border: none;
     }
     .news-mp-vote .mp-chip {
+      color: #fff !important;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -3163,6 +3164,29 @@
       font-weight: 900;
       margin: 0;
     }
+
+
+    .news-vote-layout, .news-vote-card, .news-feed-list, .news-feed-shell, .news-carousel {
+      max-width: 100%; width: 100%; box-sizing: border-box; overflow-x: hidden;
+    }
+    .news-carousel { overflow: hidden !important; max-width: 100% !important; }
+    .news-carousel-multi .news-feed-item, .news-feed-item {
+      height: 400px; max-height: 400px; box-sizing: border-box; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    body, #view-news { overflow-x: hidden; max-width: 100%; }
+
+
+    .news-item-image-slot, .news-item-image { height: 250px !important; max-height: 250px !important; }
+    .news-feed-item, .news-carousel-multi .news-feed-item { height: 400px !important; max-height: 400px !important; }
+    .news-carousel { overflow: hidden !important; }
+    .news-nav-btn {
+      top: 0 !important; bottom: 0 !important; height: 100% !important; width: 2.75rem !important;
+      transform: none !important; border-radius: 0 !important;
+      background: rgba(15,23,42,0.62) !important; font-size: 1.8rem !important;
+    }
+    .news-nav-btn.prev { left: 0 !important; }
+    .news-nav-btn.next { right: 0 !important; }
 
   </style>
 </head>
@@ -3472,10 +3496,7 @@
     <div class="view active" id="view-news">
       <div class="news-vote-layout">
         <section class="news-vote-card" aria-label="Headline vote">
-          <div class="news-vote-head">
-            <h2 style="margin:0;font-size:1.15rem;">Current news cycle</h2>
-            <p class="news-vote-note">Swipe <strong>left/right</strong> through headlines about <strong>active MPs</strong>. Tap the story (image, source, date, title) to open the original. Vote <strong>Positive</strong> or <strong>Negative</strong> per MP. Use source toggles to choose outlets.</p>
-          </div>
+          
           <div class="news-toolbar">
             <div id="newsVoteProgress" class="news-progress"></div>
             <div class="news-toolbar-actions">
@@ -8955,14 +8976,21 @@ let newsLayoutResizeBound = false;
       const display = list;
       newsCarouselList = display;
 
-      const shellWidth = Math.max(host.clientWidth || 0, (host.parentElement && host.parentElement.clientWidth) || 0, 320);
-      const cardW = shellWidth < 520 ? Math.min(300, shellWidth * 0.82) : (shellWidth < 800 ? 280 : 300);
-      const gap = 12;
-      const visible = Math.max(1, Math.floor((shellWidth + gap) / (cardW + gap)));
+      const shellWidth = Math.max(280, Math.min(
+        host.clientWidth || 0,
+        (host.parentElement && host.parentElement.clientWidth) || 99999,
+        document.documentElement.clientWidth || window.innerWidth || 99999
+      ));
+      const gap = 10;
+      let visible = 1;
+      if (shellWidth >= 960) visible = 3;
+      else if (shellWidth >= 640) visible = 2;
+      const peek = Math.max(32, Math.min(64, Math.floor(shellWidth * 0.08)));
+      const safeCardW = Math.max(200, Math.floor((shellWidth - peek - gap * (visible - 1) - 8) / visible));
 
       if (elProg) {
         elProg.textContent = display.length
-          ? (display.length + " article" + (display.length === 1 ? "" : "s") + " · horizontal carousel · ~" + visible + " visible")
+          ? (display.length + " article" + (display.length === 1 ? "" : "s") + " · horizontal carousel · " + visible + " across")
           : "No articles for selected sources…";
       }
 
@@ -8978,13 +9006,33 @@ let newsLayoutResizeBound = false;
       function partyColorForMp(mpId) {
         const person = PEOPLE.find(function(p) { return p.id === mpId; });
         if (!person) return "#64748b";
+        const map = {
+          national: "#0057b8", labour: "#d82a20", nzfirst: "#0a3d1a", act: "#e6007e",
+          green: "#098137", maori: "#b91c1c", independent: "#64748b"
+        };
+        let pid = person.partyId || person.party || "";
+        if (!pid && person.currentParty) {
+          const cp = String(person.currentParty).toLowerCase();
+          if (cp.indexOf("national") >= 0) pid = "national";
+          else if (cp.indexOf("labour") >= 0) pid = "labour";
+          else if (cp.indexOf("first") >= 0) pid = "nzfirst";
+          else if (cp.indexOf("act") >= 0) pid = "act";
+          else if (cp.indexOf("green") >= 0) pid = "green";
+          else if (cp.indexOf("maori") >= 0 || cp.indexOf("māori") >= 0) pid = "maori";
+        }
+        if (!pid && person.segments && person.segments.length) {
+          pid = person.segments[person.segments.length - 1].party;
+        }
+        pid = String(pid).toLowerCase().replace(/\s+/g, "");
+        if (pid === "nzfirst" || pid.indexOf("first") >= 0) pid = "nzfirst";
         const party = (typeof PARTIES !== "undefined" ? PARTIES : []).find(function(p) {
-          return p.id === person.party || p.name === person.party;
+          return p.id === pid || p.id === person.partyId ||
+            (p.name && person.currentParty && p.name.toLowerCase() === String(person.currentParty).toLowerCase()) ||
+            (p.name && person.party && p.name.toLowerCase() === String(person.party).toLowerCase());
         });
-        if (party && party.color) return party.color;
-        // fallback map
-        const map = { national: "#0057b8", labour: "#d82a20", nzfirst: "#0a3d1a", act: "#e6007e", green: "#098137", maori: "#b91c1c" };
-        return map[person.party] || "#64748b";
+        if (party && party.color && String(party.color).indexOf("var(") < 0) return party.color;
+        if (map[pid]) return map[pid];
+        return "#64748b";
       }
 
       function cardHtml(item, idx) {
@@ -8996,7 +9044,7 @@ let newsLayoutResizeBound = false;
           const crossOn = v === "reject" ? " is-on" : "";
           const col = partyColorForMp(mpId);
           return '<div class="news-mp-vote" data-mp="' + mpId + '">' +
-            '<button type="button" class="mp-chip" data-open-mp="' + mpId + '" style="background:' + col + ';border-color:' + col + '" title="Open profile">' + name + '</button>' +
+            '<button type="button" class="mp-chip" data-open-mp="' + mpId + '" style="background:' + col + ';border-color:' + col + ';color:#fff" title="Open profile">' + name + '</button>' +
             '<button type="button" class="nv-banner positive' + tickOn + '" data-mp-vote="accept" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Positive">' +
               '<span class="nv-badge">✓</span> Positive</button>' +
             '<button type="button" class="nv-banner negative' + crossOn + '" data-mp-vote="reject" data-mp="' + mpId + '" data-hid="' + item.id + '" title="Negative">' +
@@ -9020,10 +9068,8 @@ let newsLayoutResizeBound = false;
             ' · <span class="news-item-date">' + dateLabel + '</span></p>' +
             '<h3 class="news-item-headline">' + (item.title || "Untitled") + '</h3>';
         const isActive = idx === newsCarouselIndex;
-        const body = isActive
-          ? ('<a class="news-card-link" href="' + href + '" target="_blank" rel="noopener noreferrer">' + bodyInner + '</a>')
-          : ('<div class="news-card-link news-card-peek" data-go-idx="' + idx + '" role="button" tabindex="0">' + bodyInner + '</div>');
-        return '<article class="news-feed-item' + (isActive ? " is-active" : "") + '" data-idx="' + idx + '" data-id="' + item.id + '" style="flex:0 0 ' + cardW + 'px;width:' + cardW + 'px;max-width:' + cardW + 'px;margin-right:' + gap + 'px">' +
+        const body = '<a class="news-card-link" href="' + href + '" target="_blank" rel="noopener noreferrer">' + bodyInner + '</a>';
+        return '<article class="news-feed-item' + (isActive ? " is-active" : "") + '" data-idx="' + idx + '" data-id="' + item.id + '" style="flex:0 0 ' + safeCardW + 'px;width:' + safeCardW + 'px;max-width:' + safeCardW + 'px;margin-right:' + gap + 'px;height:400px">' +
           body +
           (mpsHtml ? '<div class="news-mp-row">' + mpsHtml + '</div>' : '') +
           '</article>';
@@ -9044,7 +9090,7 @@ let newsLayoutResizeBound = false;
 
       const track = document.getElementById("newsCarouselTrack");
       const carousel = document.getElementById("newsCarousel");
-      const step = cardW + gap;
+      const step = safeCardW + gap;
 
       function goTo(idx, animate) {
         if (!display.length) return;
@@ -9054,14 +9100,21 @@ let newsLayoutResizeBound = false;
         if (track) {
           if (animate === false) track.classList.add("swiping");
           else track.classList.remove("swiping");
-          // Pin active card near left with a small inset so neighbours show on the right
-          const inset = Math.min(24, Math.max(0, (shellWidth - cardW) / 2));
-          track.style.transform = "translateX(" + (inset - newsCarouselIndex * step) + "px)";
+          let x = -(newsCarouselIndex * step);
+          if (newsCarouselIndex > 0) x += Math.floor(peek * 0.45);
+          const minX = Math.min(0, shellWidth - (display.length * step - gap) - peek);
+          if (x < minX) x = minX;
+          if (x > 0) x = 0;
+          track.style.transform = "translateX(" + x + "px)";
         }
         host.querySelectorAll(".news-feed-item").forEach(function(el) {
           const ii = Number(el.getAttribute("data-idx"));
           if (ii === newsCarouselIndex) el.classList.add("is-active");
           else el.classList.remove("is-active");
+          // approximate on-screen for styling
+          const left = (ii - newsCarouselIndex) * step;
+          if (left + safeCardW > -20 && left < shellWidth + 20) el.classList.add("is-visible");
+          else el.classList.remove("is-visible");
         });
         const dots = document.getElementById("newsCarouselDots");
         if (dots) dots.textContent = (newsCarouselIndex + 1) + " / " + display.length;
@@ -9130,8 +9183,9 @@ let newsLayoutResizeBound = false;
           if (axis !== "x") return;
           if (e.cancelable) e.preventDefault();
           dx = adx;
-          const inset = Math.min(24, Math.max(0, (shellWidth - cardW) / 2));
-          track.style.transform = "translateX(" + (inset - newsCarouselIndex * step + dx) + "px)";
+          let x = -(newsCarouselIndex * step) + dx;
+          if (newsCarouselIndex > 0) x += Math.floor(peek * 0.45);
+          track.style.transform = "translateX(" + x + "px)";
         }
         function onUp() {
           if (!dragging) return;
