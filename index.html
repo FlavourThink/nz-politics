@@ -3224,6 +3224,21 @@
     }
     .sources-interp { font-size: 0.78rem; line-height: 1.45; color: var(--muted); }
     .sources-interp .oed { margin-top: 0.4rem; }
+
+    .src-dd-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .src-dd-left { display: inline-flex; align-items: center; gap: 0.4rem; min-width: 0; }
+    .src-dd-logo { height: 18px; width: 18px; object-fit: contain; border-radius: 3px; background: #fff; padding: 1px; flex-shrink: 0; }
+    .src-dd-logo-ph { width: 18px; height: 18px; border-radius: 3px; background: #334155; flex-shrink: 0; display: inline-block; }
+    .src-dd-name { font-weight: 700; }
+    .news-vote-bars-panel { display: block !important; visibility: visible !important; min-height: 220px; }
+    .news-vote-bars { min-height: 200px; }
+    .news-vote-bars svg { display: block; width: 100%; max-width: 100%; height: auto; min-height: 220px; }
+    .news-item-image { opacity: 1 !important; visibility: visible !important; }
+
+
+    .nv-time-chart { display: block !important; width: 100% !important; min-height: 220px; background: #0b1220; border-radius: 10px; }
+    .news-vote-bars-panel { display: block !important; margin-top: 1rem; }
+    .news-item-image { display: block !important; width: 100%; height: 250px; object-fit: cover; }
   </style>
 </head>
 <body>
@@ -7996,6 +8011,18 @@ function eventSourcesHtml(ev) {
       return "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(domain) + "&sz=64";
     }
 
+    function proxiedNewsImage(url) {
+      if (!url) return "";
+      let u = String(url).trim();
+      if (u.indexOf("//") === 0) u = "https:" + u;
+      if (!/^https?:\/\//i.test(u)) return "";
+      try {
+        return "https://wsrv.nl/?url=" + encodeURIComponent(u.replace(/^https?:\/\//i, "")) + "&w=800&output=webp";
+      } catch (e) {
+        return u;
+      }
+    }
+
     function pickArticleImage(item) {
       if (!item) return null;
       const direct = item.image || item.imageUrl || item.urlToImage || item.thumbnail || item.enclosureUrl || null;
@@ -8271,111 +8298,117 @@ function eventSourcesHtml(ev) {
       }
       if (!pid && person.segments && person.segments.length) pid = person.segments[person.segments.length - 1].party;
       pid = String(pid).toLowerCase().replace(/\s+/g, "");
-      if (map[pid]) return map[pid];
-      return fallback || "#38bdf8";
+      return map[pid] || fallback || "#38bdf8";
     }
 
     function renderNewsVoteBars() {
       const host = document.getElementById("newsVoteBars");
       if (!host) return;
-
       const data = loadNewsVotes();
       const mpMap = data.mp || {};
-      // Build timeline points from history: cumulative net (accept - reject) per MP over time
       const series = {};
       Object.keys(mpMap).forEach(function(mpId) {
-        const hist = (mpMap[mpId].history || []).slice().sort(function(a, b) {
-          return (a.ts || 0) - (b.ts || 0);
-        });
-        if (!hist.length) {
-          // synthesize from totals if no history
-          const a = mpMap[mpId].accept || 0;
-          const r = mpMap[mpId].reject || 0;
-          if (a + r === 0) return;
-          series[mpId] = [{ t: Date.now(), net: a - r, pos: a, neg: r }];
-          return;
+        const row = mpMap[mpId] || {};
+        const hist = (row.history || []).slice().sort(function(a, b) { return (a.ts || 0) - (b.ts || 0); });
+        if (hist.length) {
+          let pos = 0, neg = 0;
+          series[mpId] = hist.map(function(h) {
+            if (h.choice === "accept") pos++;
+            if (h.choice === "reject") neg++;
+            return { t: h.ts || Date.now(), net: pos - neg, pos: pos, neg: neg };
+          });
+        } else {
+          const a = row.accept || 0;
+          const r = row.reject || 0;
+          if (a + r > 0) {
+            const now = Date.now();
+            series[mpId] = [
+              { t: now - 86400000, net: 0, pos: 0, neg: 0 },
+              { t: now, net: a - r, pos: a, neg: r }
+            ];
+          }
         }
-        let pos = 0, neg = 0;
-        series[mpId] = hist.map(function(h) {
-          if (h.choice === "accept") pos++;
-          if (h.choice === "reject") neg++;
-          return { t: h.ts || Date.now(), net: pos - neg, pos: pos, neg: neg };
-        });
       });
-
       const mpIds = Object.keys(series);
-      if (!mpIds.length) {
-        host.innerHTML = "<p class='news-vote-note'>No votes yet — use Positive / Negative under an article. Chart shows net score over time (positive above zero, negative below).</p>";
-        return;
-      }
-
-      // Collect all timestamps
-      let tMin = Infinity, tMax = -Infinity;
-      let yMin = 0, yMax = 0;
-      mpIds.forEach(function(id) {
-        series[id].forEach(function(p) {
-          if (p.t < tMin) tMin = p.t;
-          if (p.t > tMax) tMax = p.t;
-          if (p.net < yMin) yMin = p.net;
-          if (p.net > yMax) yMax = p.net;
-        });
-      });
-      if (tMax <= tMin) { tMin -= 3600000; tMax += 3600000; }
-      yMin = Math.min(-1, yMin - 1);
-      yMax = Math.max(1, yMax + 1);
-
-      const W = 720, H = 280, padL = 44, padR = 16, padT = 16, padB = 36;
+      const W = 720, H = 260, padL = 48, padR = 20, padT = 20, padB = 40;
       const plotW = W - padL - padR, plotH = H - padT - padB;
-      function xAt(ts) {
-        return padL + ((ts - tMin) / (tMax - tMin)) * plotW;
+      let tMin = Date.now() - 7 * 86400000, tMax = Date.now();
+      let yMin = -2, yMax = 2;
+      if (mpIds.length) {
+        tMin = Infinity; tMax = -Infinity; yMin = 0; yMax = 0;
+        mpIds.forEach(function(id) {
+          series[id].forEach(function(p) {
+            if (p.t < tMin) tMin = p.t;
+            if (p.t > tMax) tMax = p.t;
+            if (p.net < yMin) yMin = p.net;
+            if (p.net > yMax) yMax = p.net;
+          });
+        });
+        if (tMax <= tMin) { tMin -= 3600000; tMax += 3600000; }
+        yMin = Math.min(-1, Math.floor(yMin - 1));
+        yMax = Math.max(1, Math.ceil(yMax + 1));
       }
-      function yAt(net) {
-        return padT + ((yMax - net) / (yMax - yMin)) * plotH;
-      }
+      function xAt(ts) { return padL + ((ts - tMin) / (tMax - tMin)) * plotW; }
+      function yAt(net) { return padT + ((yMax - net) / (yMax - yMin)) * plotH; }
       const zeroY = yAt(0);
-
-      let html = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="background:#0b1220;border-radius:10px;border:1px solid var(--border)">';
-      // grid
-      html += '<line x1="' + padL + '" y1="' + zeroY + '" x2="' + (W - padR) + '" y2="' + zeroY + '" stroke="#475569" stroke-width="1.5" />';
-      html += '<text x="' + (padL - 6) + '" y="' + (zeroY + 3) + '" text-anchor="end" fill="#94a3b8" font-size="10">0</text>';
-      html += '<text x="' + (padL - 6) + '" y="' + (padT + 10) + '" text-anchor="end" fill="#22c55e" font-size="10">+' + yMax + '</text>';
-      html += '<text x="' + (padL - 6) + '" y="' + (H - padB) + '" text-anchor="end" fill="#ef4444" font-size="10">' + yMin + '</text>';
-      // time labels
-      html += '<text x="' + padL + '" y="' + (H - 10) + '" fill="#64748b" font-size="10">' + new Date(tMin).toLocaleDateString("en-NZ", { day: "numeric", month: "short" }) + '</text>';
-      html += '<text x="' + (W - padR) + '" y="' + (H - 10) + '" text-anchor="end" fill="#64748b" font-size="10">' + new Date(tMax).toLocaleDateString("en-NZ", { day: "numeric", month: "short" }) + '</text>';
-
+      let svg = '<svg class="nv-time-chart" viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Votes over time">';
+      svg += '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#0b1220"/>';
+      for (let g = yMin; g <= yMax; g++) {
+        const y = yAt(g);
+        svg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#1e293b" />';
+      }
+      svg += '<line x1="' + padL + '" y1="' + zeroY + '" x2="' + (W - padR) + '" y2="' + zeroY + '" stroke="#64748b" stroke-width="2" />';
+      svg += '<text x="' + (padL - 8) + '" y="' + (zeroY + 4) + '" text-anchor="end" fill="#94a3b8" font-size="11">0</text>';
+      svg += '<text x="' + (padL - 8) + '" y="' + (padT + 12) + '" text-anchor="end" fill="#22c55e" font-size="11">+' + yMax + '</text>';
+      svg += '<text x="' + (padL - 8) + '" y="' + (H - padB + 4) + '" text-anchor="end" fill="#ef4444" font-size="11">' + yMin + '</text>';
+      svg += '<text x="' + padL + '" y="' + (H - 12) + '" fill="#64748b" font-size="10">' + new Date(tMin).toLocaleDateString("en-NZ", { day: "numeric", month: "short" }) + '</text>';
+      svg += '<text x="' + (W - padR) + '" y="' + (H - 12) + '" text-anchor="end" fill="#64748b" font-size="10">' + new Date(tMax).toLocaleDateString("en-NZ", { day: "numeric", month: "short" }) + '</text>';
       const colors = ["#38bdf8", "#a78bfa", "#f472b6", "#fbbf24", "#34d399", "#fb923c", "#e879f9", "#2dd4bf"];
-      mpIds.forEach(function(mpId, idx) {
-        const person = PEOPLE.find(function(p) { return p.id === mpId; });
-        const col = voteLineColor(mpId, person, colors[idx % colors.length]);
-        const pts = series[mpId];
-        let d = "";
-        pts.forEach(function(p, i) {
-          d += (i ? " L " : "M ") + xAt(p.t) + " " + yAt(p.net);
+      if (mpIds.length) {
+        mpIds.forEach(function(mpId, idx) {
+          const person = PEOPLE.find(function(p) { return p.id === mpId; });
+          const col = voteLineColor(mpId, person, colors[idx % colors.length]);
+          const pts = series[mpId];
+          let d = "";
+          pts.forEach(function(p, ii) { d += (ii ? " L " : "M ") + xAt(p.t) + " " + yAt(p.net); });
+          svg += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" />';
+          pts.forEach(function(p) {
+            svg += '<circle cx="' + xAt(p.t) + '" cy="' + yAt(p.net) + '" r="4" fill="' + col + '" stroke="#0b1220" stroke-width="1.5"><title>' + (person ? person.name : mpId) + " · net " + p.net + "</title></circle>";
+          });
         });
-        html += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-linejoin="round" />';
-        pts.forEach(function(p) {
-          html += '<circle cx="' + xAt(p.t) + '" cy="' + yAt(p.net) + '" r="3.5" fill="' + col + '" stroke="#0b1220" stroke-width="1">' +
-            '<title>' + (person ? person.name : mpId) + " · net " + p.net + " (+" + p.pos + " / −" + p.neg + ")</title></circle>";
+      } else {
+        svg += '<text x="' + (W / 2) + '" y="' + (H / 2) + '" text-anchor="middle" fill="#94a3b8" font-size="14">No votes yet — chart fills as you vote</text>';
+      }
+      svg += "</svg>";
+      let legend = '<div style="display:flex;flex-wrap:wrap;gap:0.5rem 0.85rem;margin-top:0.5rem;font-size:0.75rem;font-weight:700">';
+      if (mpIds.length) {
+        mpIds.forEach(function(mpId, idx) {
+          const person = PEOPLE.find(function(p) { return p.id === mpId; });
+          const col = voteLineColor(mpId, person, colors[idx % colors.length]);
+          const last = series[mpId][series[mpId].length - 1];
+          legend += '<span style="color:' + col + '">● ' + (person ? person.name : mpId) + " (" + last.net + ")</span>";
         });
-      });
-      html += '</svg>';
-      html += '<div class="nv-vote-legend" style="display:flex;flex-wrap:wrap;gap:0.5rem 0.85rem;margin-top:0.45rem;font-size:0.75rem;font-weight:700">';
-      mpIds.forEach(function(mpId, idx) {
-        const person = PEOPLE.find(function(p) { return p.id === mpId; });
-        const col = voteLineColor(mpId, person, colors[idx % colors.length]);
-        const last = series[mpId][series[mpId].length - 1];
-        html += '<span style="color:' + col + '">● ' + (person ? person.name : mpId) + ' (' + last.net + ')</span>';
-      });
-      html += '</div>';
-      html += '<p class="news-vote-note" style="margin-top:0.35rem">Net score over time: each Positive adds +1, each Negative adds −1. Zero line is neutral.</p>';
-      host.innerHTML = html;
-
-      // partyColorForMp may only exist inside renderNewsHeadline — define fallback
+      } else {
+        legend += '<span style="color:var(--muted)">Vote Positive / Negative under a story to plot lines</span>';
+      }
+      legend += "</div><p class='news-vote-note' style='margin-top:0.35rem'>X = time · Y = net score (Positive +1, Negative −1).</p>";
+      host.innerHTML = svg + legend;
     }
 
-function castMpNewsVote(headlineId, mpId, choice) {
-      // choice: accept | reject | null to clear
+    
+    function pushVoteRecordToSite(data, mpId) {
+      try {
+        const snapshot = {
+          updatedAt: new Date().toISOString(),
+          byMp: data.mp || {},
+          ballots: data.mpBallots || {}
+        };
+        localStorage.setItem("nzpt_site_vote_record_v1", JSON.stringify(snapshot));
+        window.__siteVoteRecord = snapshot;
+      } catch (e) {}
+    }
+
+    function castMpNewsVote(headlineId, mpId, choice) {
       const data = loadNewsVotes();
       if (!data.mpBallots) data.mpBallots = {};
       if (!data.mp) data.mp = {};
@@ -8400,14 +8433,12 @@ function castMpNewsVote(headlineId, mpId, choice) {
       data.mpBallots[key] = choice;
       data.mp[mpId] = tally;
       saveNewsVotes(data);
-      // unfavourable still records local controversy note
       try {
         if (choice === "reject") {
           const item = (NEWS_HEADLINES || []).find(function(h) { return h.id === headlineId; }) ||
             loadNewsArchive().find(function(h) { return h.id === headlineId; });
-          if (item) {
-            const one = Object.assign({}, item, { mpIds: [mpId] });
-            rememberLiveControversyFromHeadline(one, "reject");
+          if (item && typeof rememberLiveControversyFromHeadline === "function") {
+            rememberLiveControversyFromHeadline(Object.assign({}, item, { mpIds: [mpId] }), "reject");
           }
         }
       } catch (e) {}
@@ -8416,8 +8447,7 @@ function castMpNewsVote(headlineId, mpId, choice) {
       try { renderNewsVoteBars(); } catch (e) {}
     }
 
-
-    function stableArticleId(url, title) {
+        function stableArticleId(url, title) {
       const s = String(url || title || "x");
       let h = 0;
       for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0;
@@ -9229,8 +9259,17 @@ async function pullGitHubPolls() {
           '<div class="news-source-panel">' +
             ranked.map(function(r) {
               const on = !!prefs[r.agency];
-              return '<label><span><input type="checkbox" data-source="' + r.agency.replace(/"/g, "") + '"' +
-                (on ? " checked" : "") + " /> " + r.agency + '</span><span class="count">' + r.count + "</span></label>";
+              const logo = agencyLogoUrl(r.agency, null) || "";
+              const logoHtml = logo
+                ? '<img class="news-agency-logo src-dd-logo" src="' + logo + '" alt="" width="18" height="18" loading="lazy" />'
+                : '<span class="src-dd-logo-ph"></span>';
+              return '<label class="src-dd-row">' +
+                '<span class="src-dd-left">' +
+                  '<input type="checkbox" data-source="' + r.agency.replace(/"/g, "") + '"' + (on ? " checked" : "") + " /> " +
+                  logoHtml +
+                  '<span class="src-dd-name">' + r.agency + "</span>" +
+                "</span>" +
+                '<span class="count">' + r.count + "</span></label>";
             }).join("") +
           "</div></details>";
       host.querySelectorAll("input[data-source]").forEach(function(inp) {
@@ -9243,10 +9282,9 @@ async function pullGitHubPolls() {
           renderNewsHeadline();
         });
       });
-      // keep dropdown open state when re-rendering if possible - skip
     }
 
-let newsLayoutResizeBound = false;
+    let newsLayoutResizeBound = false;
     function ensureNewsLayoutResize() {
       if (newsLayoutResizeBound) return;
       newsLayoutResizeBound = true;
@@ -9381,17 +9419,22 @@ let newsLayoutResizeBound = false;
         const src = item.agency || "Source";
         const dateLabel = formatNewsDate(item);
         const href = item.url || "#";
-        let img = item.image ? String(item.image).trim() : "";
+        let img = item.image || item.imageUrl || item.thumbnail || "";
+        img = String(img || "").trim();
         if (img.indexOf("//") === 0) img = "https:" + img;
         img = img.replace(/"/g, "").replace(/'/g, "");
+        if (!img) {
+          try { img = pickArticleImage(item) || ""; } catch (e1) {}
+        }
         const logoEarly = agencyLogoUrl(item.agency || src, href) || "";
+        const primaryImg = img ? (proxiedNewsImage(img) || img) : "";
         let imgInner;
-        if (img) {
-          imgInner = '<img class="news-item-image" src="' + img + '" alt="" loading="lazy" referrerpolicy="no-referrer" data-fallback="' + logoEarly.replace(/"/g, "") + '" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.style.objectFit=\'contain\';this.style.padding=\'2rem\';this.dataset.fallback=\'\';}else{this.style.opacity=\'0.15\';}" />';
+        if (primaryImg) {
+          imgInner = '<img class="news-item-image" src="' + primaryImg + '" alt="" loading="lazy" />';
         } else if (logoEarly) {
-          imgInner = '<img class="news-item-image" src="' + logoEarly.replace(/"/g, "") + '" alt="" loading="lazy" referrerpolicy="no-referrer" style="object-fit:contain;padding:2.5rem;background:#0f172a" />';
+          imgInner = '<img class="news-item-image news-item-image-fallback" src="' + logoEarly + '" alt="" loading="lazy" style="object-fit:contain;padding:2.5rem;background:#0f172a" />';
         } else {
-          imgInner = '<div class="news-item-image" style="background:#0f172a"></div>';
+          imgInner = '<div class="news-item-image" style="background:linear-gradient(135deg,#0f172a,#1e293b)"></div>';
         }
         const logo = agencyLogoUrl(src, href);
         const sourceHtml = logo
@@ -10189,6 +10232,7 @@ let newsLayoutResizeBound = false;
       window.__nvRefresh = function() {
         refreshHeadlinesWithWorker({ silent: false });
       };
+      try { renderNewsVoteBars(); } catch (e) {}
 
       if (exp) exp.addEventListener("click", function() {
         const blob = new Blob([JSON.stringify(loadNewsVotes(), null, 2)], { type: "application/json" });
