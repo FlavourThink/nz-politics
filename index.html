@@ -7730,22 +7730,77 @@ function eventSourcesHtml(ev) {
       } catch (e) {}
     }
 
+
+    const NEWS_IMAGE_CACHE_KEY = "nzpt_news_image_cache_v1";
+
+    function loadImageCache() {
+      try {
+        return JSON.parse(localStorage.getItem(NEWS_IMAGE_CACHE_KEY) || "{}") || {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveImageCache(map) {
+      try {
+        const keys = Object.keys(map || {});
+        if (keys.length > 400) {
+          keys.slice(0, keys.length - 400).forEach(function(k) { delete map[k]; });
+        }
+        localStorage.setItem(NEWS_IMAGE_CACHE_KEY, JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function cacheNewsImage(h) {
+      if (!h) return;
+      const img = h.image || h.imageUrl || h.thumbnail;
+      if (!img) return;
+      const map = loadImageCache();
+      if (h.id) map["id:" + h.id] = img;
+      if (h.url) map["url:" + String(h.url).split("#")[0].split("?")[0]] = img;
+      saveImageCache(map);
+    }
+
+    function resolveCachedImage(h) {
+      if (!h) return null;
+      if (h.image) return h.image;
+      const map = loadImageCache();
+      if (h.id && map["id:" + h.id]) return map["id:" + h.id];
+      if (h.url) {
+        const u = String(h.url).split("#")[0].split("?")[0];
+        if (map["url:" + u]) return map["url:" + u];
+      }
+      return null;
+    }
+
     function upsertArchiveHeadline(h) {
       if (!h || !h.id) return;
       const list = loadNewsArchive();
       const i = list.findIndex(function(x) { return x.id === h.id; });
+      // Prefer any known image: incoming, previous archive, or URL cache
+      let image = h.image || h.imageUrl || h.thumbnail || null;
+      if (!image && i >= 0) image = list[i].image || null;
+      if (!image) image = resolveCachedImage(h);
+      if (image) {
+        h.image = image;
+        try { cacheNewsImage(h); } catch (e) {}
+      }
       const row = {
         id: h.id,
         title: h.title,
         url: h.url,
         agency: h.agency || "News",
         date: h.date || "",
-        image: h.image || null,
+        image: image || null,
         mpIds: h.mpIds || [],
         summary: (h.summary || "").slice(0, 200),
         foundAt: Date.now()
       };
-      if (i >= 0) list[i] = Object.assign({}, list[i], row);
+      if (i >= 0) {
+        // never wipe a good cached image with null
+        if (!row.image && list[i].image) row.image = list[i].image;
+        list[i] = Object.assign({}, list[i], row);
+      }
       else list.push(row);
       saveNewsArchive(list);
     }
@@ -9315,7 +9370,7 @@ async function pullGitHubPolls() {
             url: h.url,
             agency: h.agency,
             date: h.date,
-            image: h.image || null,
+            image: h.image || (typeof resolveCachedImage === "function" ? resolveCachedImage(h) : null) || null,
             mpIds: h.mpIds || [],
             summary: h.summary || h.title
           };
@@ -9421,16 +9476,22 @@ async function pullGitHubPolls() {
         const href = item.url || "#";
         let img = item.image || item.imageUrl || item.thumbnail || "";
         img = String(img || "").trim();
-        if (img.indexOf("//") === 0) img = "https:" + img;
-        img = img.replace(/"/g, "").replace(/'/g, "");
+        if (!img) {
+          try { img = resolveCachedImage(item) || ""; } catch (e0) {}
+        }
         if (!img) {
           try { img = pickArticleImage(item) || ""; } catch (e1) {}
         }
+        if (img.indexOf("//") === 0) img = "https:" + img;
+        img = img.replace(/"/g, "").replace(/'/g, "");
+        if (img) {
+          try { cacheNewsImage({ id: item.id, url: item.url || href, image: img }); } catch (e2) {}
+        }
         const logoEarly = agencyLogoUrl(item.agency || src, href) || "";
-        const primaryImg = img ? (proxiedNewsImage(img) || img) : "";
+        const proxyImg = img ? proxiedNewsImage(img) : "";
         let imgInner;
-        if (primaryImg) {
-          imgInner = '<img class="news-item-image" src="' + primaryImg + '" alt="" loading="lazy" />';
+        if (img) {
+          imgInner = '<img class="news-item-image" src="' + img + '" alt="" loading="lazy" data-direct="1" data-proxy="' + String(proxyImg).replace(/"/g, "") + '" data-logo="' + String(logoEarly).replace(/"/g, "") + '" onerror="window.__newsImgErr&&window.__newsImgErr(this)" />';
         } else if (logoEarly) {
           imgInner = '<img class="news-item-image news-item-image-fallback" src="' + logoEarly + '" alt="" loading="lazy" style="object-fit:contain;padding:2.5rem;background:#0f172a" />';
         } else {
@@ -10254,7 +10315,7 @@ async function pullGitHubPolls() {
                 url: h.url,
                 agency: h.agency,
                 date: h.date,
-                image: h.image || null,
+                image: h.image || (typeof resolveCachedImage === "function" ? resolveCachedImage(h) : null) || null,
                 mpIds: h.mpIds || [],
                 summary: h.summary || h.title
               };
