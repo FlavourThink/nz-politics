@@ -3487,8 +3487,8 @@
           <div class="news-source-dropdown-wrap" id="newsSourceToggles" aria-label="News sources"></div>
           <div id="newsFeedList" class="news-feed-list" aria-label="News feed"></div>
           <section class="news-vote-bars-panel" aria-label="Vote results">
-            <h3 class="news-vote-bars-title">MP vote tallies</h3>
-            <p class="news-vote-note" style="margin:0 0 0.5rem;">Votes on this device update the site record below. Green = positive, red = negative.</p>
+            <h3 class="news-vote-bars-title">Votes over time</h3>
+            <p class="news-vote-note" style="margin:0 0 0.5rem;">Net score over time for each MP you have voted on (Positive lifts the line, Negative lowers it).</p>
             <div id="newsVoteBars" class="news-vote-bars"></div>
           </section>
         </section>
@@ -8254,80 +8254,127 @@ function eventSourcesHtml(ev) {
       };
     }
 
-    function mergeVoteTallies() {
-      const local = loadNewsVotes();
-      const shared = window.__sharedVoteTallies || {};
-      const site = window.__siteVoteRecord && window.__siteVoteRecord.byMp ? window.__siteVoteRecord.byMp : {};
-      try {
-        if (!window.__siteVoteRecord) {
-          const raw = localStorage.getItem("nzpt_site_vote_record_v1");
-          if (raw) window.__siteVoteRecord = JSON.parse(raw);
-        }
-      } catch (e) {}
-      const siteMp = (window.__siteVoteRecord && window.__siteVoteRecord.byMp) || site || {};
-      const ids = {};
-      Object.keys(local.mp || {}).forEach(function(id) { ids[id] = true; });
-      Object.keys(shared).forEach(function(id) { ids[id] = true; });
-      Object.keys(siteMp).forEach(function(id) { ids[id] = true; });
-      const rows = [];
-      Object.keys(ids).forEach(function(mpId) {
-        const L = local.mp[mpId] || {};
-        const S = shared[mpId] || {};
-        const R = siteMp[mpId] || {};
-        // Prefer local live counts (authoritative on this device); fall back to site snapshot
-        const accept = (L.accept != null ? L.accept : null);
-        const reject = (L.reject != null ? L.reject : null);
-        const a = accept != null ? accept : ((R.accept || 0) + (S.accept || S.positive || 0));
-        const r = reject != null ? reject : ((R.reject || 0) + (S.reject || S.negative || 0));
-        // Use max of local vs combined site so graph always moves after a click
-        const accept2 = Math.max(L.accept || 0, R.accept || 0, S.accept || S.positive || 0);
-        const reject2 = Math.max(L.reject || 0, R.reject || 0, S.reject || S.negative || 0);
-        if (accept2 + reject2 <= 0) return;
-        const person = PEOPLE.find(function(p) { return p.id === mpId; });
-        rows.push({
-          mpId: mpId,
-          name: person ? person.name : mpId,
-          accept: accept2,
-          reject: reject2,
-          total: accept2 + reject2
-        });
-      });
-      rows.sort(function(a, b) { return b.total - a.total; });
-      return rows;
+    
+    function voteLineColor(mpId, person, fallback) {
+      const map = { national: "#0057b8", labour: "#d82a20", nzfirst: "#0a3d1a", act: "#e6007e", green: "#098137", maori: "#b91c1c" };
+      if (!person) person = PEOPLE.find(function(p) { return p.id === mpId; });
+      if (!person) return fallback || "#38bdf8";
+      let pid = person.partyId || person.party || "";
+      if (!pid && person.currentParty) {
+        const cp = String(person.currentParty).toLowerCase();
+        if (cp.indexOf("national") >= 0) pid = "national";
+        else if (cp.indexOf("labour") >= 0) pid = "labour";
+        else if (cp.indexOf("first") >= 0) pid = "nzfirst";
+        else if (cp.indexOf("act") >= 0) pid = "act";
+        else if (cp.indexOf("green") >= 0) pid = "green";
+        else if (cp.indexOf("maori") >= 0 || cp.indexOf("māori") >= 0) pid = "maori";
+      }
+      if (!pid && person.segments && person.segments.length) pid = person.segments[person.segments.length - 1].party;
+      pid = String(pid).toLowerCase().replace(/\s+/g, "");
+      if (map[pid]) return map[pid];
+      return fallback || "#38bdf8";
     }
 
     function renderNewsVoteBars() {
       const host = document.getElementById("newsVoteBars");
       if (!host) return;
-      const rows = mergeVoteTallies();
-      if (!rows.length) {
-        host.innerHTML = "<p class='news-vote-note'>No votes yet — use Positive / Negative under an article.</p>";
-        return;
-      }
-      const max = Math.max.apply(null, rows.map(function(r) { return r.total; })) || 1;
-      host.innerHTML = rows.map(function(r) {
-        const scale = (r.total / max) * 100;
-        const posPct = r.total ? (r.accept / r.total) * 100 : 0;
-        const negPct = r.total ? (r.reject / r.total) * 100 : 0;
-        return '<div class="nv-bar-row">' +
-          '<span class="nv-bar-name" data-open-mp="' + r.mpId + '">' + r.name + '</span>' +
-          '<div class="nv-bar-track" style="width:' + Math.max(18, scale) + '%">' +
-            '<div class="nv-bar-pos" style="width:' + posPct + '%"></div>' +
-            '<div class="nv-bar-neg" style="width:' + negPct + '%"></div>' +
-          '</div>' +
-          '<span class="nv-bar-nums"><span style="color:#16a34a">+' + r.accept + '</span> / <span style="color:#dc2626">−' + r.reject + '</span></span>' +
-        '</div>';
-      }).join("");
-      host.querySelectorAll("[data-open-mp]").forEach(function(el) {
-        el.addEventListener("click", function() {
-          const id = el.getAttribute("data-open-mp");
-          const person = PEOPLE.find(function(p) { return p.id === id; });
-          if (person && typeof openPersonModal === "function") openPersonModal(person);
+
+      const data = loadNewsVotes();
+      const mpMap = data.mp || {};
+      // Build timeline points from history: cumulative net (accept - reject) per MP over time
+      const series = {};
+      Object.keys(mpMap).forEach(function(mpId) {
+        const hist = (mpMap[mpId].history || []).slice().sort(function(a, b) {
+          return (a.ts || 0) - (b.ts || 0);
+        });
+        if (!hist.length) {
+          // synthesize from totals if no history
+          const a = mpMap[mpId].accept || 0;
+          const r = mpMap[mpId].reject || 0;
+          if (a + r === 0) return;
+          series[mpId] = [{ t: Date.now(), net: a - r, pos: a, neg: r }];
+          return;
+        }
+        let pos = 0, neg = 0;
+        series[mpId] = hist.map(function(h) {
+          if (h.choice === "accept") pos++;
+          if (h.choice === "reject") neg++;
+          return { t: h.ts || Date.now(), net: pos - neg, pos: pos, neg: neg };
         });
       });
+
+      const mpIds = Object.keys(series);
+      if (!mpIds.length) {
+        host.innerHTML = "<p class='news-vote-note'>No votes yet — use Positive / Negative under an article. Chart shows net score over time (positive above zero, negative below).</p>";
+        return;
+      }
+
+      // Collect all timestamps
+      let tMin = Infinity, tMax = -Infinity;
+      let yMin = 0, yMax = 0;
+      mpIds.forEach(function(id) {
+        series[id].forEach(function(p) {
+          if (p.t < tMin) tMin = p.t;
+          if (p.t > tMax) tMax = p.t;
+          if (p.net < yMin) yMin = p.net;
+          if (p.net > yMax) yMax = p.net;
+        });
+      });
+      if (tMax <= tMin) { tMin -= 3600000; tMax += 3600000; }
+      yMin = Math.min(-1, yMin - 1);
+      yMax = Math.max(1, yMax + 1);
+
+      const W = 720, H = 280, padL = 44, padR = 16, padT = 16, padB = 36;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+      function xAt(ts) {
+        return padL + ((ts - tMin) / (tMax - tMin)) * plotW;
+      }
+      function yAt(net) {
+        return padT + ((yMax - net) / (yMax - yMin)) * plotH;
+      }
+      const zeroY = yAt(0);
+
+      let html = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" style="background:#0b1220;border-radius:10px;border:1px solid var(--border)">';
+      // grid
+      html += '<line x1="' + padL + '" y1="' + zeroY + '" x2="' + (W - padR) + '" y2="' + zeroY + '" stroke="#475569" stroke-width="1.5" />';
+      html += '<text x="' + (padL - 6) + '" y="' + (zeroY + 3) + '" text-anchor="end" fill="#94a3b8" font-size="10">0</text>';
+      html += '<text x="' + (padL - 6) + '" y="' + (padT + 10) + '" text-anchor="end" fill="#22c55e" font-size="10">+' + yMax + '</text>';
+      html += '<text x="' + (padL - 6) + '" y="' + (H - padB) + '" text-anchor="end" fill="#ef4444" font-size="10">' + yMin + '</text>';
+      // time labels
+      html += '<text x="' + padL + '" y="' + (H - 10) + '" fill="#64748b" font-size="10">' + new Date(tMin).toLocaleDateString("en-NZ", { day: "numeric", month: "short" }) + '</text>';
+      html += '<text x="' + (W - padR) + '" y="' + (H - 10) + '" text-anchor="end" fill="#64748b" font-size="10">' + new Date(tMax).toLocaleDateString("en-NZ", { day: "numeric", month: "short" }) + '</text>';
+
+      const colors = ["#38bdf8", "#a78bfa", "#f472b6", "#fbbf24", "#34d399", "#fb923c", "#e879f9", "#2dd4bf"];
+      mpIds.forEach(function(mpId, idx) {
+        const person = PEOPLE.find(function(p) { return p.id === mpId; });
+        const col = voteLineColor(mpId, person, colors[idx % colors.length]);
+        const pts = series[mpId];
+        let d = "";
+        pts.forEach(function(p, i) {
+          d += (i ? " L " : "M ") + xAt(p.t) + " " + yAt(p.net);
+        });
+        html += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-linejoin="round" />';
+        pts.forEach(function(p) {
+          html += '<circle cx="' + xAt(p.t) + '" cy="' + yAt(p.net) + '" r="3.5" fill="' + col + '" stroke="#0b1220" stroke-width="1">' +
+            '<title>' + (person ? person.name : mpId) + " · net " + p.net + " (+" + p.pos + " / −" + p.neg + ")</title></circle>";
+        });
+      });
+      html += '</svg>';
+      html += '<div class="nv-vote-legend" style="display:flex;flex-wrap:wrap;gap:0.5rem 0.85rem;margin-top:0.45rem;font-size:0.75rem;font-weight:700">';
+      mpIds.forEach(function(mpId, idx) {
+        const person = PEOPLE.find(function(p) { return p.id === mpId; });
+        const col = voteLineColor(mpId, person, colors[idx % colors.length]);
+        const last = series[mpId][series[mpId].length - 1];
+        html += '<span style="color:' + col + '">● ' + (person ? person.name : mpId) + ' (' + last.net + ')</span>';
+      });
+      html += '</div>';
+      html += '<p class="news-vote-note" style="margin-top:0.35rem">Net score over time: each Positive adds +1, each Negative adds −1. Zero line is neutral.</p>';
+      host.innerHTML = html;
+
+      // partyColorForMp may only exist inside renderNewsHeadline — define fallback
     }
 
-    function castMpNewsVote(headlineId, mpId, choice) {
+function castMpNewsVote(headlineId, mpId, choice) {
       // choice: accept | reject | null to clear
       const data = loadNewsVotes();
       if (!data.mpBallots) data.mpBallots = {};
@@ -9334,10 +9381,18 @@ let newsLayoutResizeBound = false;
         const src = item.agency || "Source";
         const dateLabel = formatNewsDate(item);
         const href = item.url || "#";
-        const img = item.image ? String(item.image).replace(/"/g, "") : "";
-        const imgInner = img
-          ? '<img class="news-item-image" src="' + img + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'" />'
-          : "";
+        let img = item.image ? String(item.image).trim() : "";
+        if (img.indexOf("//") === 0) img = "https:" + img;
+        img = img.replace(/"/g, "").replace(/'/g, "");
+        const logoEarly = agencyLogoUrl(item.agency || src, href) || "";
+        let imgInner;
+        if (img) {
+          imgInner = '<img class="news-item-image" src="' + img + '" alt="" loading="lazy" referrerpolicy="no-referrer" data-fallback="' + logoEarly.replace(/"/g, "") + '" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.style.objectFit=\'contain\';this.style.padding=\'2rem\';this.dataset.fallback=\'\';}else{this.style.opacity=\'0.15\';}" />';
+        } else if (logoEarly) {
+          imgInner = '<img class="news-item-image" src="' + logoEarly.replace(/"/g, "") + '" alt="" loading="lazy" referrerpolicy="no-referrer" style="object-fit:contain;padding:2.5rem;background:#0f172a" />';
+        } else {
+          imgInner = '<div class="news-item-image" style="background:#0f172a"></div>';
+        }
         const logo = agencyLogoUrl(src, href);
         const sourceHtml = logo
           ? '<span class="news-item-source" title="' + String(src).replace(/"/g, "") + '"><img class="news-agency-logo" src="' + logo + '" alt="' + String(src).replace(/"/g, "") + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML=\'' + String(src).replace(/'/g, "") + '\'" /></span>'
@@ -9500,57 +9555,12 @@ let newsLayoutResizeBound = false;
     }
 
 
-    function renderMpVoteStrip() {
-      const host = document.getElementById("newsMpTallyStrip") || document.getElementById("newsTallyHost");
-      // Prefer dedicated strip under feed
-      let strip = document.getElementById("newsMpTallyStrip");
-      if (!strip) {
-        const feed = document.getElementById("newsFeedList");
-        if (feed && feed.parentNode) {
-          strip = document.createElement("div");
-          strip.id = "newsMpTallyStrip";
-          strip.className = "news-mp-tallies";
-          feed.parentNode.insertBefore(strip, feed.nextSibling);
-        }
-      }
-      if (!strip) return;
-      const data = loadNewsVotes();
-      const mp = data.mp || {};
-      const ids = Object.keys(mp).filter(function(id) {
-        const t = mp[id];
-        return t && ((t.accept || 0) + (t.reject || 0) > 0);
-      });
-      if (!ids.length) {
-        strip.innerHTML = '<p class="news-vote-note">MP votes from the articles above will show here.</p>';
-        return;
-      }
-      ids.sort(function(a, b) {
-        const na = (mp[a].accept || 0) - (mp[a].reject || 0);
-        const nb = (mp[b].accept || 0) - (mp[b].reject || 0);
-        return na - nb;
-      });
-      strip.innerHTML = '<h3 style="margin:0 0 0.5rem;font-size:0.95rem;">Your MP votes (this browser)</h3><div class="member-bubbles">' +
-        ids.map(function(id) {
-          const person = PEOPLE.find(function(p) { return p.id === id; });
-          const name = person ? person.name : id;
-          const ap = memberPublicApproval(id);
-          const shortName = name.split(/\s+/).slice(-2).join(" ");
-          return '<div class="member-bubble" data-id="' + id + '" title="' + name + " — " + ap.label + '">' +
-            '<div class="liquid" style="height:' + ap.fill + '%;background:' + ap.color + '"></div>' +
-            '<div class="mb-name">' + shortName + '</div></div>';
-        }).join("") + '</div>';
-      strip.querySelectorAll(".member-bubble").forEach(function(b) {
-        b.addEventListener("click", function() {
-          const person = PEOPLE.find(function(p) { return p.id === b.getAttribute("data-id"); });
-          if (person && typeof openPersonModal === "function") openPersonModal(person);
-        });
-      });
+        function renderMpVoteStrip() {
+      // removed — vote trends shown in line chart under the feed
+      const strip = document.getElementById("newsMpTallyStrip");
+      if (strip) strip.remove();
     }
 
-function renderNewsTallies() {
-      // MP approval bubbles under the news feed
-      try { if (typeof renderMpVoteStrip === "function") renderMpVoteStrip(); } catch (e) {}
-    }
 
     function renderSourceTally() {
       // optional per-source archive summary (no-op if host missing)
@@ -9888,17 +9898,23 @@ function renderNewsTallies() {
       const picks = document.getElementById("pollsPartyPicks");
       const tableBody = document.getElementById("pollsTableBody");
 
-      try { if (typeof pullGitHubPolls === "function") pullGitHubPolls(); } catch (e) {}
+      // Fire-and-forget worker pull (does not block first paint)
+      try {
+        if (typeof pullGitHubPolls === "function" && !window.__pollsPullOnce) {
+          window.__pollsPullOnce = true;
+          pullGitHubPolls();
+        }
+      } catch (e) {}
 
       const series = getPollSeries();
       const partyKeys = series.partyKeys;
-      const rows = series.rows;
+      const rows = series.rows || [];
 
-      // Monthly points first (needed for change vs previous month)
+      // Monthly averages
       const byMonth = {};
       rows.forEach(function(p) {
         const k = String(p.end || p.start || "").slice(0, 7);
-        if (!k) return;
+        if (!k || k.length < 7) return;
         if (!byMonth[k]) byMonth[k] = [];
         byMonth[k].push(p);
       });
@@ -9909,26 +9925,28 @@ function renderNewsTallies() {
         partyKeys.forEach(function(name) {
           let sum = 0, n = 0;
           list.forEach(function(p) {
-            if (p[name] != null && p[name] !== "") { sum += Number(p[name]); n++; }
+            const v = p[name];
+            if (v != null && v !== "" && !isNaN(Number(v))) {
+              sum += Number(v);
+              n++;
+            }
           });
-          avg[name] = n ? sum / n : null;
+          avg[name] = n ? Math.round((sum / n) * 10) / 10 : null;
         });
         return { key: k, avg: avg };
       });
-      const latestPt = points.length ? points[points.length - 1] : null;
-      const prevPt = points.length > 1 ? points[points.length - 2] : null;
 
       if (checkEl) {
-        const remote = (window.__livePollsRemote && window.__livePollsRemote.updatedAt)
-          || (liveDataMeta && liveDataMeta.pollsAt) || null;
-        if (remote) {
-          checkEl.textContent = "Last worker poll data: " + String(remote).slice(0, 19).replace("T", " ") + " UTC";
-        } else {
-          checkEl.textContent = "Last data check: " + new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
-        }
+        const remote = (window.__livePollsRemote && window.__livePollsRemote.updatedAt) || null;
+        checkEl.textContent = remote
+          ? ("Last worker poll data: " + String(remote).slice(0, 19).replace("T", " ") + " UTC · " + points.length + " months")
+          : ("Curated poll snapshot · " + points.length + " months · " + rows.length + " polls");
       }
 
+      // Top 3
       let top3Names = [];
+      const latestPt = points.length ? points[points.length - 1] : null;
+      const prevPt = points.length > 1 ? points[points.length - 2] : null;
       if (top3el && latestPt) {
         const ranked = partyKeys.map(function(name) {
           return { name: name, pct: latestPt.avg[name] };
@@ -9938,30 +9956,25 @@ function renderNewsTallies() {
         top3el.innerHTML = ranked.slice(0, 3).map(function(r, i) {
           const col = pollsPartyColor(r.name);
           const place = i === 0 ? "1st" : (i === 1 ? "2nd" : "3rd");
-          let chHtml = "";
+          let chHtml = '<div class="polls-top3-change flat"><span class="arrow">–</span></div>';
           if (prevPt && prevPt.avg[r.name] != null) {
             const delta = Math.round((r.pct - prevPt.avg[r.name]) * 10) / 10;
-            const abs = Math.abs(delta);
-            if (delta > 0) {
-              chHtml = '<div class="polls-top3-change up"><span class="arrow">▲</span> ' + abs + ' pts</div>';
-            } else if (delta < 0) {
-              chHtml = '<div class="polls-top3-change down"><span class="arrow">▼</span> ' + abs + ' pts</div>';
-            } else {
-              chHtml = '<div class="polls-top3-change flat"><span class="arrow">–</span> 0 pts</div>';
-            }
-          } else {
-            chHtml = '<div class="polls-top3-change flat"><span class="arrow">–</span></div>';
+            if (delta > 0) chHtml = '<div class="polls-top3-change up"><span class="arrow">▲</span> ' + delta + ' pts</div>';
+            else if (delta < 0) chHtml = '<div class="polls-top3-change down"><span class="arrow">▼</span> ' + Math.abs(delta) + ' pts</div>';
+            else chHtml = '<div class="polls-top3-change flat"><span class="arrow">–</span> 0 pts</div>';
           }
-          return '<div class="polls-top3-card" data-party="' + r.name + '" title="Open Party Stats">' +
+          return '<div class="polls-top3-card" data-party="' + r.name + '">' +
             '<div class="polls-top3-rank">' + place + '</div>' +
             '<div class="polls-top3-name" style="color:' + col + '">' + r.name + '</div>' +
             '<div class="polls-top3-pct">' + r.pct + '%</div>' + chHtml + '</div>';
         }).join("");
         top3el.querySelectorAll(".polls-top3-card").forEach(function(card) {
           card.addEventListener("click", function() {
-            showPartiesView(card.getAttribute("data-party"));
+            if (typeof showPartiesView === "function") showPartiesView(card.getAttribute("data-party"));
           });
         });
+      } else if (top3el) {
+        top3el.innerHTML = '<p class="news-vote-note">No poll averages available.</p>';
       }
 
       if (picks && !picks.getAttribute("data-ready")) {
@@ -9974,7 +9987,7 @@ function renderNewsTallies() {
         picks.querySelectorAll("input").forEach(function(inp) {
           inp.addEventListener("change", function() { renderOpinionPolls(); });
         });
-        ["pollsShowTrend", "pollsShowPredict"].forEach(function(id) {
+        ["pollsShowTrend", "pollsShowPredict", "pollsPredictMonths"].forEach(function(id) {
           const el = document.getElementById(id);
           if (el && !el.getAttribute("data-bound")) {
             el.setAttribute("data-bound", "1");
@@ -9987,17 +10000,14 @@ function renderNewsTallies() {
       const showPredict = !!(document.getElementById("pollsShowPredict") && document.getElementById("pollsShowPredict").checked);
       let predictMonths = 1;
       const monthsEl = document.getElementById("pollsPredictMonths");
-      if (monthsEl) {
-        predictMonths = Math.max(1, Math.min(3, parseInt(monthsEl.value, 10) || 1));
-        if (!monthsEl.getAttribute("data-bound")) {
-          monthsEl.setAttribute("data-bound", "1");
-          monthsEl.addEventListener("change", function() { renderOpinionPolls(); });
-        }
-      }
-      const selected = getSelectedPollParties(partyKeys, top3Names);
+      if (monthsEl) predictMonths = Math.max(1, Math.min(3, parseInt(monthsEl.value, 10) || 1));
+
+      let selected = getSelectedPollParties(partyKeys, top3Names);
+      if (!selected.length) selected = top3Names.length ? top3Names.slice() : partyKeys.slice(0, 3);
+
+      // Axis: data months + optional future
       const axisKeys = points.map(function(p) { return p.key; });
       const futureKeys = [];
-      // Extend axis by 1–3 months when prediction and/or trend needs the runway
       const monthsToShow = (showPredict || showTrend) ? predictMonths : 0;
       if (axisKeys.length && monthsToShow > 0) {
         let k = axisKeys[axisKeys.length - 1];
@@ -10008,193 +10018,147 @@ function renderNewsTallies() {
           axisKeys.push(k);
         }
       }
-      const axisLen = axisKeys.length;
       const futureKeySet = {};
       futureKeys.forEach(function(k) { futureKeySet[k] = true; });
+      const axisLen = Math.max(1, axisKeys.length);
 
-      if (svg && points.length) {
-        const W = 640, H = 300, padL = 36, padR = 52, padT = 18, padB = 42;
-        const plotW = W - padL - padR, plotH = H - padT - padB;
-        let yMax = 45;
-        selected.forEach(function(name) {
-          points.forEach(function(p) {
-            if (p.avg[name] != null) yMax = Math.max(yMax, p.avg[name] + 5);
-          });
-        });
-        // include predicted values in scale
-        selected.forEach(function(name) {
-          const ys = points.map(function(p) { return p.avg[name]; });
-          const tr = linearTrend(ys);
-          if (tr) {
-            for (let fi = 0; fi < Math.max(1, futureKeys.length); fi++) {
-              yMax = Math.max(yMax, tr.predict(points.length + fi) + 3);
-            }
-          }
-        });
-        yMax = Math.max(45, Math.ceil(yMax / 5) * 5);
-
-        function xAt(i) {
-          return padL + (axisLen <= 1 ? plotW / 2 : (i / (axisLen - 1)) * plotW);
-        }
-        function yAt(v) {
-          return padT + plotH - (Math.max(0, Math.min(yMax, v)) / yMax) * plotH;
-        }
-
-        // White plot background
-        let html = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
-        html += '<rect x="' + padL + '" y="' + padT + '" width="' + plotW + '" height="' + plotH + '" fill="#ffffff" stroke="rgba(148,163,184,0.35)"/>';
-
-        for (let v = 0; v <= yMax; v += 10) {
-          const y = yAt(v);
-          html += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="rgba(148,163,184,0.28)" stroke-width="1" />';
-          html += '<text x="' + (padL - 4) + '" y="' + (y + 3) + '" text-anchor="end" fill="#64748b" font-size="10">' + v + '%</text>';
-        }
-        axisKeys.forEach(function(k, i) {
-          if (axisLen > 12 && i % 2 && i < axisLen - 1) return;
-          const isFuture = futureKey && k === futureKey;
-          html += '<text x="' + xAt(i) + '" y="' + (H - 12) + '" text-anchor="middle" fill="' + (isFuture ? "#94a3b8" : "#64748b") +
-            '" font-size="10" font-style="' + (isFuture ? "italic" : "normal") + '">' + monthLabel(k) + (isFuture ? "*" : "") + '</text>';
-        });
-
-        const predLabels = [];
-        selected.forEach(function(name) {
-          const col = pollsPartyColor(name);
-          const ys = points.map(function(p) { return p.avg[name]; });
-          const tr = linearTrend(ys);
-
-          // Main data line + dots (only real months)
-          let d = "";
-          let started = false;
-          points.forEach(function(p, i) {
-            const v = p.avg[name];
-            if (v == null) { started = false; return; }
-            d += (started ? " L " : "M ") + xAt(i) + " " + yAt(v);
-            started = true;
-          });
-          if (d) {
-            html += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="3.5" stroke-linejoin="round" data-party="' + name + '" class="poll-line" style="cursor:pointer" />';
-          }
-          points.forEach(function(p, i) {
-            const v = p.avg[name];
-            if (v == null) return;
-            html += '<circle cx="' + xAt(i) + '" cy="' + yAt(v) + '" r="4" fill="' + col + '" stroke="#ffffff" stroke-width="1.5" data-party="' + name + '" class="poll-dot" style="cursor:pointer">' +
-              '<title>' + name + " · " + monthLabel(p.key) + " · " + (Math.round(v * 10) / 10) + "%</title></circle>";
-          });
-
-          // Trend through data and into predicted months (1–3)
-          if (tr && (showTrend || showPredict) && futureKeys.length) {
-            const yStart = tr.predict(0);
-            const yLast = tr.predict(points.length - 1);
-            if (showTrend) {
-              html += '<line x1="' + xAt(0) + '" y1="' + yAt(yStart) + '" x2="' + xAt(points.length - 1) + '" y2="' + yAt(yLast) +
-                '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.85" />';
-              // continue trend across each future month slot
-              let prevX = xAt(points.length - 1), prevY = yAt(yLast);
-              for (let fi = 0; fi < futureKeys.length; fi++) {
-                const yF = tr.predict(points.length + fi);
-                const xF = xAt(points.length + fi);
-                html += '<line x1="' + prevX + '" y1="' + prevY + '" x2="' + xF + '" y2="' + yAt(yF) +
-                  '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.7" />';
-                prevX = xF; prevY = yAt(yF);
+      if (svg) {
+        if (!points.length) {
+          svg.innerHTML = '<text x="20" y="40" fill="#64748b" font-size="14">No poll data to chart.</text>';
+        } else {
+          const W = 720, H = 320, padL = 40, padR = 56, padT = 20, padB = 44;
+          const plotW = W - padL - padR, plotH = H - padT - padB;
+          let yMax = 40;
+          selected.forEach(function(name) {
+            points.forEach(function(p) {
+              if (p.avg[name] != null) yMax = Math.max(yMax, p.avg[name] + 4);
+            });
+            const ys = points.map(function(p) { return p.avg[name]; });
+            const tr = linearTrend(ys);
+            if (tr) {
+              for (let fi = 0; fi < Math.max(1, futureKeys.length); fi++) {
+                yMax = Math.max(yMax, tr.predict(points.length + fi) + 3);
               }
             }
-            if (showPredict) {
-              let prevX = xAt(points.length - 1);
-              let prevY = yAt(ys[ys.length - 1] != null ? ys[ys.length - 1] : yLast);
-              for (let fi = 0; fi < futureKeys.length; fi++) {
-                const yF = tr.predict(points.length + fi);
-                const xF = xAt(points.length + fi);
-                html += '<line x1="' + prevX + '" y1="' + prevY + '" x2="' + xF + '" y2="' + yAt(yF) +
-                  '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.75" />';
-                html += '<circle cx="' + xF + '" cy="' + yAt(yF) + '" r="5" fill="#ffffff" stroke="' + col + '" stroke-width="2.5" />';
-                predLabels.push({
-                  name: name,
-                  col: col,
-                  x: xF,
-                  y: yAt(yF),
-                  text: (Math.round(yF * 10) / 10) + "%"
-                });
-                prevX = xF; prevY = yAt(yF);
-              }
-            }
-          } else if (tr && showTrend) {
-            const yStart = tr.predict(0);
-            const yLast = tr.predict(points.length - 1);
-            html += '<line x1="' + xAt(0) + '" y1="' + yAt(yStart) + '" x2="' + xAt(points.length - 1) + '" y2="' + yAt(yLast) +
-              '" stroke="' + col + '" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.85" />';
-          }
-        });
-
-        // Place prediction labels to the right of dots; nudge vertically if they collide
-        if (predLabels.length) {
-          predLabels.sort(function(a, b) { return a.y - b.y; });
-          const minGap = 14;
-          for (let i = 1; i < predLabels.length; i++) {
-            if (predLabels[i].y - predLabels[i - 1].y < minGap) {
-              predLabels[i].y = predLabels[i - 1].y + minGap;
-            }
-          }
-          // keep inside chart top/bottom
-          predLabels.forEach(function(lb) {
-            if (lb.y < padT + 8) lb.y = padT + 8;
-            if (lb.y > padT + plotH - 4) lb.y = padT + plotH - 4;
           });
-          // second pass after clamping
+          yMax = Math.max(40, Math.ceil(yMax / 5) * 5);
+
+          function xAt(i) {
+            return padL + (axisLen <= 1 ? plotW / 2 : (i / (axisLen - 1)) * plotW);
+          }
+          function yAt(v) {
+            return padT + plotH - (Math.max(0, Math.min(yMax, v)) / yMax) * plotH;
+          }
+
+          let html = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>';
+          for (let v = 0; v <= yMax; v += 10) {
+            const y = yAt(v);
+            html += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#e2e8f0" />';
+            html += '<text x="' + (padL - 6) + '" y="' + (y + 3) + '" text-anchor="end" fill="#64748b" font-size="11">' + v + '%</text>';
+          }
+          axisKeys.forEach(function(k, i) {
+            if (axisLen > 14 && i % 2 && i < axisLen - 1) return;
+            const fut = !!futureKeySet[k];
+            html += '<text x="' + xAt(i) + '" y="' + (H - 14) + '" text-anchor="middle" fill="' + (fut ? "#94a3b8" : "#475569") +
+              '" font-size="10">' + monthLabel(k) + (fut ? "*" : "") + '</text>';
+          });
+
+          const predLabels = [];
+          selected.forEach(function(name) {
+            const col = pollsPartyColor(name) || "#334155";
+            const ys = points.map(function(p) { return p.avg[name]; });
+            // main line
+            let d = "", started = false;
+            points.forEach(function(p, i) {
+              if (p.avg[name] == null) { started = false; return; }
+              d += (started ? " L " : "M ") + xAt(i) + " " + yAt(p.avg[name]);
+              started = true;
+            });
+            if (d) {
+              html += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />';
+            }
+            points.forEach(function(p, i) {
+              if (p.avg[name] == null) return;
+              html += '<circle cx="' + xAt(i) + '" cy="' + yAt(p.avg[name]) + '" r="4" fill="' + col +
+                '" stroke="#fff" stroke-width="1.5"><title>' + name + " · " + monthLabel(p.key) + " · " + p.avg[name] + "%</title></circle>";
+            });
+            const tr = linearTrend(ys);
+            if (tr && (showTrend || showPredict) && futureKeys.length) {
+              const yLast = tr.predict(points.length - 1);
+              if (showTrend) {
+                html += '<line x1="' + xAt(0) + '" y1="' + yAt(tr.predict(0)) + '" x2="' + xAt(points.length - 1) + '" y2="' + yAt(yLast) +
+                  '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.75" />';
+                let px = xAt(points.length - 1), py = yAt(yLast);
+                for (let fi = 0; fi < futureKeys.length; fi++) {
+                  const yF = tr.predict(points.length + fi);
+                  const xF = xAt(points.length + fi);
+                  html += '<line x1="' + px + '" y1="' + py + '" x2="' + xF + '" y2="' + yAt(yF) +
+                    '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.65" />';
+                  px = xF; py = yAt(yF);
+                }
+              }
+              if (showPredict) {
+                let px = xAt(points.length - 1);
+                let py = yAt(ys[ys.length - 1] != null ? ys[ys.length - 1] : yLast);
+                for (let fi = 0; fi < futureKeys.length; fi++) {
+                  const yF = tr.predict(points.length + fi);
+                  const xF = xAt(points.length + fi);
+                  html += '<line x1="' + px + '" y1="' + py + '" x2="' + xF + '" y2="' + yAt(yF) +
+                    '" stroke="' + col + '" stroke-width="1.4" stroke-dasharray="2 3" opacity="0.8" />';
+                  html += '<circle cx="' + xF + '" cy="' + yAt(yF) + '" r="5" fill="#fff" stroke="' + col + '" stroke-width="2.5" />';
+                  predLabels.push({ col: col, x: xF, y: yAt(yF), text: (Math.round(yF * 10) / 10) + "%" });
+                  px = xF; py = yAt(yF);
+                }
+              }
+            } else if (tr && showTrend) {
+              html += '<line x1="' + xAt(0) + '" y1="' + yAt(tr.predict(0)) + '" x2="' + xAt(points.length - 1) + '" y2="' + yAt(tr.predict(points.length - 1)) +
+                '" stroke="' + col + '" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.75" />';
+            }
+          });
+
           predLabels.sort(function(a, b) { return a.y - b.y; });
           for (let i = 1; i < predLabels.length; i++) {
-            if (predLabels[i].y - predLabels[i - 1].y < minGap) {
-              predLabels[i].y = predLabels[i - 1].y + minGap;
-            }
+            if (predLabels[i].y - predLabels[i - 1].y < 12) predLabels[i].y = predLabels[i - 1].y + 12;
           }
           predLabels.forEach(function(lb) {
-            const lx = Math.min(W - 4, lb.x + 10);
-            html += '<text x="' + lx + '" y="' + (lb.y + 3) + '" text-anchor="start" fill="' + lb.col +
+            html += '<text x="' + Math.min(W - 4, lb.x + 8) + '" y="' + (lb.y + 3) + '" fill="' + lb.col +
               '" font-size="11" font-weight="800">' + lb.text + '</text>';
           });
+
+          svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+          svg.style.background = "#ffffff";
+          svg.innerHTML = html;
         }
+      }
 
-        svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-        svg.style.background = "#ffffff";
-        svg.innerHTML = html;
-        svg.querySelectorAll(".poll-line, .poll-dot").forEach(function(el) {
-          el.addEventListener("click", function() {
-            showPartiesView(el.getAttribute("data-party"));
-          });
-        });
-
-        if (legend) legend.innerHTML = "";
+      if (legend) {
+        legend.innerHTML = selected.map(function(name) {
+          const col = pollsPartyColor(name);
+          return '<span style="margin-right:0.75rem;font-weight:700;color:' + col + '">● ' + name + '</span>';
+        }).join("") + (futureKeys.length ? '<span style="color:#94a3b8">* forecast months</span>' : "");
       }
 
       if (tableBody) {
         const tableRows = rows.slice().sort(function(a, b) {
           return String(b.end || b.start).localeCompare(String(a.end || a.start));
         });
-        if (!tableRows.length) {
-          tableBody.innerHTML = '<tr><td colspan="7">No poll rows available yet.</td></tr>';
-        } else {
-          tableBody.innerHTML = tableRows.map(function(p) {
-            function cell(name) {
-              const v = p[name];
-              return v != null && v !== "" ? v : "—";
-            }
-            const when = (p.start && p.end && p.start !== p.end)
-              ? (p.start + " → " + p.end)
-              : (p.end || p.start || "—");
-            return '<tr><td>' + (p.firm || "—") + '</td><td>' + when + '</td><td>' + cell("National") +
-              '</td><td>' + cell("Labour") + '</td><td>' + cell("Green") + '</td><td>' + cell("ACT") +
-              '</td><td>' + cell("NZ First") + '</td></tr>';
-          }).join("");
-        }
+        tableBody.innerHTML = tableRows.length
+          ? tableRows.map(function(p) {
+              function cell(name) {
+                const v = p[name];
+                return v != null && v !== "" ? v : "—";
+              }
+              const when = (p.start && p.end && p.start !== p.end) ? (p.start + " → " + p.end) : (p.end || p.start || "—");
+              return "<tr><td>" + (p.firm || "—") + "</td><td>" + when + "</td><td>" + cell("National") +
+                "</td><td>" + cell("Labour") + "</td><td>" + cell("Green") + "</td><td>" + cell("ACT") +
+                "</td><td>" + cell("NZ First") + "</td></tr>";
+            }).join("")
+          : '<tr><td colspan="7">No poll rows.</td></tr>';
       }
 
       if (foot) {
-        let extra = "";
-        if (window.__livePollsRemote && window.__livePollsRemote.updatedAt) {
-          extra = "Worker polls file updated " + String(window.__livePollsRemote.updatedAt).slice(0, 19).replace("T", " ") + " UTC. ";
-        }
-        foot.innerHTML = extra + "Monthly averages from public polls. Trend/prediction are linear fits (indicative only). <a href=\"" + LIVE_POLLS_URL +
-          "\" target=\"_blank\" rel=\"noopener noreferrer\">polls.json</a> · <a href=\"" + OPINION_POLLS_SOURCE +
-          "\" target=\"_blank\" rel=\"noopener noreferrer\">Wikipedia</a>.";
+        foot.innerHTML = rows.length + " polls across " + points.length + " months. " +
+          '<a href="' + OPINION_POLLS_SOURCE + '" target="_blank" rel="noopener noreferrer">Wikipedia polling table</a>.';
       }
     }
 
@@ -10246,6 +10210,7 @@ function renderNewsTallies() {
                 url: h.url,
                 agency: h.agency,
                 date: h.date,
+                image: h.image || null,
                 mpIds: h.mpIds || [],
                 summary: h.summary || h.title
               };
