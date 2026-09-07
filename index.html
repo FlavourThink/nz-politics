@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Parliamentary Generational Atlas — New Zealand MPs by birth year · v3.09</title>
+  <title>Parliamentary Generational Atlas — New Zealand MPs by birth year · v3.11</title>
   <meta name="description" content="Interactive atlas of New Zealand’s 54th Parliament: sitting MPs by birth year and first term, generation windows, party records, and 2026 election promises. Designed by FlavourThink Ltd." />
   <meta name="keywords" content="New Zealand Parliament, 54th Parliament, NZ MPs, birth year timeline, generation Boomer Gen X Millennial, 2026 election, National Labour Green ACT NZ First Te Pāti Māori TOP, Hansard votes, MMP, Beehive, Wellington, FlavourThink" />
   <meta name="author" content="FlavourThink Ltd" />
@@ -837,7 +837,7 @@
     .detail-panel .close { position: absolute; top: 0.9rem; right: 0.9rem; background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; line-height: 1; }
     .detail-section { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid var(--border); }
     .detail-section h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin-bottom: 0.35rem; }
-    .era-context { background: var(--surface2); border-radius: 6px; padding: 0.7rem; font-size: 0.84rem; border-left: 3px solid var(--accent); }
+    .era-context { background: transparent; border-radius: 0; padding: 0.35rem 0 0.7rem; font-size: 0.84rem; border-left: 3px solid var(--accent); }
     .formative-list { margin: 0.5rem 0 0 0; padding-left: 1.1rem; font-size: 0.84rem; }
     .formative-list li { margin-bottom: 0.35rem; }
     .pos-row { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.55rem; font-size: 0.84rem; }
@@ -5448,6 +5448,117 @@
       background-size: 1000% 800%;
       background-position: calc(var(--c, 0) * 100% / 9) calc(var(--r, 0) * 100% / 7);
     }
+
+    .menu-speed {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 0.85rem;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+    .menu-speed-row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .menu-speed input[type="range"] {
+      flex: 1;
+      min-width: 0;
+    }
+    #hansardPage.donate-page,
+    #hansardPage {
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    #hansardPage.open {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    #hansardPage .hansard-card {
+      margin: auto !important;
+      align-self: center !important;
+    }
+    #hansardList,
+    #hansardPage .hansard-cal {
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    .hansard-cal {
+      width: min(22.5rem, 100%);
+    }
+    .detail-badges,
+    .detail-badges.badge-combined,
+    .badge-pane .detail-badges,
+    #badgesSection .detail-badges,
+    #panel .detail-badges {
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      flex-direction: unset !important;
+      gap: 0.25rem !important;
+      width: 100% !important;
+    }
+    .badge-split {
+      display: block !important;
+    }
+    #panel .detail-badges .badge-slot,
+    #badgesSection .badge-slot {
+      max-width: 3.4rem !important;
+      width: 100% !important;
+      margin: 0 auto !important;
+    }
+    .era-context {
+      background: transparent !important;
+      border: 0 !important;
+      border-left: 0 !important;
+      padding-left: 0 !important;
+    }
+    #panel .poll-chart,
+    svg.poll-chart {
+      display: block !important;
+      visibility: visible !important;
+      width: 100% !important;
+      min-height: 200px !important;
+      height: 220px !important;
+    }
+    #partyPollMount { min-height: 200px; }
+
+    .reel-toggle {
+      flex: 0 0 auto;
+      min-width: 2.6rem;
+      height: 1.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface2, var(--surface));
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .reel-toggle.on {
+      background: color-mix(in srgb, var(--accent) 35%, var(--surface));
+      border-color: var(--accent);
+    }
+    .promise-reel { pointer-events: auto; }
+    html.reel-off .promise-reel { display: none !important; }
+    #partyPollMount { min-height: 0; }
+    #partyPollMount .poll-chart {
+      height: 168px !important;
+      min-height: 168px !important;
+      overflow: hidden;
+    }
+    .poll-months {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.15rem;
+      margin: 0.2rem 0 0.35rem;
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+    .poll-months span { flex: 1; text-align: center; }
+    .poll-legend { display: block; margin: 0.15rem 0 0.55rem; line-height: 1.35; }
   </style>
 </head>
 <body>
@@ -5573,6 +5684,13 @@
     <button type="button" class="donate-btn" id="menuFeatureBtn" style="background:transparent;color:var(--accent);border:1px solid color-mix(in srgb, var(--accent) 45%, transparent);margin-top:0.25rem;">Request a feature</button>
     <button type="button" class="donate-btn" id="menuHansardBtn" style="background:transparent;color:var(--accent);border:1px solid color-mix(in srgb, var(--accent) 45%, transparent);margin-top:0.25rem;">Hansard</button>
     <button type="button" class="theme-icon theme-icon-menu" id="themeToggleMenu" aria-label="Switch theme" title="Light or dark">☀</button>
+    <label class="menu-speed" for="reelSpeed">News speed
+      <span class="menu-speed-row">
+        <input type="range" id="reelSpeed" min="30" max="100" step="1" value="30" />
+        <span id="reelSpeedVal">30 px/s</span>
+        <button type="button" class="reel-toggle on" id="reelToggle" aria-pressed="true" title="Show or hide the news reel">On</button>
+      </span>
+    </label>
   </nav>
 
   <!-- Donate information page -->
@@ -5604,7 +5722,7 @@
     </div>
   <footer>
     <button type="button" class="version-chip" id="versionChip" title="Open release log" aria-label="Open release log">
-      <span id="versionLabel">v3.09</span>
+      <span id="versionLabel">v3.11</span>
       <span class="ver-date" id="versionDate">· 22 Aug 2026</span>
     </button>
     <span class="footer-meta">Designed by FlavourThink Ltd. · Copyright © 2026</span>
@@ -5681,7 +5799,7 @@
   </div>
 
   <script>
-    const BUILD = "v3.09";
+    const BUILD = "v3.11";
     window.__mpPanelCache = window.__mpPanelCache || {};
     /* Live party feed — fill githubBase (raw URL prefix) to pull daily JSON.
        Files expected: party-polls.json and party-offerings-2026.json
@@ -5999,12 +6117,32 @@
 
     const SPRITE_SHEET = { url: "busts-atlas.png", file: "busts-atlas.png", cell: 128, cols: 9, rows: 8 };
     const SPRITE_ATLAS = {"arena-williams":{"x":0,"y":0,"c":0,"r":0,"i":0},"ayesha-verrall":{"x":128,"y":0,"c":1,"r":0,"i":1},"barbara-edmonds":{"x":256,"y":0,"c":2,"r":0,"i":2},"bill-english":{"x":384,"y":0,"c":3,"r":0,"i":3},"brooke-van-velden":{"x":512,"y":0,"c":4,"r":0,"i":4},"cameron-brewer":{"x":640,"y":0,"c":5,"r":0,"i":5},"camilla-belich":{"x":768,"y":0,"c":6,"r":0,"i":6},"carmel-sepuloni":{"x":896,"y":0,"c":7,"r":0,"i":7},"casey-costello":{"x":1024,"y":0,"c":8,"r":0,"i":8},"catherine-wedd":{"x":0,"y":128,"c":0,"r":1,"i":9},"chloe-swarbrick":{"x":128,"y":128,"c":1,"r":1,"i":10},"chris-bishop":{"x":256,"y":128,"c":2,"r":1,"i":11},"chris-hipkins":{"x":384,"y":128,"c":3,"r":1,"i":12},"christopher-luxon":{"x":512,"y":128,"c":4,"r":1,"i":13},"clerk":{"x":640,"y":128,"c":5,"r":1,"i":14},"cushla-tangaere-manuel":{"x":768,"y":128,"c":6,"r":1,"i":15},"damien-oconnor":{"x":896,"y":128,"c":7,"r":1,"i":16},"dan-bidois":{"x":1024,"y":128,"c":8,"r":1,"i":17},"daniel-eb":{"x":0,"y":256,"c":0,"r":2,"i":18},"david-seymour":{"x":128,"y":256,"c":1,"r":2,"i":19},"debbie-ngarewa-packer":{"x":256,"y":256,"c":2,"r":2,"i":20},"deborah-russell":{"x":384,"y":256,"c":3,"r":2,"i":21},"erica-stanford":{"x":512,"y":256,"c":4,"r":2,"i":22},"francisco-hernandez":{"x":640,"y":256,"c":5,"r":2,"i":23},"gerry-brownlee":{"x":768,"y":256,"c":6,"r":2,"i":24},"ginny-andersen":{"x":896,"y":256,"c":7,"r":2,"i":25},"greg-oconnor":{"x":1024,"y":256,"c":8,"r":2,"i":26},"hana-rawhiti-maipi-clarke":{"x":0,"y":384,"c":0,"r":3,"i":27},"huhana-lyndon":{"x":128,"y":384,"c":1,"r":3,"i":28},"jacinda-ardern":{"x":256,"y":384,"c":2,"r":3,"i":29},"jenny-salesa":{"x":384,"y":384,"c":3,"r":3,"i":30},"jessica-hammond":{"x":512,"y":384,"c":4,"r":3,"i":31},"jo-luxton":{"x":640,"y":384,"c":5,"r":3,"i":32},"john-key":{"x":768,"y":384,"c":6,"r":3,"i":33},"judith-collins":{"x":896,"y":384,"c":7,"r":3,"i":34},"julie-anne-genter":{"x":1024,"y":384,"c":8,"r":3,"i":35},"karen-chhour":{"x":0,"y":512,"c":0,"r":4,"i":36},"katie-nimon":{"x":128,"y":512,"c":1,"r":4,"i":37},"kieran-mcanulty":{"x":256,"y":512,"c":2,"r":4,"i":38},"lan-pham":{"x":384,"y":512,"c":3,"r":4,"i":39},"lawrence-xu-nan":{"x":512,"y":512,"c":4,"r":4,"i":40},"louise-upston":{"x":640,"y":512,"c":5,"r":4,"i":41},"marama-davidson":{"x":768,"y":512,"c":6,"r":4,"i":42},"mark-mitchell":{"x":896,"y":512,"c":7,"r":4,"i":43},"matt-doocey":{"x":1024,"y":512,"c":8,"r":4,"i":44},"megan-woods":{"x":0,"y":640,"c":0,"r":5,"i":45},"mike-davidson":{"x":128,"y":640,"c":1,"r":5,"i":46},"nicola-grigg":{"x":256,"y":640,"c":2,"r":5,"i":47},"nicola-willis":{"x":384,"y":640,"c":3,"r":5,"i":48},"nicole-mckee":{"x":512,"y":640,"c":4,"r":5,"i":49},"paul-goldsmith":{"x":640,"y":640,"c":5,"r":5,"i":50},"penny-simmonds":{"x":768,"y":640,"c":6,"r":5,"i":51},"priyanca-radhakrishnan":{"x":896,"y":640,"c":7,"r":5,"i":52},"qiulae-wong":{"x":1024,"y":640,"c":8,"r":5,"i":53},"rachel-brooking":{"x":0,"y":768,"c":0,"r":6,"i":54},"rawiri-waititi":{"x":128,"y":768,"c":1,"r":6,"i":55},"ricardo-menendez-march":{"x":256,"y":768,"c":2,"r":6,"i":56},"shane-jones":{"x":384,"y":768,"c":3,"r":6,"i":57},"simeon-brown":{"x":512,"y":768,"c":4,"r":6,"i":58},"simon-court":{"x":640,"y":768,"c":5,"r":6,"i":59},"simon-watts":{"x":768,"y":768,"c":6,"r":6,"i":60},"steve-abel":{"x":896,"y":768,"c":7,"r":6,"i":61},"suze-redmayne":{"x":1024,"y":768,"c":8,"r":6,"i":62},"tama-potaka":{"x":0,"y":896,"c":0,"r":7,"i":63},"tamatha-paul":{"x":128,"y":896,"c":1,"r":7,"i":64},"teanau-tuiono":{"x":256,"y":896,"c":2,"r":7,"i":65},"todd-mcclay":{"x":384,"y":896,"c":3,"r":7,"i":66},"tom-rutherford":{"x":512,"y":896,"c":4,"r":7,"i":67},"tracey-mclellan":{"x":640,"y":896,"c":5,"r":7,"i":68},"willie-jackson":{"x":768,"y":896,"c":6,"r":7,"i":69},"willow-jean-prime":{"x":896,"y":896,"c":7,"r":7,"i":70},"winston-peters":{"x":1024,"y":896,"c":8,"r":7,"i":71}};
+    
+    const SPRITE_ALIAS = {
+      luxon:"christopher-luxon", hipkins:"chris-hipkins", seymour:"david-seymour",
+      peters:"winston-peters", brownlee:"gerry-brownlee", collins:"judith-collins",
+      jones:"shane-jones", davidson:"marama-davidson", sepuloni:"carmel-sepuloni",
+      waititi:"rawiri-waititi", willis:"nicola-willis", vanvelden:"brooke-van-velden",
+      "van-velden":"brooke-van-velden", swarbrick:"chloe-swarbrick",
+      maipi:"hana-rawhiti-maipi-clarke", jackson:"willie-jackson",
+      ngarewa:"debbie-ngarewa-packer", mckee:"nicole-mckee", costello:"casey-costello",
+      menendez:"ricardo-menendez-march", wong:"qiulae-wong", eb:"daniel-eb",
+      hammond:"jessica-hammond", bishop:"chris-bishop", stanford:"erica-stanford",
+      chhour:"karen-chhour", mcanulty:"kieran-mcanulty", genter:"julie-anne-genter",
+      ardern:"jacinda-ardern", english:"bill-english", key:"john-key"
+    };
     const SPRITE_DATA = new Proxy({}, { get: function(_, id) { return spriteUrl(String(id)); } });
     function spritePos(id) {
-      var a = SPRITE_ATLAS[id];
-      if (a) return a;
-      var k = String(id || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-      return SPRITE_ATLAS[k] || null;
+      var raw = String(id || "");
+      if (SPRITE_ATLAS[raw]) return SPRITE_ATLAS[raw];
+      var k = raw.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      if (SPRITE_ATLAS[k]) return SPRITE_ATLAS[k];
+      if (SPRITE_ALIAS[k] && SPRITE_ATLAS[SPRITE_ALIAS[k]]) return SPRITE_ATLAS[SPRITE_ALIAS[k]];
+      var keys = Object.keys(SPRITE_ATLAS);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].split("-").pop() === k) return SPRITE_ATLAS[keys[i]];
+      }
+      return null;
     }
     function spriteUrl(id) { return spritePos(id) ? SPRITE_SHEET.url : ""; }
     function spriteStyle(id, size) {
@@ -6694,7 +6832,8 @@
     const PARTY_PROFILES = {
       "National": {
         short: "NAT",
-        current: 29.7,
+        asAt: "1–3 Sep 2026 · Curia",
+        current: 29.0,
         forecast: 29.0,
         series: [38.1, 33.0, 32.0, 31.5, 30.5, 30.0, 31.0, 29.7, 29.0],
         promises: [
@@ -6743,8 +6882,8 @@
       },
       "Labour": {
         short: "LAB",
-        current: 30.8,
-        forecast: 31.2,
+        current: 25.9,
+        forecast: 26.2,
         series: [26.9, 30.0, 31.0, 32.0, 32.5, 32.0, 31.5, 30.8, 31.2],
         promises: [
           { h: "Transport", items: ["$20 weekly public-transport fare cap from July 2027"] },
@@ -6792,8 +6931,8 @@
       },
       "Green": {
         short: "GRN",
-        current: 10.8,
-        forecast: 11.0,
+        current: 13.9,
+        forecast: 13.5,
         series: [11.6, 11.0, 11.2, 12.0, 12.5, 13.0, 11.5, 10.8, 11.0],
         promises: [
           { h: "Tax", items: ["Tax wealth, capital and inheritance to fund public services"] },
@@ -6841,8 +6980,8 @@
       },
       "ACT": {
         short: "ACT",
-        current: 7.8,
-        forecast: 7.6,
+        current: 10.5,
+        forecast: 10.2,
         series: [8.6, 8.2, 8.0, 7.8, 7.5, 7.2, 7.8, 7.8, 7.6],
         promises: [
           { h: "Tax", items: ["Flatter income tax with a 28% top rate aligned to company tax", "No new taxes"] },
@@ -6890,7 +7029,7 @@
       },
       "NZ First": {
         short: "NZF",
-        current: 10.8,
+        current: 8.4,
         forecast: 11.0,
         series: [6.1, 8.5, 9.0, 9.5, 10.5, 11.0, 11.2, 10.8, 11.0],
         promises: [
@@ -6938,8 +7077,8 @@
       },
       "Te Pāti Māori": {
         short: "TPM",
-        current: 2.3,
-        forecast: 2.4,
+        current: 2.0,
+        forecast: 2.1,
         series: [3.1, 2.4, 2.2, 2.0, 2.0, 1.9, 2.1, 2.3, 2.4],
         promises: [
           { h: "Tax", items: ["Tax-free first $30,000 and higher top rates", "Wealth, vacant-house and land-banking taxes"] },
@@ -6986,8 +7125,8 @@
       },
       "TOP": {
         short: "TOP",
-        current: 5.7,
-        forecast: 6.0,
+        current: 4.5,
+        forecast: 4.8,
         series: [2.2, 3.0, 3.5, 4.0, 4.5, 5.0, 5.4, 5.7, 6.0],
         promises: [
           { h: "Tax and housing", items: ["Evidence-based tax and housing settings"] },
@@ -7937,16 +8076,10 @@
       if (hist.length && fut.length && hist[hist.length - 1] !== fut[0]) fut.unshift(hist[hist.length - 1]);
       var yMarks = [lo, (lo + hi) / 2, hi];
       var grid = yMarks.map(function(v) {
-        return '<line x1="' + padL + '" y1="' + yAt(v).toFixed(1) + '" x2="' + (w - padR) + '" y2="' + yAt(v).toFixed(1) + '" stroke="#445" />' +
-          '<text x="' + (padL - 4) + '" y="' + (yAt(v) + 3).toFixed(1) + '" text-anchor="end" fill="#c5c9ce" font-size="8">' + v.toFixed(1) + "</text>";
+        return '<line x1="' + padL + '" y1="' + yAt(v).toFixed(1) + '" x2="' + (w - padR) + '" y2="' + yAt(v).toFixed(1) + '" stroke="#445" />';
       }).join("");
       var ticks = "";
-      [2,3,4,5,6,7,8,9,10].forEach(function(mo) {
-        var t = Date.UTC(2026, mo, 1);
-        var lab = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][mo];
-        ticks += '<text x="' + xAt(t).toFixed(1) + '" y="' + (h - 8) + '" text-anchor="middle" fill="#c5c9ce" font-size="8">' + lab + "</text>";
-      });
-      return '<svg class="poll-chart" viewBox="0 0 ' + w + " " + h + '" width="100%" height="200" role="img" aria-label="Party vote track to November 2026">' +
+      return '<svg class="poll-chart" viewBox="0 0 ' + w + " " + h + '" width="100%" height="168" role="img" aria-label="Party vote track to November 2026">' +
         '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="#1b1f27" rx="8" />' +
         grid +
         (hist.length ? '<polyline fill="none" stroke="' + color + '" stroke-width="2.6" points="' + hist.join(" ") + '" />' : "") +
@@ -8039,8 +8172,7 @@
         '<h2 class="keep-title">' + party + ' <button type="button" class="hansard-icon-btn" id="partyHansardBtn" title="Hansard" aria-label="Hansard" onclick="event.preventDefault();event.stopPropagation();window.openHansardFor && window.openHansardFor(\'\');">H</button></h2>' +
         '<p class="poll-now">' + (isFinite(Number(profile.current)) ? Number(profile.current).toFixed(1) : "—") + '% <small>party vote · ' + (profile.asAt || (window.__liveFeedMeta && window.__liveFeedMeta.asAt) || "bundled late Aug 2026") + '</small></p>' +
         '<p class="poll-legend">Track to election day (7 Nov 2026): <strong>' + (isFinite(Number(profile.forecast)) ? Number(profile.forecast).toFixed(1) : "—") + '%</strong></p>' +
-        (function(){ try { return pollChartSvg(party, profile) || '<p class="poll-legend">No poll track for this party yet.</p>'; } catch (err) { console.error('poll chart', err); return '<p class="poll-legend">Poll track could not be drawn.</p>'; } })() +
-        '<p class="poll-legend">Solid = last six months. Dotted = track to 7 Nov 2026. Hollow point is the projection, not a poll.</p>' +
+        '<div id="partyPollMount">' + (function(){ try { seedMonthlyPoints(profile); var svg = pollChartSvg(party, profile) || '<p class="poll-legend">No poll track for this party yet.</p>'; return svg + '<div class="poll-months"><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span></div><p class="poll-legend">Solid = last six months. Dotted = track to 7 Nov 2026. Hollow point is the projection, not a poll.</p>'; } catch (err) { console.error('poll chart', err); return '<p class="poll-legend">Poll track could not be drawn.</p>'; } })() + '</div>' +
         '<div class="detail-section"><h3>Tracking the Promises: The 2026 Election</h3><p class="poll-legend">Current offerings for this election. Not a record of delivery.</p>' + promises + '</div>' +
         '<div class="detail-section"><h3>Last 7 elections (2005–2023)</h3>' + cycleHtml + '</div>';
       resetPanelScroll();
@@ -8968,6 +9100,26 @@
 
     const RELEASE_DATE = "22 Aug 2026";
     const RELEASE_LOG = [
+      {
+        version: "v3.11",
+        date: "8 Sep 2026",
+        items: [
+          { type: "fixed", text: "MP cards read busts-atlas.png using short-id aliases (luxon → christopher-luxon)" },
+          { type: "upgraded", text: "News reel default 30 px/s; hold to pause; menu On/Off toggle" },
+          { type: "fixed", text: "Poll month labels and legend sit under the graph, not over it" }
+        ]
+      },
+      {
+        version: "v3.10",
+        date: "8 Sep 2026",
+        items: [
+          { type: "upgraded", text: "News reel speed slider in the menu, default 50 px/s (50–100)" },
+          { type: "fixed", text: "Hansard calendar centred in its window" },
+          { type: "fixed", text: "MP badges forced to four columns" },
+          { type: "fixed", text: "Removed the blue block behind In the news whilst … was a young adult" },
+          { type: "fixed", text: "Party poll graph always mounts and refreshes from the latest Curia (1–3 Sep 2026)" }
+        ]
+      },
       {
         version: "v3.09",
         date: "8 Sep 2026",
@@ -12458,7 +12610,18 @@
         tryFetch(LIVE_FEED.proposedFile, "proposed")
       ]);
     }
-    loadLiveFeeds();
+    loadLiveFeeds().then(function() {
+      try {
+        var mount = document.getElementById("partyPollMount");
+        var title = document.getElementById("mpTitleName");
+        var party = title && title.textContent;
+        if (mount && party && PARTY_PROFILES[party]) {
+          seedMonthlyPoints(PARTY_PROFILES[party]);
+          mount.innerHTML = pollChartSvg(party, PARTY_PROFILES[party]);
+        }
+        if (window.applyReelSpeed) window.applyReelSpeed();
+      } catch (e) { console.warn("live graph refresh", e); }
+    });
 
     (function bindPanelWheel() {
       var el = document.getElementById("panel");
@@ -12519,8 +12682,61 @@
       }
       var html = seq.map(itemHtml).join("");
       track.innerHTML = html + html;
-      track.style.animation = "reel-scroll 80s linear infinite";
+      window.applyReelSpeed();
     }
+    window.applyReelSpeed = function(px) {
+      var track = document.getElementById("promiseReelTrack");
+      var slider = document.getElementById("reelSpeed");
+      var label = document.getElementById("reelSpeedVal");
+      var stored = parseFloat(localStorage.getItem("atlasReelPx") || "30");
+      if (!isFinite(stored)) stored = 30;
+      var speed = px != null ? Number(px) : (slider ? Number(slider.value) : stored);
+      if (!isFinite(speed)) speed = 30;
+      speed = Math.max(30, Math.min(100, speed));
+      try { localStorage.setItem("atlasReelPx", String(speed)); } catch (e) {}
+      if (slider) slider.value = String(Math.round(speed));
+      if (label) label.textContent = Math.round(speed) + " px/s";
+      if (!track || !track.scrollWidth) {
+        if (track) track.style.animation = "reel-scroll 40s linear infinite";
+        return;
+      }
+      var dist = Math.max(1, track.scrollWidth / 2);
+      var sec = dist / speed;
+      track.style.animation = "reel-scroll " + sec.toFixed(2) + "s linear infinite";
+    };
+    (function bindReelSlider() {
+      var slider = document.getElementById("reelSpeed");
+      var stored = parseFloat(localStorage.getItem("atlasReelPx") || "30");
+      if (!isFinite(stored)) stored = 30;
+      if (slider) {
+        slider.value = String(Math.round(stored));
+        slider.addEventListener("input", function() { window.applyReelSpeed(slider.value); });
+      }
+      window.applyReelSpeed(stored);
+      var reel = document.getElementById("promiseReel");
+      var track = document.getElementById("promiseReelTrack");
+      function pauseReel() { if (track) track.style.animationPlayState = "paused"; }
+      function playReel() { if (track) track.style.animationPlayState = "running"; }
+      if (reel && track) {
+        reel.addEventListener("pointerdown", function(ev) { ev.preventDefault(); pauseReel(); });
+        window.addEventListener("pointerup", playReel);
+        window.addEventListener("pointercancel", playReel);
+        reel.addEventListener("pointerleave", playReel);
+      }
+      var tog = document.getElementById("reelToggle");
+      var show = localStorage.getItem("atlasReelOn") !== "0";
+      function applyReelVis() {
+        document.documentElement.classList.toggle("reel-off", !show);
+        if (tog) {
+          tog.classList.toggle("on", show);
+          tog.textContent = show ? "On" : "Off";
+          tog.setAttribute("aria-pressed", show ? "true" : "false");
+        }
+        try { localStorage.setItem("atlasReelOn", show ? "1" : "0"); } catch (e) {}
+      }
+      if (tog) tog.addEventListener("click", function() { show = !show; applyReelVis(); });
+      applyReelVis();
+    })();
     try { buildPromiseReel(); } catch (e) { console.warn("reel", e); }
 
     fillChamberCast();
