@@ -1,2 +1,2 @@
-v3.12 — 8 Sep 2026
-index.html + atlas.css + atlas.js + three image files.
+v3.13 — 8 Sep 2026
+Replace index.html, atlas.css, atlas.js from the v3.13 zip.
