@@ -1,2 +1,2 @@
-v3.09 — 8 Sep 2026
-HTML ~561KB. Needs busts-atlas.png, badges-atlas.png, chamber-header.jpg beside index.html.
+v3.10 — 8 Sep 2026
+Needs busts-atlas.png, badges-atlas.png, chamber-header.jpg next to index.html.
