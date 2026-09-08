@@ -5513,3 +5513,65 @@
     }
     #panel.party-mode .poll-now { margin-top: 0.1rem; }
     #panel.party-mode .party-back { margin-bottom: 0.35rem; }
+
+    .detail-badges .badge-slot span.badge-spr,
+    .detail-badges .badge-slot span.pos,
+    .detail-badges .badge-slot .neg-slash {
+      display: block !important;
+    }
+    .detail-badges .badge-slot .badge-spr {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 2.6rem;
+    }
+    .mp-node .sprite,
+    .mp-node .sprite.sprite-atlas {
+      width: 48px !important;
+      height: 48px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+      background-color: #fffaf0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .mp-node .sprite.sprite-empty {
+      background: #2a2f3a;
+    }
+    .panel-sprite,
+    .panel-sprite.sprite-atlas {
+      width: 112px !important;
+      height: 112px !important;
+      padding: 0 !important;
+      box-sizing: border-box;
+    }
+    #partyPollMount {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch;
+      gap: 0.3rem;
+      position: relative;
+      min-height: 0 !important;
+    }
+    #panel .poll-chart,
+    svg.poll-chart,
+    #partyPollMount .poll-chart {
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      display: block !important;
+      width: 100% !important;
+      height: 160px !important;
+      min-height: 160px !important;
+      max-height: 160px !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+    }
+    #partyPollMount .poll-months,
+    #partyPollMount .poll-legend {
+      position: static !important;
+      inset: auto !important;
+      float: none !important;
+      transform: none !important;
+      margin: 0 !important;
+    }

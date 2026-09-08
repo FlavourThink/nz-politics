@@ -1,4 +1,4 @@
-const BUILD = "v3.12";
+const BUILD = "v3.13";
     window.__mpPanelCache = window.__mpPanelCache || {};
     /* Live party feed — fill githubBase (raw URL prefix) to pull daily JSON.
        Files expected: party-polls.json and party-offerings-2026.json
@@ -1975,7 +1975,7 @@ const BUILD = "v3.12";
           <div class="birth-edge" title="Left edge = birth year"></div>
           <div class="party-bar" style="background:${partyColour[mp.party] || '#666'}"></div>
           ${isPm ? '<span class="pm-seal" title="Prime Minister"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="20" rx="7" ry="1.6" fill="currentColor"/><path d="M6.5 20v-2.2c0-.2 1.6-1.1 5.5-1.1s5.5.9 5.5 1.1V20" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="16.6" rx="6" ry="1.3" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="13.8" rx="5" ry="1.2" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="11.2" rx="3.8" ry="1.1" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="8.8" rx="2.6" ry="1" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="12" cy="6.6" rx="1.6" ry=".8" fill="currentColor"/></svg><span class="pm-letters">PM</span></span>' : ""}
-          ${spriteMarkup(mp.id || mp.baseId, 44, "sprite")}
+          ${spriteMarkup(mp.id || mp.baseId, 48, "sprite")}
           <div class="card-copy">
             <div class="name">${mp.name}</div>
             <div class="meta">${(function(){
@@ -2540,7 +2540,7 @@ const BUILD = "v3.12";
             var title = opposed ? (label + " — opposed") : (label + " — supported");
             var cls = "badge-slot" + (opposed ? " opposed" : "");
             var imgs = a
-              ? ("<span class=\"pos badge-spr\" style=\"--c:" + a.c + ";--r:" + a.r + "\" role=\"img\" aria-label=\"" + esc(title) + "\"></span>")
+              ? ("<span class=\"pos badge-spr\" style=\"--c:" + a.c + ";--r:" + a.r + ";display:block\" role=\"img\" aria-label=\"" + esc(title) + "\"></span>")
               : ("<img class=\"pos\" src=\"badges/" + k + ".png\" alt=\"" + esc(title) + "\">");
             if (opposed) imgs += "<span class=\"neg-slash\" aria-hidden=\"true\"></span>";
             return "<button type=\"button\" class=\"" + cls + "\" data-badge=\"" + k + "\" data-up=\"" + (opposed ? "0" : "1") + "\" data-down=\"" + (opposed ? "1" : "0") + "\" aria-pressed=\"false\" title=\"" + esc(title) + ". Click for explanation\">" + imgs + "</button>";
@@ -2621,7 +2621,7 @@ const BUILD = "v3.12";
               "<p class=\"biz-org\">New Zealand Parliament</p>" +
               "<div class=\"panel-top\">" +
                 "<div class=\"panel-sprite-col\">" +
-                  spriteMarkup(mp.id || mp.baseId, 56, "panel-sprite sprite") +
+                  spriteMarkup(mp.id || mp.baseId, 112, "panel-sprite sprite") +
                 "</div>" +
                 "<div class=\"panel-top-text\">" +
                   "<p class=\"biz-name\" id=\"bizCardName\">" + esc(mp.name) + "</p>" +
@@ -2852,7 +2852,7 @@ const BUILD = "v3.12";
               "<div class=\"biz-slit biz-slit-bl\"></div><div class=\"biz-slit biz-slit-br\"></div>" +
               "<p class=\"biz-org\">New Zealand Parliament</p>" +
               "<div class=\"panel-top\">" +
-                "<div class=\"panel-sprite-col\">" + spriteMarkup(m.id || m.baseId, 56, "panel-sprite sprite") + "</div>" +
+                "<div class=\"panel-sprite-col\">" + spriteMarkup(m.id || m.baseId, 112, "panel-sprite sprite") + "</div>" +
                 "<div class=\"panel-top-text\">" +
                   "<p class=\"biz-name\">" + esc(m.name) + "</p>" +
                   "<p class=\"biz-role\">" + esc(m.role || m.party || "") + "</p>" +
@@ -3300,6 +3300,16 @@ const BUILD = "v3.12";
 
     const RELEASE_DATE = "22 Aug 2026";
     const RELEASE_LOG = [
+      {
+        version: "v3.13",
+        date: "8 Sep 2026",
+        items: [
+          { type: "fixed", text: "MP panel badges show again (sprite spans were hidden)" },
+          { type: "fixed", text: "Party graph captions sit under the chart" },
+          { type: "fixed", text: "Timeline cards crop the bust atlas into the 48px photo slot" },
+          { type: "upgraded", text: "One BUILD_NOTES.md on GitHub, updated each release" }
+        ]
+      },
       {
         version: "v3.12",
         date: "8 Sep 2026",
