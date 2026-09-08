@@ -1,4 +1,5 @@
-const BUILD = "v3.16";
+const BUILD = "v3.18";
+    const FEATURE_API = "https://nz-politics-features.flavourthink.workers.dev";
     window.__mpPanelCache = window.__mpPanelCache || {};
     /* Live party feed — fill githubBase (raw URL prefix) to pull daily JSON.
        Files expected: party-polls.json and party-offerings-2026.json
@@ -2277,7 +2278,11 @@ const BUILD = "v3.16";
       var grid = yMarks.map(function(v) {
         return '<line x1="' + padL + '" y1="' + yAt(v).toFixed(1) + '" x2="' + (w - padR) + '" y2="' + yAt(v).toFixed(1) + '" stroke="#445" />';
       }).join("");
-      var ticks = "";
+      var ticks = yMarks.map(function(v) {
+        var yy = yAt(v);
+        return '<text x="' + (padL - 3) + '" y="' + (yy + 3).toFixed(1) + '" text-anchor="end" fill="#d0d4da" font-size="10" font-family="system-ui,sans-serif">' +
+          (Math.abs(v) >= 10 ? v.toFixed(0) : v.toFixed(1)) + "</text>";
+      }).join("");
       var monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       var monthRow = '<div class="poll-months" style="padding-left:' + (padL / w * 100).toFixed(2) + '%;padding-right:' + (padR / w * 100).toFixed(2) + '%">' +
         months.map(function(t) {
@@ -2290,6 +2295,7 @@ const BUILD = "v3.16";
         (hist.length ? '<polyline fill="none" stroke="' + color + '" stroke-width="2.6" points="' + hist.join(" ") + '" />' : "") +
         (fut.length ? '<polyline fill="none" stroke="' + color + '" stroke-width="2.4" stroke-dasharray="5 4" points="' + fut.join(" ") + '" />' : "") +
         '<circle cx="' + xAt(end).toFixed(1) + '" cy="' + yAt(atT(end)).toFixed(1) + '" r="4.5" fill="none" stroke="' + color + '" stroke-width="2.2" />' +
+        ticks +
         "</svg>";
       return svg + monthRow;
     }
@@ -2685,6 +2691,9 @@ const BUILD = "v3.16";
             ev.preventDefault();
             ev.stopPropagation();
             var gid = genChip.getAttribute("data-gen");
+            window.__keepAtlasHistory = true;
+            try { closePanel(); } catch (e) {}
+            window.__keepAtlasHistory = false;
             if (gid && typeof openGenDetail === "function") openGenDetail(gid);
           });
         }
@@ -2693,11 +2702,28 @@ const BUILD = "v3.16";
           hanBtn.addEventListener("click", function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
+            window.__keepAtlasHistory = true;
             try { closePanel(); } catch (e) {}
+            window.__keepAtlasHistory = false;
             window.__hansardFilter = "";
-            if (window.openHansardPage) window.openHansardPage();
+            function showHansard() {
+              if (typeof window.openHansardPage === "function") { window.openHansardPage(); return; }
+              var page = document.getElementById("hansardPage");
+              if (!page) return;
+              page.classList.add("open");
+              page.style.display = "flex";
+              page.style.zIndex = "400";
+            }
+            setTimeout(showHansard, 0);
           });
         }
+        panelContent.querySelectorAll(".badge-slot").forEach(function(btn) {
+          btn.addEventListener("click", function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            showBadgePopup(btn);
+          });
+        });
 
         var sheet = panelContent.querySelector("#folderSheet") || panelContent.querySelector(".folder-sheet");
         var hint = panelContent.querySelector(".folder-scroll-hint");
@@ -3143,6 +3169,48 @@ const BUILD = "v3.16";
       }, { passive: false, capture: true });
     }
 
+
+    function showBadgePopup(btn) {
+      if (!btn) return;
+      var k = btn.getAttribute("data-badge") || "";
+      var opposed = btn.classList.contains("opposed") || btn.getAttribute("data-down") === "1";
+      var title = (BADGE_META && BADGE_META[k]) || k;
+      var note = (window.BADGE_NOTE && BADGE_NOTE[k]) || title;
+      var el = document.getElementById("badgeExplain");
+      if (!el) {
+        el = document.createElement("div");
+        el.id = "badgeExplain";
+        el.className = "badge-explain";
+        document.body.appendChild(el);
+      }
+      if (el.dataset.openFor === k && el.style.display === "block") {
+        el.style.display = "none";
+        el.hidden = true;
+        el.dataset.openFor = "";
+        return;
+      }
+      el.innerHTML = "<strong>" + title + "</strong><p>" + (opposed ? "Opposed. " : "Supported. ") + note + "</p>";
+      el.hidden = false;
+      el.style.display = "block";
+      el.dataset.openFor = k;
+      var r = btn.getBoundingClientRect();
+      var left = Math.max(8, Math.min(r.left, window.innerWidth - 300));
+      var top = r.bottom + 8;
+      if (top + 120 > window.innerHeight) top = Math.max(8, r.top - 128);
+      el.style.left = left + "px";
+      el.style.top = top + "px";
+      if (window.__badgeBlurbOff) document.removeEventListener("pointerdown", window.__badgeBlurbOff, true);
+      window.__badgeBlurbOff = function(ev) {
+        if (el.contains(ev.target) || (ev.target.closest && ev.target.closest(".badge-slot") === btn)) return;
+        el.style.display = "none";
+        el.hidden = true;
+        el.dataset.openFor = "";
+        document.removeEventListener("pointerdown", window.__badgeBlurbOff, true);
+        window.__badgeBlurbOff = null;
+      };
+      setTimeout(function(){ document.addEventListener("pointerdown", window.__badgeBlurbOff, true); }, 0);
+    }
+
     function closePanel() {
       window.__mapScrollEnabled = true;
       try {
@@ -3167,7 +3235,7 @@ const BUILD = "v3.16";
       backdrop.style.opacity = "";
       backdrop.style.pointerEvents = "";
       applyFilters(true);
-      if (window.atlasBack) window.atlasBack();
+      if (!(window.__keepAtlasHistory) && window.atlasBack) window.atlasBack();
     }
     window.__atlasPopping = false;
     window.atlasPush = function(kind, extra) {
@@ -3605,9 +3673,10 @@ const BUILD = "v3.16";
       var box = document.getElementById("featApproved");
       if (!box) return;
       var urls = [
+        (typeof FEATURE_API === "string" ? FEATURE_API : ""),
         "feature-requests.json",
         "https://raw.githubusercontent.com/FlavourThink/nz-politics/main/feature-requests.json"
-      ];
+      ].filter(Boolean);
       function paint(data) {
         var rows = (data && data.requests) || (Array.isArray(data) ? data : []);
         box.innerHTML = rows.length
@@ -3661,16 +3730,29 @@ const BUILD = "v3.16";
         var title = (document.getElementById("featTitle").value || "").trim();
         var detail = (document.getElementById("featDetail").value || "").trim();
         if (!title || !detail) return;
-        var pend = featPending();
-        pend.push({ title: title, detail: detail, at: Date.now() });
-        try { localStorage.setItem(FEAT_PEND_KEY, JSON.stringify(pend)); } catch (e) {}
-        featForm.reset();
+        var btn = document.getElementById("featSubmit");
         var thanks = document.getElementById("featThanks");
-        if (thanks) { thanks.hidden = false; thanks.textContent = "Opened a GitHub issue draft so it can be saved on the repo."; }
-        renderFeatureBoard();
-        var gh = "https://github.com/FlavourThink/nz-politics/issues/new?labels=feature-request&title=" +
-          encodeURIComponent(title) + "&body=" + encodeURIComponent(detail + "\n\n— sent from Parliament Atlas " + (window.BUILD || ""));
-        window.open(gh, "_blank", "noopener");
+        if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+        if (thanks) thanks.hidden = true;
+        var api = (typeof FEATURE_API === "string" && FEATURE_API) ? FEATURE_API : "";
+        fetch(api, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: title, detail: detail })
+        }).then(function(r) { return r.json().then(function(j){ return { ok: r.ok && j && j.ok, data: j }; }); })
+        .then(function(res) {
+          if (!res.ok) throw new Error("save");
+          featForm.reset();
+          if (res.data && res.data.requests) {
+            window.__featureRequests = { requests: res.data.requests };
+          }
+          renderFeatureBoard();
+          if (thanks) { thanks.hidden = false; thanks.textContent = "Sent. It’s on the list."; }
+        }).catch(function() {
+          if (thanks) { thanks.hidden = false; thanks.textContent = "Could not send just now. Try again in a moment."; }
+        }).then(function() {
+          if (btn) { btn.disabled = false; btn.textContent = "Send"; }
+        });
       });
     }
     var menuFeatureBtn = document.getElementById("menuFeatureBtn");
@@ -3680,7 +3762,7 @@ const BUILD = "v3.16";
       var url = "https://api.github.com/repos/FlavourThink/nz-politics-workers-collection/issues?state=open&labels=feature-request&per_page=20";
       fetch(url, { headers: { Accept: "application/vnd.github+json" } }).then(function(r){ return r.json(); }).then(function(rows){
         if (!Array.isArray(rows) || !rows.length) {
-          box.innerHTML = '<li class="poll-legend">No open <code>feature-request</code> issues yet. Use “Open a GitHub request”.</li>';
+          box.innerHTML = '<li class="poll-legend">Nothing on the list yet.</li>';
           return;
         }
         box.innerHTML = rows.map(function(it){
