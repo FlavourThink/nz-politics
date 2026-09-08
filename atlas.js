@@ -1,4 +1,4 @@
-const BUILD = "v3.18";
+const BUILD = "v3.19";
     const FEATURE_API = "https://nz-politics-features.flavourthink.workers.dev";
     window.__mpPanelCache = window.__mpPanelCache || {};
     /* Live party feed — fill githubBase (raw URL prefix) to pull daily JSON.
@@ -2560,7 +2560,6 @@ const BUILD = "v3.18";
             var imgs = a
               ? ("<span class=\"pos badge-spr\" style=\"--c:" + a.c + ";--r:" + a.r + ";display:block\" role=\"img\" aria-label=\"" + esc(title) + "\"></span>")
               : ("<img class=\"pos\" src=\"badges/" + k + ".png\" alt=\"" + esc(title) + "\">");
-            if (opposed) imgs += "<span class=\"neg-slash\" aria-hidden=\"true\"></span>";
             return "<button type=\"button\" class=\"" + cls + "\" data-badge=\"" + k + "\" data-up=\"" + (opposed ? "0" : "1") + "\" data-down=\"" + (opposed ? "1" : "0") + "\" aria-pressed=\"false\" title=\"" + esc(title) + ". Click for explanation\">" + imgs + "</button>";
           }
           var mixed = [];
@@ -5083,7 +5082,7 @@ const BUILD = "v3.18";
       function itemHtml(it) {
         var bg = tint[it.party] || "var(--accent)";
         var label = it.party === "Green" ? "Greens" : it.party;
-        return "<span class='reel-item " + it.kind + "' style='background:color-mix(in srgb," + bg + " 22%, transparent)'>" +
+        return "<span class='reel-item " + it.kind + "' style='background:color-mix(in srgb," + bg + " 80%, transparent)'>" +
           "<span class='reel-party'>" + label + "</span>" +
           "<span class='reel-copy'>" + String(it.text).replace(/</g, "") + "</span></span>";
       }
