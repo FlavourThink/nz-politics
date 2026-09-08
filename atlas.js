@@ -1,4 +1,4 @@
-const BUILD = "v3.13";
+const BUILD = "v3.14";
     window.__mpPanelCache = window.__mpPanelCache || {};
     /* Live party feed — fill githubBase (raw URL prefix) to pull daily JSON.
        Files expected: party-polls.json and party-offerings-2026.json
@@ -2244,7 +2244,6 @@ const BUILD = "v3.13";
         m += 1;
         if (m > 11) { m = 0; y += 1; }
       }
-      months.push(end);
       function atT(t) {
         var a = raw[0], b = raw[raw.length - 1];
         for (var i = 0; i < raw.length - 1; i++) {
@@ -2278,14 +2277,20 @@ const BUILD = "v3.13";
         return '<line x1="' + padL + '" y1="' + yAt(v).toFixed(1) + '" x2="' + (w - padR) + '" y2="' + yAt(v).toFixed(1) + '" stroke="#445" />';
       }).join("");
       var ticks = "";
-      return '<svg class="poll-chart" viewBox="0 0 ' + w + " " + h + '" width="100%" height="168" role="img" aria-label="Party vote track to November 2026">' +
+      var monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      var monthRow = '<div class="poll-months" style="padding-left:' + (padL / w * 100).toFixed(2) + '%;padding-right:' + (padR / w * 100).toFixed(2) + '%">' +
+        months.map(function(t) {
+          var d = new Date(t);
+          return "<span>" + monthNames[d.getUTCMonth()] + "</span>";
+        }).join("") + "</div>";
+      var svg = '<svg class="poll-chart" viewBox="0 0 ' + w + " " + h + '" width="100%" height="150" preserveAspectRatio="none" role="img" aria-label="Party vote track to November 2026">' +
         '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="#1b1f27" rx="8" />' +
         grid +
         (hist.length ? '<polyline fill="none" stroke="' + color + '" stroke-width="2.6" points="' + hist.join(" ") + '" />' : "") +
         (fut.length ? '<polyline fill="none" stroke="' + color + '" stroke-width="2.4" stroke-dasharray="5 4" points="' + fut.join(" ") + '" />' : "") +
         '<circle cx="' + xAt(end).toFixed(1) + '" cy="' + yAt(atT(end)).toFixed(1) + '" r="4.5" fill="none" stroke="' + color + '" stroke-width="2.2" />' +
-        ticks +
         "</svg>";
+      return svg + monthRow;
     }
 
     function resolvePartyName(party) {
@@ -2371,8 +2376,14 @@ const BUILD = "v3.13";
         (fromMp ? '<button type="button" class="party-back" id="partyBackBtn">← ' + fromMp.name + '</button>' : '') +
         '<p class="poll-now">' + (isFinite(Number(profile.current)) ? Number(profile.current).toFixed(1) : "—") + '% <small>party vote · ' + (profile.asAt || (window.__liveFeedMeta && window.__liveFeedMeta.asAt) || "bundled late Aug 2026") + '</small></p>' +
         '<p class="poll-legend">Track to election day (7 Nov 2026): <strong>' + (isFinite(Number(profile.forecast)) ? Number(profile.forecast).toFixed(1) : "—") + '%</strong></p>' +
-        '<div id="partyPollMount">' + (function(){ try { seedMonthlyPoints(profile); var svg = pollChartSvg(party, profile) || '<p class="poll-legend">No poll track for this party yet.</p>'; return svg + '<div class="poll-months"><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span></div><p class="poll-legend">Solid = last six months. Dotted = track to 7 Nov 2026. Hollow point is the projection, not a poll.</p>'; } catch (err) { console.error('poll chart', err); return '<p class="poll-legend">Poll track could not be drawn.</p>'; } })() + '</div>' +
-        '<div class="detail-section"><h3>Tracking the Promises: The 2026 Election</h3><p class="poll-legend">Current offerings for this election. Not a record of delivery.</p>' + promises + '</div>' +
+        '<div class="party-split">' +
+        '<section class="party-graph-col" id="partyPollMount">' +
+          '<h3>Polling</h3>' +
+          (function(){ try { seedMonthlyPoints(profile); return pollChartSvg(party, profile) || '<p class="poll-legend">No poll track for this party yet.</p>'; } catch (err) { console.error('poll chart', err); return '<p class="poll-legend">Poll track could not be drawn.</p>'; } })() +
+          '<p class="poll-legend">Solid = last six months. Dotted = track to 7 Nov 2026. Hollow point is the projection, not a poll.</p>' +
+        '</section>' +
+        '<section class="party-promises-col detail-section"><h3>Tracking the Promises: The 2026 Election</h3><p class="poll-legend">Current offerings for this election. Not a record of delivery.</p>' + promises + '</section>' +
+        '</div>' +
         '<div class="detail-section"><h3>Last 7 elections (2005–2023)</h3>' + cycleHtml + '</div>';
       resetPanelScroll();
       Array.prototype.forEach.call(panelContent.querySelectorAll(".promise-q"), function(btn) {
@@ -2621,7 +2632,7 @@ const BUILD = "v3.13";
               "<p class=\"biz-org\">New Zealand Parliament</p>" +
               "<div class=\"panel-top\">" +
                 "<div class=\"panel-sprite-col\">" +
-                  spriteMarkup(mp.id || mp.baseId, 112, "panel-sprite sprite") +
+                  spriteMarkup(mp.id || mp.baseId, 90, "panel-sprite sprite") +
                 "</div>" +
                 "<div class=\"panel-top-text\">" +
                   "<p class=\"biz-name\" id=\"bizCardName\">" + esc(mp.name) + "</p>" +
@@ -2633,7 +2644,7 @@ const BUILD = "v3.13";
                     "<button type=\"button\" class=\"party-badge-btn panel-tab-like\" id=\"openPartyPanelBtn\" data-party=\"" + esc(mp.party) + "\">" +
                       "<span class=\"swatch\" style=\"background:" + partyCol + "\"></span>" +
                       esc(mp.party) + "</button>" +
-                    "<button type=\"button\" class=\"hansard-icon-btn\" id=\"mpHansardBtn\" title=\"Open Hansard\" aria-label=\"Hansard\" onclick=\"event.preventDefault();event.stopPropagation();window.openHansardFor && window.openHansardFor(\"" + String(mp.name).replace(/"/g,"") + "\");\">Hansard</button>" +
+                    "<button type=\"button\" class=\"hansard-icon-btn\" id=\"mpHansardBtn\" title=\"Open Hansard calendar\" aria-label=\"Hansard\">Hansard</button>" +
                   "</div>" +
                 "</div>" +
               "</div>" +
@@ -2666,6 +2677,26 @@ const BUILD = "v3.13";
         window.__mpPanelCache[mp.id] = __builtMpHtml;
         if (htmlOnly) return;
         panelContent.innerHTML = __builtMpHtml;
+
+        var genChip = panelContent.querySelector("#panelGenChip");
+        if (genChip) {
+          genChip.addEventListener("click", function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            var gid = genChip.getAttribute("data-gen");
+            if (gid && typeof openGenDetail === "function") openGenDetail(gid);
+          });
+        }
+        var hanBtn = panelContent.querySelector("#mpHansardBtn");
+        if (hanBtn) {
+          hanBtn.addEventListener("click", function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            try { closePanel(); } catch (e) {}
+            window.__hansardFilter = "";
+            if (window.openHansardPage) window.openHansardPage();
+          });
+        }
 
         var sheet = panelContent.querySelector("#folderSheet") || panelContent.querySelector(".folder-sheet");
         var hint = panelContent.querySelector(".folder-scroll-hint");
@@ -2852,7 +2883,7 @@ const BUILD = "v3.13";
               "<div class=\"biz-slit biz-slit-bl\"></div><div class=\"biz-slit biz-slit-br\"></div>" +
               "<p class=\"biz-org\">New Zealand Parliament</p>" +
               "<div class=\"panel-top\">" +
-                "<div class=\"panel-sprite-col\">" + spriteMarkup(m.id || m.baseId, 112, "panel-sprite sprite") + "</div>" +
+                "<div class=\"panel-sprite-col\">" + spriteMarkup(m.id || m.baseId, 90, "panel-sprite sprite") + "</div>" +
                 "<div class=\"panel-top-text\">" +
                   "<p class=\"biz-name\">" + esc(m.name) + "</p>" +
                   "<p class=\"biz-role\">" + esc(m.role || m.party || "") + "</p>" +
@@ -3300,6 +3331,16 @@ const BUILD = "v3.13";
 
     const RELEASE_DATE = "22 Aug 2026";
     const RELEASE_LOG = [
+      {
+        version: "v3.14",
+        date: "8 Sep 2026",
+        items: [
+          { type: "fixed", text: "Poll line and month labels share the same March–November scale" },
+          { type: "fixed", text: "Graph is its own column beside 2026 promises; captions stay under the SVG" },
+          { type: "fixed", text: "Business-card bust slot is 20% smaller; generation chip opens the gen note; Hansard chip closes the MP panel and opens the calendar" },
+          { type: "fixed", text: "Badges fill their columns with 10px padding; stats text uses body colour" }
+        ]
+      },
       {
         version: "v3.13",
         date: "8 Sep 2026",
