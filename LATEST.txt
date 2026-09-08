@@ -1,2 +1,2 @@
-v3.15 — 8 Sep 2026
-Overwrite index.html, atlas.css, atlas.js from the v3.15 zip.
+v3.16 — 8 Sep 2026
+Also upload release-log.json and feature-requests.json next to index.html.

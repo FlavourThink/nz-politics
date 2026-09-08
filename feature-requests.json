@@ -1,0 +1,18 @@
+{
+  "updated": "2026-09-08",
+  "repo": "FlavourThink/nz-politics",
+  "requests": [
+    {
+      "id": "release-log-file",
+      "title": "Load the release log from GitHub",
+      "detail": "Keep version history in release-log.json and fetch it only when the log is opened.",
+      "status": "accepted"
+    },
+    {
+      "id": "feature-file",
+      "title": "Store feature requests on GitHub",
+      "detail": "List accepted requests in feature-requests.json. New ideas open a GitHub issue on this repo.",
+      "status": "accepted"
+    }
+  ]
+}
