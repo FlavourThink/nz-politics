@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Parliamentary Generational Atlas — New Zealand MPs by birth year · v3.14</title>
+  <title>Parliamentary Generational Atlas — New Zealand MPs by birth year · v3.16</title>
   <meta name="description" content="Interactive atlas of New Zealand’s 54th Parliament: sitting MPs by birth year and first term, generation windows, party records, and 2026 election promises. Designed by FlavourThink Ltd." />
   <meta name="keywords" content="New Zealand Parliament, 54th Parliament, NZ MPs, birth year timeline, generation Boomer Gen X Millennial, 2026 election, National Labour Green ACT NZ First Te Pāti Māori TOP, Hansard votes, MMP, Beehive, Wellington, FlavourThink" />
   <meta name="author" content="FlavourThink Ltd" />
@@ -226,7 +226,7 @@
     </div>
   <footer>
     <button type="button" class="version-chip" id="versionChip" title="Open release log" aria-label="Open release log">
-      <span id="versionLabel">v3.14</span>
+      <span id="versionLabel">v3.16</span>
       <span class="ver-date" id="versionDate">· 22 Aug 2026</span>
     </button>
     <span class="footer-meta">Designed by FlavourThink Ltd. · Copyright © 2026</span>
@@ -246,28 +246,24 @@
 
   <div class="donate-page" id="featurePage" role="dialog" aria-modal="true" aria-labelledby="featureTitle">
     <div class="donate-card" style="max-width:32rem;max-height:min(88vh,40rem);overflow:auto;">
-      <button type="button" class="close-donate" id="closeFeature" aria-label="Close">×</button>
-      <div class="atlas-titlebar"><span class="mp-title-name" id="featureTitle">Request a feature</span><button type="button" class="close" id="closeFeatureTop" aria-label="Close">×</button></div>
-      <p class="poll-legend">Requests are stored as GitHub issues on FlavourThink/nz-politics-workers-collection (label <code>feature-request</code>). Approved issues can be voted here once listed.</p>
-      <p><a class="donate-btn" id="featGithubNew" href="https://github.com/FlavourThink/nz-politics-workers-collection/issues/new?labels=feature-request&amp;template=feature_request.md&amp;title=" target="_blank" rel="noopener">Open a GitHub request</a></p>
-      <h3>On GitHub</h3>
-      <ul id="featGithubList" class="feat-list"><li class="poll-legend">Loading issues…</li></ul>
+      <div class="atlas-titlebar">
+        <span class="mp-title-name" id="featureTitle">Request a feature</span>
+        <button type="button" class="close" id="closeFeatureTop" aria-label="Close">×</button>
+      </div>
+      <p>Ask for a change. Requests are written to <code>feature-requests.json</code> on the public GitHub repo after they are accepted. You can also open a GitHub issue.</p>
       <form id="featureForm">
         <label class="feat-label" for="featTitle">Title</label>
         <input id="featTitle" name="title" required maxlength="80" placeholder="Short name" />
         <label class="feat-label" for="featDetail">What should it do?</label>
         <textarea id="featDetail" name="detail" required maxlength="400" rows="3" placeholder="One or two sentences"></textarea>
-        <button type="submit" class="donate-btn" id="featSubmit">Send for approval</button>
-        <p class="poll-legend" id="featThanks" hidden>Saved as pending on this device. It will show in the public list after it is approved in a build.</p>
+        <button type="submit" class="donate-btn" id="featSubmit">Send request</button>
+        <p class="poll-legend" id="featThanks" hidden>Opened a GitHub issue draft. Sign in there to save it to the repo.</p>
       </form>
-      <h3>Approved — vote</h3>
-      <ul class="feat-list" id="featApproved"></ul>
-      <h3>Waiting on this device</h3>
-      <ul class="feat-list" id="featPending"></ul>
+      <h3>On the list</h3>
+      <ul class="feat-list" id="featApproved"><li class="poll-legend">Loading…</li></ul>
     </div>
   </div>
 
-<!-- Decade / era detail -->
   <div class="era-detail" id="eraDetail" role="dialog" aria-modal="true" aria-labelledby="eraDetailTitle">
     <div class="era-detail-card">
       <button type="button" class="close-era" id="closeEraDetail" aria-label="Close">×</button>

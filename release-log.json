@@ -1,0 +1,3544 @@
+[
+  {
+    "version": "v3.16",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Release log loads from release-log.json only when opened"
+      },
+      {
+        "type": "upgraded",
+        "text": "Feature requests list lives in feature-requests.json on GitHub"
+      },
+      {
+        "type": "fixed",
+        "text": "Timeline card corner marks sit on the corners; NZ Parliament is centred"
+      },
+      {
+        "type": "fixed",
+        "text": "MP panel statistics use readable contrast"
+      }
+    ]
+  },
+  {
+    "version": "v3.15",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Business-card busts show from busts-atlas.png (background shorthand was wiping the sprite)"
+      },
+      {
+        "type": "fixed",
+        "text": "Party graph stacks above promises, not beside them"
+      },
+      {
+        "type": "fixed",
+        "text": "Filter box sits below the title so the party dropdown is not covered"
+      },
+      {
+        "type": "upgraded",
+        "text": "Policy badges fill their four columns"
+      }
+    ]
+  },
+  {
+    "version": "v3.14",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Poll line and month labels share the same March–November scale"
+      },
+      {
+        "type": "fixed",
+        "text": "Graph is its own column beside 2026 promises; captions stay under the SVG"
+      },
+      {
+        "type": "fixed",
+        "text": "Business-card bust slot is 20% smaller; generation chip opens the gen note; Hansard chip closes the MP panel and opens the calendar"
+      },
+      {
+        "type": "fixed",
+        "text": "Badges fill their columns with 10px padding; stats text uses body colour"
+      }
+    ]
+  },
+  {
+    "version": "v3.13",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP panel badges show again (sprite spans were hidden)"
+      },
+      {
+        "type": "fixed",
+        "text": "Party graph captions sit under the chart"
+      },
+      {
+        "type": "fixed",
+        "text": "Timeline cards crop the bust atlas into the 48px photo slot"
+      },
+      {
+        "type": "upgraded",
+        "text": "One BUILD_NOTES.md on GitHub, updated each release"
+      }
+    ]
+  },
+  {
+    "version": "v3.12",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Party panel: no duplicate title, no Hansard button, title bar reads Party name + Party"
+      },
+      {
+        "type": "upgraded",
+        "text": "CSS and JS split out so GitHub can take the files through the connector"
+      }
+    ]
+  },
+  {
+    "version": "v3.11",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP cards read busts-atlas.png using short-id aliases (luxon → christopher-luxon)"
+      },
+      {
+        "type": "upgraded",
+        "text": "News reel default 30 px/s; hold to pause; menu On/Off toggle"
+      },
+      {
+        "type": "fixed",
+        "text": "Poll month labels and legend sit under the graph, not over it"
+      }
+    ]
+  },
+  {
+    "version": "v3.10",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "News reel speed slider in the menu, default 50 px/s (50–100)"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard calendar centred in its window"
+      },
+      {
+        "type": "fixed",
+        "text": "MP badges forced to four columns"
+      },
+      {
+        "type": "fixed",
+        "text": "Removed the blue block behind In the news whilst … was a young adult"
+      },
+      {
+        "type": "fixed",
+        "text": "Party poll graph always mounts and refreshes from the latest Curia (1–3 Sep 2026)"
+      }
+    ]
+  },
+  {
+    "version": "v3.09",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Bust atlas, badge atlas, and header image are files — no longer base64 in index.html"
+      }
+    ]
+  },
+  {
+    "version": "v3.08",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Promise reel fills and scrolls again"
+      },
+      {
+        "type": "upgraded",
+        "text": "Hansard calendar is centred in its window"
+      },
+      {
+        "type": "upgraded",
+        "text": "MP tabs removed; badges are 4 columns with statistics directly underneath"
+      }
+    ]
+  },
+  {
+    "version": "v3.07",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Hansard calendar is always a 6-week grid so the picker does not change height"
+      },
+      {
+        "type": "upgraded",
+        "text": "Promise reel sits on the bottom edge of the header, just above the date bar"
+      }
+    ]
+  },
+  {
+    "version": "v3.06",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Hansard votes use plain titles (bill + reading). Click for a short note, then jump to that section."
+      },
+      {
+        "type": "feature",
+        "text": "GitHub connected as FlavourThink; site files aimed at FlavourThink/nz-politics"
+      }
+    ]
+  },
+  {
+    "version": "v3.05",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Hansard calendar drops the sitting-status paragraph; Saturday and Sunday are hatched red"
+      },
+      {
+        "type": "feature",
+        "text": "Scrolling promise reel under the header: one policy each from Labour, Greens, National and so on, with occasional polling figures"
+      }
+    ]
+  },
+  {
+    "version": "v3.04",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "All MP busts sit on one sprite sheet; each MP stores x/y cell coordinates"
+      },
+      {
+        "type": "feature",
+        "text": "Hansard day view lists bill votes and readings parsed from the sitting text"
+      },
+      {
+        "type": "upgraded",
+        "text": "Timeline cards use the business-card corner style; generation colours stay"
+      }
+    ]
+  },
+  {
+    "version": "v3.03",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Skills tab removed from MP panels"
+      },
+      {
+        "type": "upgraded",
+        "text": "Previous / next MP buttons removed on phone and desktop"
+      },
+      {
+        "type": "upgraded",
+        "text": "For and Against headings removed; badges sit in one A-Z list"
+      }
+    ]
+  },
+  {
+    "version": "v3.02",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Pinch zoom-out caps at 150% of the original frame"
+      }
+    ]
+  },
+  {
+    "version": "v3.01",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Zoom scales the view only; year positions stay locked so MPs stay on their years"
+      }
+    ]
+  },
+  {
+    "version": "v3.00",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Pinch zoom-out no longer loses the cards; zoom-in returns to the original frame"
+      }
+    ]
+  },
+  {
+    "version": "v2.99",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Phone filters sit in the floor band above the date bar, not over the Speaker"
+      }
+    ]
+  },
+  {
+    "version": "v2.98",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "No neighbour sliver at rest; the open MP panel fills the width"
+      }
+    ]
+  },
+  {
+    "version": "v2.97",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Closed MP panel no longer covers the timeline on phones"
+      }
+    ]
+  },
+  {
+    "version": "v2.96",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Phone MP panel is full-width and no longer shifted off the left of the screen"
+      },
+      {
+        "type": "fixed",
+        "text": "Removed the More chip that sat on top of badges and the skill tree"
+      },
+      {
+        "type": "fixed",
+        "text": "Skill tree labels are no longer stretched or clipped"
+      }
+    ]
+  },
+  {
+    "version": "v2.95",
+    "date": "7 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Phone MP panel is centred on screen"
+      },
+      {
+        "type": "upgraded",
+        "text": "Badges tab is now Achievements; Years is inside Profile; Record tab removed"
+      },
+      {
+        "type": "upgraded",
+        "text": "Skill tree labels use more horizontal space"
+      }
+    ]
+  },
+  {
+    "version": "v2.94",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Right-hand 5px sliver of the next MP panel is visible, matching the left"
+      }
+    ]
+  },
+  {
+    "version": "v2.93",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Business card list line is now Party #rank. Region"
+      }
+    ]
+  },
+  {
+    "version": "v2.92",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Left and right MP panels are preloaded into memory before swipe"
+      },
+      {
+        "type": "upgraded",
+        "text": "New Zealand Parliament is centred on the business card"
+      }
+    ]
+  },
+  {
+    "version": "v2.91",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "New Zealand Parliament is justified across the business card"
+      },
+      {
+        "type": "upgraded",
+        "text": "Swipe placeholders preload For / Against with a loading spinner on each badge"
+      }
+    ]
+  },
+  {
+    "version": "v2.90",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Bust has 5px padding left and right; card buttons stay on the bottom text row"
+      }
+    ]
+  },
+  {
+    "version": "v2.89",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Card buttons line up with the text column; the bust lines up with the top of the name"
+      }
+    ]
+  },
+  {
+    "version": "v2.88",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Business cards are 178px; generation, party and Hansard stay on one bottom row"
+      }
+    ]
+  },
+  {
+    "version": "v2.87",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "MP business cards and swipe placeholders are 178px tall"
+      }
+    ]
+  },
+  {
+    "version": "v2.86",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Every MP business card, including swipe placeholders, is 178px — Gerry Brownlee’s loaded card height"
+      }
+    ]
+  },
+  {
+    "version": "v2.85",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Swipe is mobile only; prev/next buttons are desktop only"
+      },
+      {
+        "type": "fixed",
+        "text": "Placeholder business card is locked to the loaded card height"
+      }
+    ]
+  },
+  {
+    "version": "v2.84",
+    "date": "6 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Swipe placeholders use the same card and folder layout and sizes as the loaded MP"
+      }
+    ]
+  },
+  {
+    "version": "v2.83",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP Details is centred between the prev and next buttons"
+      },
+      {
+        "type": "fixed",
+        "text": "5px of the neighbouring card and manila folder now shows on both sides"
+      }
+    ]
+  },
+  {
+    "version": "v2.82",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "5px of the neighbouring MP card and folders shows on each side"
+      },
+      {
+        "type": "upgraded",
+        "text": "Title bar reads MP Details, centred between the prev and next buttons"
+      },
+      {
+        "type": "upgraded",
+        "text": "New Zealand Parliament line is 3pt smaller"
+      }
+    ]
+  },
+  {
+    "version": "v2.81",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "MP panel fills the phone; neighbouring members stay hidden until you swipe"
+      }
+    ]
+  },
+  {
+    "version": "v2.80",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP panel fits the phone width; inner cards and folders no longer overflow sideways"
+      }
+    ]
+  },
+  {
+    "version": "v2.79",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Swipe gap is 0px; the panel eases into its rest place before the next member loads"
+      }
+    ]
+  },
+  {
+    "version": "v2.78",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Swipe drags the current panel and the next one together, 20px apart"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard calendar states the last sitting on file; 4–5 Sep 2026 were not House sitting days"
+      }
+    ]
+  },
+  {
+    "version": "v2.77",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Business card line “New Zealand Parliament” is smaller, one line, faded"
+      },
+      {
+        "type": "upgraded",
+        "text": "Swipe paints the next member immediately instead of waiting on a slide"
+      }
+    ]
+  },
+  {
+    "version": "v2.76",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Opening an MP panel shows only that member — the peek carousel no longer flashes neighbours"
+      },
+      {
+        "type": "fixed",
+        "text": "Swipe drags the open panel with the finger; arrows open the neighbour directly"
+      }
+    ]
+  },
+  {
+    "version": "v2.75",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Timeline failed to load: a quote error in the carousel peek card stopped the whole script"
+      }
+    ]
+  },
+  {
+    "version": "v2.74",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "MP panel swipe uses a CSS scroll-snap carousel (CSS-Tricks pattern)"
+      },
+      {
+        "type": "upgraded",
+        "text": "Arrows smooth-scroll to the neighbouring slide, then load that member"
+      }
+    ]
+  },
+  {
+    "version": "v2.73",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP name on the business card was hidden by an old h2 rule; it is visible now"
+      },
+      {
+        "type": "upgraded",
+        "text": "Swipe follows the finger, then eases the rest of the way"
+      }
+    ]
+  },
+  {
+    "version": "v2.72",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Name is only on the panel business card; title bar is arrows and close"
+      },
+      {
+        "type": "upgraded",
+        "text": "Next/previous MP slides like a carousel"
+      }
+    ]
+  },
+  {
+    "version": "v2.71",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP name is on the panel business card again"
+      },
+      {
+        "type": "upgraded",
+        "text": "Timeline cards: photo left, name / year / party+rank stacked"
+      },
+      {
+        "type": "upgraded",
+        "text": "Swipe left or right on an MP panel to move through the list; arrows still work"
+      }
+    ]
+  },
+  {
+    "version": "v2.70",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Business card no longer prints the MP name; name stays in the title bar"
+      },
+      {
+        "type": "upgraded",
+        "text": "Timeline MP cards use the same slit-and-stripe card language, generation colour kept"
+      }
+    ]
+  },
+  {
+    "version": "v2.69",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP name lives on the business card only; title bar keeps prev / next / close"
+      },
+      {
+        "type": "fixed",
+        "text": "Card chips share one height and shrink to their label"
+      },
+      {
+        "type": "upgraded",
+        "text": "Folder shows a More hint while there is content below the fold"
+      }
+    ]
+  },
+  {
+    "version": "v2.68",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "MP business card redesigned: Parliament line, role, seat, born/House dates, list number"
+      },
+      {
+        "type": "fixed",
+        "text": "Folder document sheet scrolls; header card and tabs stay put"
+      }
+    ]
+  },
+  {
+    "version": "v2.67",
+    "date": "5 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "MP panel header sits in a business-card holder with corner slits"
+      },
+      {
+        "type": "upgraded",
+        "text": "Panel tabs read as manila folders with a document sheet inside"
+      }
+    ]
+  },
+  {
+    "version": "v2.66",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Matt Doocey bust redrawn from 2023 official likeness: bald, speaker-frame proportions"
+      }
+    ]
+  },
+  {
+    "version": "v2.65",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Donate can be opened more than once"
+      },
+      {
+        "type": "upgraded",
+        "text": "Shared title bar on donate (title + close)"
+      },
+      {
+        "type": "fixed",
+        "text": "Donate sits in the centre of the screen at the top z-index"
+      }
+    ]
+  },
+  {
+    "version": "v2.64",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Donate card opens above the header and date bar"
+      },
+      {
+        "type": "fixed",
+        "text": "Paul Goldsmith bust scaled to the speaker frame"
+      },
+      {
+        "type": "fixed",
+        "text": "Louise Upston and Catherine Wedd now have different busts"
+      }
+    ]
+  },
+  {
+    "version": "v2.63",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Policy badges sit as For (2 columns) and Against (2 columns) with no Policy badges heading"
+      },
+      {
+        "type": "fixed",
+        "text": "MP panel accepts mouse and trackpad scroll"
+      },
+      {
+        "type": "upgraded",
+        "text": "Timeline decades now include Vietnam protests, decimal currency, Commonwealth Games, Dawn Raids, Springbok Tour, Rainbow Warrior, 1987 crash, Cave Creek and Kyoto-era climate talks"
+      }
+    ]
+  },
+  {
+    "version": "v2.62",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Donate pop-up sits above the header image"
+      },
+      {
+        "type": "upgraded",
+        "text": "Header chamber image zooms out 20% and still fills left to right on large screens"
+      },
+      {
+        "type": "fixed",
+        "text": "Speaker-framed busts redrawn for Verrall, Grigg, Doocey, Andersen, O’Connor and Edmonds"
+      }
+    ]
+  },
+  {
+    "version": "v2.61",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "MP panel badges back to four columns"
+      },
+      {
+        "type": "fixed",
+        "text": "MP panel body scrolls under a title bar that holds previous / next"
+      }
+    ]
+  },
+  {
+    "version": "v2.60",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Paul Goldsmith bust redrawn so the full chest-up portrait shows"
+      },
+      {
+        "type": "upgraded",
+        "text": "Suze Redmayne and Dr Tracey McLellan Hansard busts added"
+      }
+    ]
+  },
+  {
+    "version": "v2.59",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "ALL CAPS names such as RICARDO MENÉNDEZ MARCH are treated as the speaker"
+      }
+    ]
+  },
+  {
+    "version": "v2.58",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Hansard sections keep speech follow-on lines so a sitting no longer looks half-cut"
+      }
+    ]
+  },
+  {
+    "version": "v2.57",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "A chosen Hansard section now draws its full speeches, not a short excerpt"
+      }
+    ]
+  },
+  {
+    "version": "v2.56",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "MP policy badges sit in two vertical stacks: voted for and voted against"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard calendar title uses the same dialog heading as the other pop-ups"
+      }
+    ]
+  },
+  {
+    "version": "v2.55",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "A sitting first asks which Hansard section to open, then draws only that section"
+      }
+    ]
+  },
+  {
+    "version": "v2.54",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Hansard section nav is a sticky dropdown plus previous/next heading buttons that follow the current heading as you scroll"
+      }
+    ]
+  },
+  {
+    "version": "v2.53",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Footer party buttons open a titled briefing with poll and promises"
+      },
+      {
+        "type": "fixed",
+        "text": "Party panel title is visible again"
+      },
+      {
+        "type": "upgraded",
+        "text": "Hansard heading pager stays on screen while the sitting title stays at the top"
+      },
+      {
+        "type": "fixed",
+        "text": "More space between the Hansard title and the calendar"
+      },
+      {
+        "type": "fixed",
+        "text": "Site title stays fixed when the filter opens or closes"
+      }
+    ]
+  },
+  {
+    "version": "v2.52",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Release log can mark work as Upgraded"
+      },
+      {
+        "type": "feature",
+        "text": "Feature requests store as GitHub issues on FlavourThink/nz-politics-workers-collection"
+      },
+      {
+        "type": "fixed",
+        "text": "Bottom party buttons open the party briefing with data"
+      },
+      {
+        "type": "feature",
+        "text": "Hansard heading pagination (previous / next heading)"
+      },
+      {
+        "type": "fixed",
+        "text": "Opening a panel no longer hides the header or date range"
+      },
+      {
+        "type": "upgraded",
+        "text": "MP panel prev/next controls are labelled and larger"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation chip matches the party button and sits beside the birthday cake"
+      }
+    ]
+  },
+  {
+    "version": "v2.51",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Party buttons open a filled briefing; NZ First names are aliased"
+      },
+      {
+        "type": "fixed",
+        "text": "NZ First graph line is a visible indigo on the dark chart"
+      },
+      {
+        "type": "fixed",
+        "text": "Header lock uses the whole header rectangle, left and right"
+      },
+      {
+        "type": "fixed",
+        "text": "Mouse wheel scrolls the timeline again after leaving the header"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard calendar no longer flashes a loading pop-up"
+      },
+      {
+        "type": "feature",
+        "text": "Hansard sittings have section skip links and back to top"
+      }
+    ]
+  },
+  {
+    "version": "v2.50",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Edge-scrolling the timeline pauses while the cursor is over the header or any panel"
+      }
+    ]
+  },
+  {
+    "version": "v2.49",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "NZ First poll graph uses the same deep blue as the party button"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation buttons sit 5px below the date range"
+      }
+    ]
+  },
+  {
+    "version": "v2.48",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Hansard busts (including Ginny Andersen) sit on the same 128px cream frame as the Speaker"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard title bar flushes to the top of the card and includes a back-to-calendar control"
+      },
+      {
+        "type": "fixed",
+        "text": "Choosing Hansard from the menu closes the menu first"
+      }
+    ]
+  },
+  {
+    "version": "v2.47",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Hansard title bar sticks to the top of the Hansard card only"
+      },
+      {
+        "type": "fixed",
+        "text": "Hamburger menu opens over the header, not in the timeline"
+      }
+    ]
+  },
+  {
+    "version": "v2.46",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Willow-Jean Prime bust rebuilt to the same sprite card rule as the Speaker"
+      },
+      {
+        "type": "fixed",
+        "text": "Mike Davidson Green list MP bust added for Hansard"
+      },
+      {
+        "type": "fixed",
+        "text": "Stray Hansard title bar no longer shows on page load"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard title bar appears once the sitting is scrolled"
+      },
+      {
+        "type": "fixed",
+        "text": "Open filters sit beside the site title instead of covering it"
+      }
+    ]
+  },
+  {
+    "version": "v2.45",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Willow-Jean Prime, Deborah Russell, Katie Nimon and Catherine Wedd busts in the shared chibi style"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard sitting view shows a top title bar with close once you scroll"
+      },
+      {
+        "type": "fixed",
+        "text": "Hamburger menu drops in place of the button instead of down the timeline"
+      }
+    ]
+  },
+  {
+    "version": "v2.44",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Hansard portraits only match an exact unique name — no more shared Marama faces"
+      },
+      {
+        "type": "fixed",
+        "text": "Panel title lives in a top title bar; duplicate heading removed from the body"
+      },
+      {
+        "type": "fixed",
+        "text": "Site title sits 5px from the top-left of the window"
+      },
+      {
+        "type": "fixed",
+        "text": "Served cards show the date range; header crop shows more of the Speaker and PM"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard calendar has no title bar"
+      }
+    ]
+  },
+  {
+    "version": "v2.43",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Sticky title bar with close appears when a panel close button scrolls off screen"
+      },
+      {
+        "type": "feature",
+        "text": "Hansard busts open that MP panel when a card exists"
+      },
+      {
+        "type": "feature",
+        "text": "Hansard sittings picker is a calendar; recorded days are highlighted"
+      }
+    ]
+  },
+  {
+    "version": "v2.42",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Timeline wrap pinned under a capped header so the chart cannot disappear"
+      }
+    ]
+  },
+  {
+    "version": "v2.41",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Filter icon is sliders (lines with knobs)"
+      },
+      {
+        "type": "fixed",
+        "text": "Title stays top-left when filters open"
+      },
+      {
+        "type": "fixed",
+        "text": "Header image always spans the window width"
+      }
+    ]
+  },
+  {
+    "version": "v2.40",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Mobile filter button left of the hamburger; green badge when a filter is active"
+      }
+    ]
+  },
+  {
+    "version": "v2.39",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Edge auto-scroll off on phones; mouse-only and stops on mouseup"
+      },
+      {
+        "type": "fixed",
+        "text": "Reset restores party, generation, prior PMs and Born mode without jumping the map"
+      },
+      {
+        "type": "fixed",
+        "text": "Footer party buttons use the same overlay panel as MP party links"
+      }
+    ]
+  },
+  {
+    "version": "v2.38",
+    "date": "4 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Filter box padding reduced and dropped toward the date line"
+      },
+      {
+        "type": "fixed",
+        "text": "Header chamber image zoom cut from 170% to 120%"
+      },
+      {
+        "type": "fixed",
+        "text": "Overlays move to document.body and park the header behind them"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard consecutive lines join into one paragraph per speaker"
+      }
+    ]
+  },
+  {
+    "version": "v2.37",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Party dock buttons equal width and height"
+      },
+      {
+        "type": "fixed",
+        "text": "MP and party panels forced above the header"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard shows one bust for consecutive lines by the same speaker"
+      }
+    ]
+  },
+  {
+    "version": "v2.36",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Bottom date bar removed"
+      },
+      {
+        "type": "fixed",
+        "text": "MP and party panels sit over the header"
+      },
+      {
+        "type": "feature",
+        "text": "Phone back button steps through overlays to the timeline"
+      }
+    ]
+  },
+  {
+    "version": "v2.35",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Top and bottom date ranges restored and pinned on mobile; they follow scroll and zoom"
+      }
+    ]
+  },
+  {
+    "version": "v2.34",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "MP badges split into Voted for / Voted against"
+      },
+      {
+        "type": "fixed",
+        "text": "Mobile: timeline scrolls vertically inside the wrap; date rows zoom with the chart"
+      },
+      {
+        "type": "feature",
+        "text": "Mobile filter grid: parties+generations | born-served + prior/reset, at the bottom of the header"
+      }
+    ]
+  },
+  {
+    "version": "v2.33",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Chamber busts added for Luxton, Doocey, Tangaere-Manuel and other missing 54th names"
+      },
+      {
+        "type": "feature",
+        "text": "Busts stored in SPRITE_DATA and artifacts/nz-politics-timeline/busts/"
+      }
+    ]
+  },
+  {
+    "version": "v2.32",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Generation filter rebuilt from GEN_INFO (Greatest through Gamma)"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard sitting view reads speech + text lines and shows up to 2500 rows"
+      }
+    ]
+  },
+  {
+    "version": "v2.31",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Chibi busts for Goldsmith and other frequent Hansard speakers without art"
+      },
+      {
+        "type": "feature",
+        "text": "Hansard window re-fetches the index and sitting files on every open"
+      },
+      {
+        "type": "fixed",
+        "text": "Future sittings attach a bust by last-name match against the sprite set"
+      }
+    ]
+  },
+  {
+    "version": "v2.30",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Watts, Upston, Bidois, O'Connor and Clerk redrawn as cream-background chibi busts to match the timeline sprites"
+      }
+    ]
+  },
+  {
+    "version": "v2.29",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Watts and Upston portraits resolve by last-name alias"
+      },
+      {
+        "type": "feature",
+        "text": "Portraits for Dan Bidois, Greg O'Connor and the Clerk"
+      },
+      {
+        "type": "feature",
+        "text": "Party colour bar under each Hansard face"
+      }
+    ]
+  },
+  {
+    "version": "v2.28",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Pixel portraits for 14 frequent Hansard speakers who had no card art"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard days use Wed 02/Sep/26; up to 100 speeches per sitting"
+      }
+    ]
+  },
+  {
+    "version": "v2.27",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Rollback to v2.23 after v2.26 hid the timeline. No layout changes in this build."
+      }
+    ]
+  },
+  {
+    "version": "v2.23",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Panel H buttons call Hansard directly"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard rows parse speaker names from the sitting file and attach portraits"
+      }
+    ]
+  },
+  {
+    "version": "v2.22",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Hansard H button opens the sitting list; portraits match speaker names"
+      },
+      {
+        "type": "fixed",
+        "text": "Skill tree has no sky fill; labels are larger"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation chips sit 5px under the date bar"
+      },
+      {
+        "type": "fixed",
+        "text": "Hover the Speaker or PM in the header for their name"
+      }
+    ]
+  },
+  {
+    "version": "v2.21",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Hansard speeches show the member portrait; popup has a top-right close"
+      },
+      {
+        "type": "feature",
+        "text": "Hansard icon on MP and party panels"
+      },
+      {
+        "type": "fixed",
+        "text": "Removed the black strip between the date bar and generation colours"
+      },
+      {
+        "type": "fixed",
+        "text": "Party dock buttons are flat, uppercase, corporate"
+      },
+      {
+        "type": "fixed",
+        "text": "Comedy skill tree removed; branch names updated"
+      }
+    ]
+  },
+  {
+    "version": "v2.20",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Rolled back to v2.18 then reapplied only the safe fixes — MP panels unchanged"
+      },
+      {
+        "type": "fixed",
+        "text": "Greatest, Beta and Gamma have House / voter stats and a notes page"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation bands meet the timeline; 1910 and 1990 are labelled"
+      },
+      {
+        "type": "feature",
+        "text": "Hamburger Hansard reads sittings as speaker-and-text, not raw JSON"
+      }
+    ]
+  },
+  {
+    "version": "v2.18",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP and party panels sit under the title / Donate row and above the chamber and map"
+      }
+    ]
+  },
+  {
+    "version": "v2.17",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Removed the born-mode hint line"
+      },
+      {
+        "type": "fixed",
+        "text": "Coloured date bar stays under the header while the map scrolls"
+      },
+      {
+        "type": "fixed",
+        "text": "Party dock buttons are filled with each party colour at 98%"
+      }
+    ]
+  },
+  {
+    "version": "v2.16",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Party graphs draw a March–November 2026 track with a visible line"
+      },
+      {
+        "type": "fixed",
+        "text": "Header height stops under the filters; Speaker and PM stay centred and visible"
+      }
+    ]
+  },
+  {
+    "version": "v2.15",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Header stays fixed at the top of the window"
+      },
+      {
+        "type": "fixed",
+        "text": "Timeline wrapper scrolls left/right again so year−40 can sit in the middle"
+      },
+      {
+        "type": "fixed",
+        "text": "Mouse at the left or right edge pans the timeline"
+      }
+    ]
+  },
+  {
+    "version": "v2.14",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Opens with (current year − 40) in the middle of the window"
+      },
+      {
+        "type": "fixed",
+        "text": "Header stays on screen full width; Speaker and PM stay centred"
+      },
+      {
+        "type": "fixed",
+        "text": "Mouse at the screen edges scrolls the page"
+      },
+      {
+        "type": "fixed",
+        "text": "Party dock has extra padding at the top"
+      }
+    ]
+  },
+  {
+    "version": "v2.13",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Brownlee / Luxon names only appear on hover of each figure"
+      },
+      {
+        "type": "fixed",
+        "text": "One page scrollbar — timeline no longer has its own scroller"
+      },
+      {
+        "type": "fixed",
+        "text": "Party buttons stay fixed to the bottom of the window and share the width evenly"
+      }
+    ]
+  },
+  {
+    "version": "v2.12",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Party poll graphs drawn again with a monthly track through November 2026"
+      },
+      {
+        "type": "fixed",
+        "text": "Beta meets Gamma — no empty year between them"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation % is regular weight in light mode, bold in dark mode"
+      },
+      {
+        "type": "fixed",
+        "text": "Filters stack under the title in a tight pill; Donate / Light / Menu stay top-right with the title"
+      }
+    ]
+  },
+  {
+    "version": "v2.11",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Date line and governments run from 1901 (Seddon) through Gamma 2054"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation Gamma window is coloured"
+      },
+      {
+        "type": "fixed",
+        "text": "Light mode: birth years and generation labels are black"
+      },
+      {
+        "type": "fixed",
+        "text": "Hamburger is the 3-bar control in donate blue"
+      },
+      {
+        "type": "feature",
+        "text": "Filters sit in the title row; party buttons dock to the bottom of the screen"
+      },
+      {
+        "type": "fixed",
+        "text": "Removed the sitting-MPs hint line"
+      }
+    ]
+  },
+  {
+    "version": "v2.10",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Timeline renders again (broken chamber function had stopped the whole script)"
+      },
+      {
+        "type": "fixed",
+        "text": "Title background is a pill around the logo and name only"
+      },
+      {
+        "type": "fixed",
+        "text": "Donate, theme and menu share the donate button style and work again"
+      }
+    ]
+  },
+  {
+    "version": "v2.09",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Brownlee sits in the chamber throne itself, not a second chair"
+      },
+      {
+        "type": "fixed",
+        "text": "Standing PM is the existing Luxon card likeness, composited into the room"
+      }
+    ]
+  },
+  {
+    "version": "v2.08",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Beta and Gamma windows use the chart colours on the timeline"
+      },
+      {
+        "type": "fixed",
+        "text": "Date line party colour and PM names run from 1920 (Massey) not 1928"
+      },
+      {
+        "type": "fixed",
+        "text": "Header seat is Brownlee (blink). Standing figure is Luxon in formal dress, not Hipkins"
+      },
+      {
+        "type": "fixed",
+        "text": "Title and menu stay pinned to the top of the screen"
+      }
+    ]
+  },
+  {
+    "version": "v2.07",
+    "date": "3 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Generation colours match the attached birth-year chart"
+      },
+      {
+        "type": "feature",
+        "text": "Header is a pixel-art chamber: Speaker sits the chair, PM stands to the side, filters sit on the wood panels"
+      }
+    ]
+  },
+  {
+    "version": "v2.06",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "On the record links removed"
+      },
+      {
+        "type": "fixed",
+        "text": "Party poll graph guarded so a bad series cannot blank the panel"
+      },
+      {
+        "type": "fixed",
+        "text": "Bottom date bar matches the top and spans the map; PM faces stay off"
+      },
+      {
+        "type": "fixed",
+        "text": "Cards kept inside the map; lane gap widened so they do not overlap"
+      },
+      {
+        "type": "fixed",
+        "text": "Rank numbers restored to the previous in-card style"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation Alpha is navy; Generation Beta added after it; Millennial has no s"
+      }
+    ]
+  },
+  {
+    "version": "v2.05",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Party rank sits in a hanging circle on each MP card — white number on a darker inner disc"
+      }
+    ]
+  },
+  {
+    "version": "v2.04",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "On-the-record links now match the story, not a nearby headline"
+      },
+      {
+        "type": "feature",
+        "text": "Comedy skill tree is the default; Classic v1 kept behind a toggle"
+      },
+      {
+        "type": "feature",
+        "text": "Skill tree: tap a star to pick it, light the path, and read the note"
+      }
+    ]
+  },
+  {
+    "version": "v2.03",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "PM faces removed from the timeline date bar"
+      },
+      {
+        "type": "fixed",
+        "text": "Greatest Generation added (to 1927); Muldoon 1921 no longer filed as Silent"
+      },
+      {
+        "type": "feature",
+        "text": "On the record items link out to source articles where we have them"
+      }
+    ]
+  },
+  {
+    "version": "v2.02",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP panel header cleaned: portrait, name, one subtitle, chip row"
+      },
+      {
+        "type": "fixed",
+        "text": "Prev/next sit on the portrait; party stays as a chip; tabs shortened"
+      }
+    ]
+  },
+  {
+    "version": "v2.01",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Skill tree: four coloured columns from one shared Start node"
+      },
+      {
+        "type": "fixed",
+        "text": "Skill labels made larger; each path keeps its own colour"
+      }
+    ]
+  },
+  {
+    "version": "v2.00",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Skill tree rebuilt as one Skyrim-style constellation shared by every MP"
+      },
+      {
+        "type": "fixed",
+        "text": "Like skills collapsed to one node; lit stars are that member's public record"
+      }
+    ]
+  },
+  {
+    "version": "v1.99",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Skill tree on each MP panel — schooling, work, House, other skills"
+      },
+      {
+        "type": "feature",
+        "text": "Skill tree button added to the panel header"
+      }
+    ]
+  },
+  {
+    "version": "v1.98",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "New policy badges resized to 160×160 to match the rest of the set"
+      }
+    ]
+  },
+  {
+    "version": "v1.97",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Five new policy badges: School Phone Ban, Social Media Age-Limit, Youth Academies, Māori Wards, Defence Spend"
+      },
+      {
+        "type": "feature",
+        "text": "New badges assigned for and against from public positions this term"
+      }
+    ]
+  },
+  {
+    "version": "v1.96",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP panel: prev/next above the portrait; generation chip and birth year under the name"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation and party buttons use the same shape as the tabs"
+      }
+    ]
+  },
+  {
+    "version": "v1.95",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Badge popup now renders on top of the page so the note is visible"
+      }
+    ]
+  },
+  {
+    "version": "v1.94",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Policy badges fill more of their button"
+      },
+      {
+        "type": "feature",
+        "text": "Badge notes open as a popup; click again or anywhere else to close"
+      }
+    ]
+  },
+  {
+    "version": "v1.93",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Growing-up tab heading now reads In the news whilst [first name] was a young adult"
+      }
+    ]
+  },
+  {
+    "version": "v1.92",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Badges is the first MP tab; generation chip and birth year sit beside the party button"
+      },
+      {
+        "type": "fixed",
+        "text": "Tab headings stay put; only the tab body scrolls"
+      }
+    ]
+  },
+  {
+    "version": "v1.91",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "MP panel split into Profile, Badges, Growing up, and On the record tabs"
+      },
+      {
+        "type": "fixed",
+        "text": "On the record items now show date + Headline / Quote / Quirk / Object chips"
+      }
+    ]
+  },
+  {
+    "version": "v1.90",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "On-the-record blurbs expanded into takeaway bullets: date, context, why it stuck, quote"
+      }
+    ]
+  },
+  {
+    "version": "v1.89",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "On-the-record file now dated, newest first, with quoted lines on most items"
+      }
+    ]
+  },
+  {
+    "version": "v1.88",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Strange / silly file rewritten as headline incidents with a short reporter blurb on each"
+      }
+    ]
+  },
+  {
+    "version": "v1.87",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Timeline now starts in 1928, at the start of the Silent Generation"
+      },
+      {
+        "type": "fixed",
+        "text": "1930s added to the formative “what was normal” notes so Silent-era childhoods are covered"
+      },
+      {
+        "type": "fixed",
+        "text": "Strange / silly notes are now quotes or one-sentence actions, not group-chat rewrite"
+      }
+    ]
+  },
+  {
+    "version": "v1.86",
+    "date": "1 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Generation windows now follow NZ-used bands: Silent 1928–1945, Baby Boomers 1946–1964, Generation X 1965–1980, Millennials 1981–1996, Generation Z 1997–2012, Generation Alpha from 2013"
+      },
+      {
+        "type": "fixed",
+        "text": "Birth year on MP cards is white"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation chips sit slightly darker than their band"
+      }
+    ]
+  },
+  {
+    "version": "v1.85",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP cards sit 80% toward their generation window colour so they match the band behind them"
+      }
+    ]
+  },
+  {
+    "version": "v1.84",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP cards are 5% darker than their generation colour, not lighter"
+      }
+    ]
+  },
+  {
+    "version": "v1.83",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Strange / silly / outrageous notes rewritten in Gen X–Millennial voice, about ten public examples per member"
+      }
+    ]
+  },
+  {
+    "version": "v1.82",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Dark mode is the default view"
+      },
+      {
+        "type": "fixed",
+        "text": "MP card backgrounds are the generation colour mixed 10% toward white"
+      }
+    ]
+  },
+  {
+    "version": "v1.81",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "MP panels carry a Strange, silly, and on the record section for public circus moments, burns, and object/vehicle episodes"
+      }
+    ]
+  },
+  {
+    "version": "v1.80",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Statistics lists Generation on the left and a compact gen chip (name only) on the right"
+      }
+    ]
+  },
+  {
+    "version": "v1.79",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Generation chips show % of Parliament and % of NZ voters in that age bracket"
+      },
+      {
+        "type": "feature",
+        "text": "MP panel uses the same generation chip as the timeline; tap it for the full gen note"
+      }
+    ]
+  },
+  {
+    "version": "v1.78",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Vertical MMP banner at 1996, text rotated 270° behind the cards, stopping at the top and bottom timelines"
+      }
+    ]
+  },
+  {
+    "version": "v1.77",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Gen Z windows are lime green; Gen Alpha is yellow"
+      },
+      {
+        "type": "feature",
+        "text": "PM cards carry a small gold Beehive seal"
+      }
+    ]
+  },
+  {
+    "version": "v1.76",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Removed the Votes & stance block from MP panels"
+      },
+      {
+        "type": "feature",
+        "text": "Click a policy badge to open its explanation under the grid; click again to close"
+      }
+    ]
+  },
+  {
+    "version": "v1.75",
+    "date": "31 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Swapped oil and gas, fees-free, parental leave, and grocery watch pins for the new circular art"
+      },
+      {
+        "type": "fixed",
+        "text": "Policy badges sit in a tight 4-column equal-size grid on every MP panel"
+      },
+      {
+        "type": "fixed",
+        "text": "Votes & stance starts directly under the badge grid with no leftover gap"
+      }
+    ]
+  },
+  {
+    "version": "v1.74",
+    "date": "30 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Replaced the 20 trial pins with the supplied layer-policy badges, labelled from the banner text"
+      },
+      {
+        "type": "feature",
+        "text": "Added the extra layer-badge set (clean energy, refugee support, UBS, and the rest)"
+      },
+      {
+        "type": "feature",
+        "text": "Hung the new pins on sitting MPs and recent PMs from public votes and stated positions"
+      }
+    ]
+  },
+  {
+    "version": "v1.73",
+    "date": "30 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Served mode no longer tints a border around MP portraits"
+      },
+      {
+        "type": "fixed",
+        "text": "Gen Alpha is amber-gold so it no longer matches Gen X teal"
+      },
+      {
+        "type": "feature",
+        "text": "Twenty new stance badges added to the pin set"
+      }
+    ]
+  },
+  {
+    "version": "v1.72",
+    "date": "30 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Born mode keeps a simple blue 3px left bar"
+      },
+      {
+        "type": "feature",
+        "text": "On Served the white pad around the portrait fades into that MP's generation-button colour over the card slide"
+      }
+    ]
+  },
+  {
+    "version": "v1.71",
+    "date": "30 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Left bar is a 50% darker mix of that MP card's Born background"
+      },
+      {
+        "type": "feature",
+        "text": "On Served the bar fades to the Born wash colour over the same 1.26s slide; Born reverses it"
+      }
+    ]
+  },
+  {
+    "version": "v1.70",
+    "date": "30 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Left birth bar stays the original 3px blue on Born"
+      },
+      {
+        "type": "feature",
+        "text": "On Served the same bar fades from blue into that MP's generation colour"
+      }
+    ]
+  },
+  {
+    "version": "v1.69",
+    "date": "30 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Birthday cake on born cards is 10% larger"
+      },
+      {
+        "type": "fixed",
+        "text": "Timeline year labels stay white in light and dark mode"
+      },
+      {
+        "type": "feature",
+        "text": "Served cards no longer use a generation dot — the left bar fades from blue into that MP's generation colour"
+      }
+    ]
+  },
+  {
+    "version": "v1.68",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Generation window labels stay white in light and dark mode"
+      },
+      {
+        "type": "feature",
+        "text": "Born cards show a birthday cake and the year only"
+      },
+      {
+        "type": "feature",
+        "text": "Party panel pulls Promises since … from party-offerings-proposed.json"
+      }
+    ]
+  },
+  {
+    "version": "v1.67",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Promises heading is Tracking the Promises: The 2026 Election"
+      },
+      {
+        "type": "feature",
+        "text": "Party graph keeps a solid six-month line and a dotted prediction through November; every month is labelled"
+      },
+      {
+        "type": "feature",
+        "text": "Last 7 elections lists latest first"
+      },
+      {
+        "type": "fixed",
+        "text": "Ticks and crosses on that list are thicker"
+      }
+    ]
+  },
+  {
+    "version": "v1.66",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Party graphs show only the last six months through 7 Nov 2026"
+      },
+      {
+        "type": "feature",
+        "text": "Bundled data/party-offerings-2026.json for all seven parties — copy onto the workers repo to go live"
+      }
+    ]
+  },
+  {
+    "version": "v1.65",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Party graphs load daily from FlavourThink/nz-politics-workers-collection data/polls.json"
+      },
+      {
+        "type": "feature",
+        "text": "Worker poll rows (Wikipedia scrape) mapped onto NAT/LAB/GRN/ACT/NZ First/TPM/TOP and drawn month-by-month"
+      },
+      {
+        "type": "fixed",
+        "text": "2026 offerings still use the bundled On the paper list — the workers repo has no manifesto job yet"
+      }
+    ]
+  },
+  {
+    "version": "v1.64",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP and party panels keep their own mouse-wheel / trackpad scroll while the map is locked"
+      },
+      {
+        "type": "fixed",
+        "text": "Party poll line is drawn month-by-month from the 2023 result to Nov 2026 so the axis no longer jumps Oct 23 → Nov 25"
+      },
+      {
+        "type": "feature",
+        "text": "Party page heading is now On the paper for 7 November 2026"
+      },
+      {
+        "type": "feature",
+        "text": "Optional daily JSON feed (GitHub raw or local data/) for polls and 2026 offerings"
+      }
+    ]
+  },
+  {
+    "version": "v1.63",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Script died after load: mps was const then reassigned. Filters painted, timeline and clicks never bound."
+      },
+      {
+        "type": "fixed",
+        "text": "Kept v1.61 layout. mps is let; empty slots stripped; PM-marker and panel lookups skip missing records."
+      }
+    ]
+  },
+  {
+    "version": "v1.62",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Removed empty slot in mps[] before Ardern that made .id throw in makeAxis, openDetails, and openPanel"
+      },
+      {
+        "type": "fixed",
+        "text": "All MP lookups skip holes; Prior PM cards can open again"
+      }
+    ]
+  },
+  {
+    "version": "v1.61",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Gen Z ends 2025; Gen Alpha occupies 2025–2040 so Z is not stretched across empty decades"
+      },
+      {
+        "type": "fixed",
+        "text": "Prior control labelled Prior PMs; capture-phase click + error logging for cards"
+      },
+      {
+        "type": "feature",
+        "text": "Skip link, focus rings, reduced-motion, live region (NZ web quality / WCAG-oriented)"
+      },
+      {
+        "type": "fixed",
+        "text": "Timeline bands and MP cards are solid, not translucent"
+      }
+    ]
+  },
+  {
+    "version": "v1.60",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Party stripes behind MP cards removed; axis timeline bands back to the earlier darker strength"
+      },
+      {
+        "type": "feature",
+        "text": "Theme control is ☀ / ☽ — header on desktop, hamburger on phones"
+      }
+    ]
+  },
+  {
+    "version": "v1.59",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Light mode: brighter green ticks, red crosses, and gold section titles"
+      }
+    ]
+  },
+  {
+    "version": "v1.58",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Beehive logo uses currentColor so it shows in light mode"
+      },
+      {
+        "type": "fixed",
+        "text": "Timeline party and generation bands are more solid"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation labels use white text in light mode"
+      }
+    ]
+  },
+  {
+    "version": "v1.57",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Light mode uses a cooler mid-grey canvas so party and generation colours are not washed out"
+      }
+    ]
+  },
+  {
+    "version": "v1.56",
+    "date": "29 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Hamburger Light / Dark toggle; light is the default, choice is stored on the device"
+      }
+    ]
+  },
+  {
+    "version": "v1.55",
+    "date": "28 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Generation popup uses the same section titles, body size, list indent and gaps as the opened MP card"
+      }
+    ]
+  },
+  {
+    "version": "v1.54",
+    "date": "28 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Type scale standardised from the opened MP card: title 1.15rem, section 0.78rem, body 0.84rem, caption 0.7rem, same list indent and gaps"
+      }
+    ]
+  },
+  {
+    "version": "v1.53",
+    "date": "28 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Generation notes include House share, how many are on the map, birth-year span, party mix, and PM cards"
+      }
+    ]
+  },
+  {
+    "version": "v1.52",
+    "date": "28 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Diagonal scroll uses one rounded scrollTo per frame so the view does not stutter on two axes"
+      },
+      {
+        "type": "feature",
+        "text": "Generation titles open a short brief and a common-traits list"
+      }
+    ]
+  },
+  {
+    "version": "v1.51",
+    "date": "28 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Hamburger stays visible on desktop and mobile"
+      },
+      {
+        "type": "fixed",
+        "text": "Donate sits in the header on desktop and only in the menu on phones"
+      }
+    ]
+  },
+  {
+    "version": "v1.50",
+    "date": "28 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Menu: request a feature — pending on-device until approved in a build, then listed with votes"
+      },
+      {
+        "type": "feature",
+        "text": "Document head filled for search and share (description, Open Graph, Twitter, JSON-LD)"
+      }
+    ]
+  },
+  {
+    "version": "v1.49",
+    "date": "28 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Alliance party bar is red (Willie Jackson’s 1999–2002 card was rendering black)"
+      },
+      {
+        "type": "fixed",
+        "text": "PM gold shimmer kept in Served mode (generation class had overwritten the fill)"
+      },
+      {
+        "type": "fixed",
+        "text": "Birth-year edge is a full-height bar again, not a bottom dot"
+      },
+      {
+        "type": "fixed",
+        "text": "Reset button is 2rem on desktop and mobile"
+      }
+    ]
+  },
+  {
+    "version": "v1.48",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Polling graphs scale to each party’s own range and draw taller"
+      },
+      {
+        "type": "fixed",
+        "text": "Opening a panel scrolls that panel to the top"
+      }
+    ]
+  },
+  {
+    "version": "v1.47",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Party colour bar locked to the top of each MP card"
+      },
+      {
+        "type": "fixed",
+        "text": "Served-mode generation dot is 11px and vertically centred on the name"
+      },
+      {
+        "type": "fixed",
+        "text": "Last 7 elections uses ✓ / ✕, drops the % total, and matches This election list type"
+      }
+    ]
+  },
+  {
+    "version": "v1.46",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Generation windows stay visible in Served mode"
+      },
+      {
+        "type": "feature",
+        "text": "Generation wash on each card shrinks to a dot by the name in Served, expands again in Born"
+      },
+      {
+        "type": "fixed",
+        "text": "Edge / mouse scroll pauses while a panel is open"
+      }
+    ]
+  },
+  {
+    "version": "v1.45",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Edge-scroll bound on page load — it had been nested inside the Reset button"
+      }
+    ]
+  },
+  {
+    "version": "v1.44",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "PM gold shimmer cut to half brightness"
+      },
+      {
+        "type": "feature",
+        "text": "Move the pointer to a window edge to scroll the timeline"
+      }
+    ]
+  },
+  {
+    "version": "v1.43",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "One heading scale site-wide: h1 title, h2 name, h3 section (blue), h4 topic/year (gold)"
+      }
+    ]
+  },
+  {
+    "version": "v1.42",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "This election promises are grouped under topic headers (Tax, Health, Housing, and so on)"
+      }
+    ]
+  },
+  {
+    "version": "v1.41",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Footer date bar uses the same width, margin and scroll as the header bar (no extra zoom scale)"
+      },
+      {
+        "type": "feature",
+        "text": "Seven cycles show three flagship promises; extra notes sit behind a tap-to-toggle ?"
+      }
+    ]
+  },
+  {
+    "version": "v1.40",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Party page splits This election (7 Nov 2026) from Last 7 elections (2005–2023)"
+      },
+      {
+        "type": "fixed",
+        "text": "History is a plain Done / Not done table plus a single achieved-vs-not total; TOP has no pre-2016 rows"
+      }
+    ]
+  },
+  {
+    "version": "v1.39",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "TOP no longer has fake 2014 rows or invented success % — founded 2016, 0 seats in 2017/20/23"
+      },
+      {
+        "type": "fixed",
+        "text": "Cycle scores are now computed: toward = in government after that election; achieved = delivered ÷ promised on one documented metric"
+      }
+    ]
+  },
+  {
+    "version": "v1.38",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Legend click never bound on load — handler had been nested inside the Reset button"
+      },
+      {
+        "type": "feature",
+        "text": "Party briefing lists promises from 2014–2026 with toward % and achieved %"
+      }
+    ]
+  },
+  {
+    "version": "v1.37",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP cards again show party as plain text, not a badge"
+      },
+      {
+        "type": "fixed",
+        "text": "Legend chips look clickable (border, hover ring, ›) and open the party briefing"
+      }
+    ]
+  },
+  {
+    "version": "v1.36",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Same party badge on each MP card; click opens the 2026 party briefing"
+      },
+      {
+        "type": "feature",
+        "text": "Header legend parties are buttons that open the same briefing"
+      }
+    ]
+  },
+  {
+    "version": "v1.35",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Government colour bands now change on the same dates as a change of governing party; white ticks still mark every new PM, including same-party handovers"
+      },
+      {
+        "type": "feature",
+        "text": "Party badge on the MP panel opens a 2026 briefing: promises, current poll %, monthly trend, election-day projection"
+      }
+    ]
+  },
+  {
+    "version": "v1.34",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "PM handover list now runs the full chart: Savage → Fraser → Holland → Holyoake → Nash → Holyoake → Marshall → Kirk → Rowling → Muldoon and on"
+      },
+      {
+        "type": "feature",
+        "text": "Each generation title shows that cohort’s share of the whole sitting House (all 123 MPs, not only cards on the map)"
+      }
+    ]
+  },
+  {
+    "version": "v1.33",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Cards dropped below generation titles so labels stay readable"
+      },
+      {
+        "type": "feature",
+        "text": "Each generation title has its own unused colour; Born-mode cards use the same tint"
+      }
+    ]
+  },
+  {
+    "version": "v1.32",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "PM hover on coloured bar — axis had pointer-events:none and overflow:hidden clipping the tip"
+      },
+      {
+        "type": "fixed",
+        "text": "Government colour and current coalitions end at the 2026 election, not 2030; chart still runs to 2040"
+      },
+      {
+        "type": "feature",
+        "text": "Born mode shows boxed generation windows (Silent → Gen Z) on the timeline"
+      }
+    ]
+  },
+  {
+    "version": "v1.31",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Detail panel ‹ › buttons jump to the nearest MP left or right on the current Born/Served map"
+      },
+      {
+        "type": "feature",
+        "text": "White handover ticks on the coloured timeline when a new PM takes office; hover shows sitting PM name"
+      }
+    ]
+  },
+  {
+    "version": "v1.30",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Born + year emphasised on cards; left-edge marker shows birth year alignment"
+      },
+      {
+        "type": "feature",
+        "text": "Filter note: currently sitting MPs plus top 5 per party; Born-mode left-edge explainer"
+      },
+      {
+        "type": "feature",
+        "text": "Te Pāti Māori colour changed to dark crimson (#8B1A1A)"
+      }
+    ]
+  },
+  {
+    "version": "v1.29",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Removed decade date-range labels; coloured gov bars sit under the filter (sticky)"
+      },
+      {
+        "type": "feature",
+        "text": "Year numbers inside the coloured bars are bold; party colour wash at 5% behind MP cards"
+      },
+      {
+        "type": "feature",
+        "text": "Pacifier emoji on the card Born date line"
+      }
+    ]
+  },
+  {
+    "version": "v1.28",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Reworded era copy that used “gay sex” to “same-sex relations”"
+      },
+      {
+        "type": "feature",
+        "text": "Removed decade description text from the main timeline (labels only; full notes stay in decade popup)"
+      }
+    ]
+  },
+  {
+    "version": "v1.27",
+    "date": "27 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Rolled back to v1.05 codebase (pre birth-grid / sitting-roster experiments)"
+      },
+      {
+        "type": "feature",
+        "text": "Restored original timeline layout, filters, prior MPs, and v1.05 click/panel behaviour"
+      }
+    ]
+  },
+  {
+    "version": "v1.05",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "MP cards back under timeline descriptions (z-index 10–15; sticky era 25)"
+      },
+      {
+        "type": "fixed",
+        "text": "Sticky era-bands no longer steal clicks (pointer-events none)"
+      },
+      {
+        "type": "fixed",
+        "text": "Card tap/click opens #panel (expand remains hover/hold only)"
+      }
+    ]
+  },
+  {
+    "version": "v1.04",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Prior/top-lane cards were under sticky era layer (z 25) with clickable era-bands — cards now z-index 30+"
+      },
+      {
+        "type": "fixed",
+        "text": "One identical el.onclick open path for every mp-node (prior and current)"
+      }
+    ]
+  },
+  {
+    "version": "v1.03",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "openPanel opens #panel immediately then fills content — prior PMs (e.g. Helen Clark) no longer fail silently"
+      },
+      {
+        "type": "fixed",
+        "text": "HTML-escaped notes/evidence; safer badge/stance rendering for all members"
+      }
+    ]
+  },
+  {
+    "version": "v1.02",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "detail-panel ghost-close blocked for 600ms after open (prior cards were opening then instantly closing)"
+      },
+      {
+        "type": "fixed",
+        "text": "openPanel try/catch always shows panel; document capture-phase click/touch opens any mp-node"
+      }
+    ]
+  },
+  {
+    "version": "v1.01",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Prior MP cards open detail panel via timeline event delegation (click + touch)"
+      },
+      {
+        "type": "fixed",
+        "text": "openPanel always loads master mps[] record so prior badgesSection + Votes & stance appear"
+      },
+      {
+        "type": "feature",
+        "text": "badgesSection always rendered; scrolls into view when a card opens"
+      }
+    ]
+  },
+  {
+    "version": "v1.00",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Prior PMs (Muldoon–Clark) now have policy badges + Votes & stance detail like sitting MPs"
+      },
+      {
+        "type": "feature",
+        "text": "Detail panel always shows Votes & stance and Policy badges sections for every member"
+      }
+    ]
+  },
+  {
+    "version": "v0.99",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Prior MP cards open like current MPs — shared click/touch handler, child pointer-events none"
+      },
+      {
+        "type": "fixed",
+        "text": "openPanel shows details before re-layout so prior cards cannot fail silently"
+      }
+    ]
+  },
+  {
+    "version": "v0.98",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Muldoon, Palmer, Bolger portraits re-generated in simple chibi/RPG sprite style matching other MPs"
+      },
+      {
+        "type": "fixed",
+        "text": "Mobile card open via Pointer Events + touch-action: manipulation (prior and all cards)"
+      }
+    ]
+  },
+  {
+    "version": "v0.97",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Prior PM portraits regenerated in chibi/pixel avatar style matching sitting MPs (128×128)"
+      },
+      {
+        "type": "feature",
+        "text": "Statistics block on every MP detail panel (birth, entry, years, party, rank, role, prior)"
+      },
+      {
+        "type": "fixed",
+        "text": "Prior cards fully clickable (onclick, capture click, keyboard, touch)"
+      }
+    ]
+  },
+  {
+    "version": "v0.96",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Prior cards clickable (onclick + capture click, prior z-index)"
+      },
+      {
+        "type": "feature",
+        "text": "Historical PM portraits from real photos (Muldoon–Clark), card-sized JPEG sprites"
+      },
+      {
+        "type": "feature",
+        "text": "Richer biographical notes for all prior PMs from 1975"
+      }
+    ]
+  },
+  {
+    "version": "v0.95",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Born mode: PM cards use standard background (no gold shimmer until Served-mode PM card)"
+      }
+    ]
+  },
+  {
+    "version": "v0.94",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Designed prior-PM cards from 1975: Muldoon, Lange, Palmer, Moore, Bolger, Shipley, Clark"
+      },
+      {
+        "type": "feature",
+        "text": "PRIME_MINISTERS + axis portraits extended from 1975; dual Served cards + shimmer when PM"
+      }
+    ]
+  },
+  {
+    "version": "v0.93",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Lane packing: PM cards top rows, then ranks 1–4; no overlap (push down)"
+      },
+      {
+        "type": "fixed",
+        "text": "PM cards open on click/tap (capture phase + touch)"
+      }
+    ]
+  },
+  {
+    "version": "v0.92",
+    "date": "23 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Prior PM cards open again on click/tap"
+      },
+      {
+        "type": "fixed",
+        "text": "PM card meta shows term range (e.g. 2017 – 2023) instead of “PM from ####”"
+      }
+    ]
+  },
+  {
+    "version": "v0.91",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "PMs get two Served-mode cards: standard at first election, gold shimmer at PM start, joined by white curve"
+      }
+    ]
+  },
+  {
+    "version": "v0.90",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Removed ~1MB duplicate opposed-badge images; opposed state via CSS grey + red slash"
+      },
+      {
+        "type": "feature",
+        "text": "Streamlined badge rendering and shared focus styles"
+      },
+      {
+        "type": "fixed",
+        "text": "applyFilters error boundary so a render fault cannot blank the app silently"
+      }
+    ]
+  },
+  {
+    "version": "v0.89",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Restored data display from v0.86 (removed heavy touch rewrites that blanked the timeline)"
+      },
+      {
+        "type": "fixed",
+        "text": "PM shimmer slowed 80% (16s)"
+      },
+      {
+        "type": "feature",
+        "text": "Mini PM portraits on date axes with click-to-open"
+      },
+      {
+        "type": "fixed",
+        "text": "Safer card open when resolving baseId"
+      }
+    ]
+  },
+  {
+    "version": "v0.86",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Trial: Prime Minister cards use animated gold shimmer background (Luxon, Ardern, Key, English, Hipkins)"
+      }
+    ]
+  },
+  {
+    "version": "v0.85",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Max zoom-out limited to 300% (scale ≥ 1/3)"
+      },
+      {
+        "type": "fixed",
+        "text": "Vertical guides meet bottom date axis with no gap"
+      },
+      {
+        "type": "feature",
+        "text": "Card slide ease-in-out: slow start, accelerate, ease into place"
+      },
+      {
+        "type": "feature",
+        "text": "Party-link curves fade in and out instead of popping"
+      }
+    ]
+  },
+  {
+    "version": "v0.84",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Bottom date axis sticks to footer; chart stretches so zoomed content meets it"
+      },
+      {
+        "type": "fixed",
+        "text": "Bottom axis horizontal scale matches card zoom"
+      },
+      {
+        "type": "fixed",
+        "text": "Born/Served toggle preserves zoom level and scroll position"
+      }
+    ]
+  },
+  {
+    "version": "v0.83",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Decade descriptions, top/bottom date axes, and vertical guides zoom with MP cards"
+      },
+      {
+        "type": "fixed",
+        "text": "Vertical decade lines span from top date strip to bottom date strip at every zoom"
+      }
+    ]
+  },
+  {
+    "version": "v0.82",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Top date axis stays with decade descriptions; bottom date axis fixed to footer (not affected by zoom)"
+      },
+      {
+        "type": "feature",
+        "text": "Zoom scales cards/links only; min zoom 0.2× (500% out), max 1× original"
+      },
+      {
+        "type": "fixed",
+        "text": "Card slide duration slowed 20% (1.26s)"
+      }
+    ]
+  },
+  {
+    "version": "v0.81",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Served→Born: remove link lines, then extra party cards, then slide remaining cards"
+      },
+      {
+        "type": "fixed",
+        "text": "Zoomed-out timeline pins bottom date axis to the footer (no gap)"
+      }
+    ]
+  },
+  {
+    "version": "v0.80",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Zoom in caps at original card size (1×); zoom out caps at full timeline width fit"
+      },
+      {
+        "type": "fixed",
+        "text": "Multi-party cards only in Served mode; Born mode shows one card per MP"
+      }
+    ]
+  },
+  {
+    "version": "v0.79",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Pinch-zoom (and ctrl/meta + wheel) on the timeline"
+      },
+      {
+        "type": "fixed",
+        "text": "Party-link curves touch card edges (measured from live card boxes)"
+      },
+      {
+        "type": "fixed",
+        "text": "Party-link curves render underneath MP cards"
+      }
+    ]
+  },
+  {
+    "version": "v0.78",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Rebuilt party-change cards without breaking timeline (duplicate const bug in prior attempt)"
+      },
+      {
+        "type": "feature",
+        "text": "Party switchers get one card per affiliation with curved white mid-side links"
+      }
+    ]
+  },
+  {
+    "version": "v0.77",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Born/Served toggle works correctly while Prior filter is on (uses same filtered set)"
+      },
+      {
+        "type": "feature",
+        "text": "Thin coalition/support-partner colour strip under the government party axis"
+      }
+    ]
+  },
+  {
+    "version": "v0.76",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Timeline height grows with lane count so the bottom date line always sits under all MP cards (Born and Served)"
+      }
+    ]
+  },
+  {
+    "version": "v0.75",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Born/Served toggle padding balanced (Born left halved; matching pad on Served right)"
+      },
+      {
+        "type": "fixed",
+        "text": "Lane packing uses active position year so Served mode cards (e.g. Davidson / Seymour) no longer overlap"
+      },
+      {
+        "type": "feature",
+        "text": "Mode change animates both horizontal and vertical lane moves"
+      }
+    ]
+  },
+  {
+    "version": "v0.74",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Restored timeline visibility after broken maxYear scope in prior v0.74 attempt"
+      },
+      {
+        "type": "feature",
+        "text": "Born/Served slide slower and smoother (~1.05s)"
+      },
+      {
+        "type": "feature",
+        "text": "Timeline maxYear dynamically extends through end of next future decade"
+      }
+    ]
+  },
+  {
+    "version": "v0.73",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Timeline axes, decade lines, and party-in-power colours extended through 2030 (aligned with decade descriptors)"
+      },
+      {
+        "type": "feature",
+        "text": "Born / Served slide toggle — positions by birth year or first entry to Parliament"
+      },
+      {
+        "type": "feature",
+        "text": "MP cards animate horizontally when switching Born ↔ Served"
+      }
+    ]
+  },
+  {
+    "version": "v0.72",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Year-number axis strip coloured by party in power (Labour red / National blue)"
+      }
+    ]
+  },
+  {
+    "version": "v0.71",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Expanded MP cards no longer float above sticky decade headers / menus (z-index stack corrected)"
+      },
+      {
+        "type": "feature",
+        "text": "Decade popup: year headings with bulleted law reforms"
+      },
+      {
+        "type": "feature",
+        "text": "Decade popup: “By decade’s end” section for what was still unchanged or unthinkable"
+      }
+    ]
+  },
+  {
+    "version": "v0.70",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Beehive logo redesigned as recognisable stepped circular Executive Wing"
+      },
+      {
+        "type": "feature",
+        "text": "Decade segments clickable with accent border highlight (no scale)"
+      },
+      {
+        "type": "feature",
+        "text": "Decade detail popup with politics, society, law, and extra markers"
+      }
+    ]
+  },
+  {
+    "version": "v0.69",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Footer credit: Designed by FlavourThink Ltd. Copyright © 2026"
+      },
+      {
+        "type": "feature",
+        "text": "Beehive / NZ Parliament icon logo before title in rounded square"
+      },
+      {
+        "type": "feature",
+        "text": "MP cards scale to 125% on hover / hold"
+      },
+      {
+        "type": "fixed",
+        "text": "Disabled context menu on long-press / right-click of MP cards"
+      },
+      {
+        "type": "fixed",
+        "text": "Release log close (×) control clarified top-right"
+      }
+    ]
+  },
+  {
+    "version": "v0.68",
+    "date": "22 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Version & release log button in hamburger menu"
+      },
+      {
+        "type": "feature",
+        "text": "Donate button top-right on desktop"
+      },
+      {
+        "type": "feature",
+        "text": "Hamburger pinned top-right on mobile"
+      },
+      {
+        "type": "feature",
+        "text": "MP cards scale 20% on hover / touch-hold with swift animation"
+      },
+      {
+        "type": "feature",
+        "text": "Initial view centres on MPs born ~40 years ago"
+      },
+      {
+        "type": "fixed",
+        "text": "Footer taller, cleaner, distinctly darker background"
+      }
+    ]
+  },
+  {
+    "version": "v0.67",
+    "date": "17 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Clickable version chip showing latest version and release date"
+      },
+      {
+        "type": "feature",
+        "text": "In-app release log (Feature / Fixed) for every version from the baseline"
+      }
+    ]
+  },
+  {
+    "version": "v0.66",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Phone hamburger menu with Donate"
+      },
+      {
+        "type": "feature",
+        "text": "Donate info page (site funded entirely by donations)"
+      },
+      {
+        "type": "feature",
+        "text": "Donation button linked to configurable DONATE_URL"
+      },
+      {
+        "type": "fixed",
+        "text": "Reset button wraps to next line on narrow phone screens"
+      }
+    ]
+  },
+  {
+    "version": "v0.65",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Era note font size set to 0.7rem"
+      }
+    ]
+  },
+  {
+    "version": "v0.64",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Decade description fonts increased by ~1pt"
+      }
+    ]
+  },
+  {
+    "version": "v0.63",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "End of Life Choice badge scaled to match other pin sizes"
+      }
+    ]
+  },
+  {
+    "version": "v0.62",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Opposed badges: greyed-out pins with red strike-through for votes against"
+      },
+      {
+        "type": "feature",
+        "text": "Expanded card shows colour and/or opposed badges by stance"
+      }
+    ]
+  },
+  {
+    "version": "v0.61",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Detail card shows every decade overlapping formative years (ages ≈15–25)"
+      },
+      {
+        "type": "fixed",
+        "text": "Removed “Recorded positions relative to later liberalising changes” section"
+      }
+    ]
+  },
+  {
+    "version": "v0.60",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "End of Life Choice badge artwork updated (black background stripped)"
+      }
+    ]
+  },
+  {
+    "version": "v0.59",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "End of Life Choice badge on David Seymour (bill sponsor)"
+      },
+      {
+        "type": "fixed",
+        "text": "Terminology: “rape” reworded to “sexual assault” in era notes"
+      }
+    ]
+  },
+  {
+    "version": "v0.58",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "End of Life Choice enamel badge + opposed variant added"
+      }
+    ]
+  },
+  {
+    "version": "v0.57",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Restored full atlas build after workspace file loss"
+      },
+      {
+        "type": "feature",
+        "text": "Timeline span, axes, decade bars, and 30 enamel badges restored"
+      }
+    ]
+  },
+  {
+    "version": "v0.56",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Timeline, axes, and vertical bars extended through 2026 (no longer stop at 2010)"
+      }
+    ]
+  },
+  {
+    "version": "v0.55",
+    "date": "16 Aug 2026",
+    "items": [
+      {
+        "type": "feature",
+        "text": "Baseline locked: generational atlas, enamel badges, prior toggle, lane layout"
+      }
+    ]
+  }
+]

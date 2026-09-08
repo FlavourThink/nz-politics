@@ -5651,3 +5651,105 @@
       opacity: 0.8;
     }
     .party-promises-col { margin-top: 0 !important; padding-top: 0 !important; border-top: 0 !important; min-width: 0; }
+
+    /* v3.15: never use background shorthand on sprites */
+    .panel-sprite,
+    .panel-sprite.sprite-atlas,
+    .sprite.sprite-atlas,
+    .hansard-face.sprite-atlas {
+      background-color: #fffaf0 !important;
+      background-image: url("busts-atlas.png") !important;
+      background-repeat: no-repeat !important;
+      background-size: var(--ssw, 1152px) var(--ssh, 1024px) !important;
+      background-position: var(--sx, 0) var(--sy, 0) !important;
+    }
+    .sprite-empty {
+      background-image: none !important;
+      background-color: #2a2f3a !important;
+    }
+    .detail-badges,
+    #panel .detail-badges,
+    #badgesSection .detail-badges {
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      gap: 0.4rem !important;
+      width: 100% !important;
+    }
+    #panel .detail-badges .badge-slot,
+    #badgesSection .badge-slot,
+    .detail-badges .badge-slot {
+      max-width: none !important;
+      width: 100% !important;
+      aspect-ratio: 1 / 1;
+      padding: 4px !important;
+      box-sizing: border-box;
+    }
+    .detail-badges .badge-slot .badge-spr,
+    .detail-badges .badge-slot img.pos {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+    .party-split {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.9rem !important;
+    }
+    .party-split { grid-template-columns: 1fr !important; }
+    .brand-pill {
+      position: relative;
+      z-index: 6;
+    }
+    .header-filters,
+    .header-filters.chamber-ui {
+      position: relative !important;
+      z-index: 8 !important;
+      margin-top: 0.65rem !important;
+      transform: none !important;
+    }
+    .header-filters select {
+      position: relative;
+      z-index: 9;
+    }
+    @media (max-width: 640px) {
+      .header-filters,
+      .header-filters.chamber-ui {
+        margin-top: 0.7rem !important;
+        transform: none !important;
+        padding-top: 0.35rem !important;
+      }
+    }
+
+    .mp-node.biz-mini .biz-slit-tl { top: 1px !important; left: 1px !important; }
+    .mp-node.biz-mini .biz-slit-tr { top: 1px !important; right: 1px !important; }
+    .mp-node.biz-mini .biz-slit-bl { bottom: 1px !important; left: 1px !important; }
+    .mp-node.biz-mini .biz-slit-br { bottom: 1px !important; right: 1px !important; }
+    .biz-slit-tl { top: 2px !important; left: 2px !important; }
+    .biz-slit-tr { top: 2px !important; right: 2px !important; }
+    .biz-slit-bl { bottom: 2px !important; left: 2px !important; }
+    .biz-slit-br { bottom: 2px !important; right: 2px !important; }
+    .biz-org,
+    #panel .biz-org,
+    .mp-node .biz-org {
+      display: block !important;
+      width: 100% !important;
+      text-align: center !important;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #panel .stats-list,
+    #panel .stats-list li,
+    #panel .stats-list li span,
+    #panel .stats-list li strong {
+      color: #f2f3f5 !important;
+      opacity: 1 !important;
+    }
+    html[data-theme="light"] #panel .stats-list,
+    html[data-theme="light"] #panel .stats-list li,
+    html[data-theme="light"] #panel .stats-list li span,
+    html[data-theme="light"] #panel .stats-list li strong {
+      color: #1b1b1b !important;
+    }
+    .folder-sheet .stats-list li span { color: #2c2418 !important; }
+    .folder-sheet .stats-list li strong { color: #16110c !important; }
