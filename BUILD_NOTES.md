@@ -1,9 +1,9 @@
 # Build notes
 
-Latest: **v3.14** — 8 Sep 2026
+Latest: **v3.15** — 8 Sep 2026
 
-## v3.14
-- Poll line and month labels share March–November.
-- Graph column beside 2026 promises.
-- Business-card bust 90px; gen chip opens gen note; Hansard chip opens calendar.
-- Badges fill columns with 10px padding; stats use body colour.
+## v3.15
+- Business-card faces use busts-atlas.png (background shorthand was wiping the sprite).
+- Party graph stacks above promises.
+- Filter sits below the title.
+- Badges fill four columns.
