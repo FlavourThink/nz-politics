@@ -4,11 +4,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Parliamentary Generational Atlas — New Zealand MPs by birth year · v3.14</title>
+  <meta name="description" content="Interactive atlas of New Zealand’s 54th Parliament: sitting MPs by birth year and first term, generation windows, party records, and 2026 election promises. Designed by FlavourThink Ltd." />
   <link rel="stylesheet" href="atlas.css" />
 </head>
 <body>
-  <p>Placeholder — use the v3.14 zip index.html if this commit is incomplete.</p>
+  <a class="skip-link" href="#mainTimeline">Skip to timeline</a>
+  <div id="a11yLive" aria-live="polite"></div>
+  <header class="chamber-header">
+    <div class="site-chrome"><div class="header-top">
+      <div class="brand-pill"><h1>Parliamentary Generational Atlas</h1></div>
+      <div class="header-actions">
+        <button type="button" class="chrome-btn desktop-donate" id="desktopDonateBtn">Donate</button>
+        <button type="button" class="chrome-btn theme-icon theme-icon-header" id="themeToggleHeader" aria-label="Switch theme">Dark</button>
+        <button type="button" class="chrome-btn hamburger" id="hamburgerBtn" aria-label="Open menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div id="promiseReel" class="promise-reel"><div class="promise-reel-track" id="promiseReelTrack"></div></div>
+  </header>
+  <div id="topAxisBar" class="top-axis-fixed"></div>
+  <main id="mainTimeline" class="timeline-wrap" tabindex="-1"><div class="timeline" id="timeline"></div></div>
+  <div id="bottomAxisBar" class="bottom-axis-fixed"></div>
+  <div class="panel-backdrop" id="backdrop"></div>
+  <aside class="detail-panel" id="panel">
+    <div class="mp-titlebar" id="mpTitlebar">
+      <div class="tb-nav"><span class="mp-title-name" id="mpTitleName">MP Details</span></div>
+      <button class="close" id="closePanel" aria-label="Close">×</button>
+    </div>
+    <div id="panelContent"></div>
+  </aside>
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <nav class="mobile-menu" id="mobileMenu">
+    <button type="button" class="menu-close" id="menuClose" aria-label="Close menu">×</button>
+    <h2>Menu</h2>
+    <button type="button" class="donate-btn" id="menuDonateBtn">Donate</button>
+    <button type="button" class="donate-btn" id="menuVersionBtn">Version & release log</button>
+    <button type="button" class="donate-btn" id="menuFeatureBtn">Request a feature</button>
+    <button type="button" class="donate-btn" id="menuHansardBtn">Hansard</button>
+    <label class="menu-speed" for="reelSpeed">News speed
+      <span class="menu-speed-row">
+        <input type="range" id="reelSpeed" min="30" max="100" step="1" value="30" />
+        <span id="reelSpeedVal">30 px/s</span>
+        <button type="button" class="reel-toggle on" id="reelToggle">On</button>
+      </span>
+    </label>
+  </nav>
+  <div class="donate-page" id="donatePage"><div class="donate-card"><div class="atlas-titlebar"><span class="mp-title-name" id="donateTitle">Support this project</span><button type="button" class="close" id="closeDonate">×</button></div></div></div>
+  <div class="legend legend-dock" id="partyLegend">
+    <button type="button" class="legend-party" data-party="National" onclick="openPartyPanel('National')">National</button>
+    <button type="button" class="legend-party" data-party="Labour" onclick="openPartyPanel('Labour')">Labour</button>
+    <button type="button" class="legend-party" data-party="Green" onclick="openPartyPanel('Green')">Green</button>
+    <button type="button" class="legend-party" data-party="ACT" onclick="openPartyPanel('ACT')">ACT</button>
+    <button type="button" class="legend-party" data-party="NZ First" onclick="openPartyPanel('NZ First')">NZ First</button>
+    <button type="button" class="legend-party" data-party="Te Pāti Māori" onclick="openPartyPanel('Te Pāti Māori')">Te Pāti Māori</button>
+    <button type="button" class="legend-party" data-party="TOP" onclick="openPartyPanel('TOP')">TOP</button>
+  </div>
+  <div class="donate-page" id="hansardPage"><div class="donate-card hansard-card"><button type="button" class="close-donate" id="hansardClose">×</button><header class="dialog-head"><h2 id="hansardTitle">Hansard</h2></header><div id="hansardList"></div><div id="hansardRead" hidden></div></div></div>
+  <div class="donate-page" id="featurePage"><div class="donate-card"><button type="button" class="close-donate" id="closeFeature">×</button><div class="atlas-titlebar"><span id="featureTitle">Request a feature</span></div></div></div>
+  <div class="era-detail" id="eraDetail"><div class="era-detail-card"><button type="button" class="close-era" id="closeEraDetail">×</button><h2 id="eraDetailTitle">Decade</h2><div id="eraDetailYears"></div><div id="eraDetailBody"></div></div></div>
+  <div class="era-detail" id="genDetail"><div class="era-detail-card"><button type="button" class="close-era" id="closeGenDetail">×</button><h2 id="genDetailTitle">Generation</h2><div id="genDetailYears"></div><div id="genDetailBody"></div></div></div>
+  <div class="release-log" id="releaseLog"><div class="release-log-card"><button type="button" class="close-rel" id="closeReleaseLog">×</button><h2 id="releaseLogTitle">Release log</h2><div id="releaseLogBody"></div></div></div>
   <script src="atlas.js" defer></script>
 </body>
 </html>
