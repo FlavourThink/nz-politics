@@ -1,5 +1,93 @@
 [
   {
+    "version": "v3.20",
+    "date": "11 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "The Chamber \u2014 walk the House, hold briefs against the polls, one sitting on the ledger"
+      },
+      {
+        "type": "upgraded",
+        "text": "Hamburger opens Chamber; atlas header stays, timeline filters hide"
+      },
+      {
+        "type": "upgraded",
+        "text": "Unfinished sittings stay in the browser until you lose the floor"
+      }
+    ]
+  },
+  {
+    "version": "v3.19",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "News reel uses party-button colour at 20% fade"
+      },
+      {
+        "type": "upgraded",
+        "text": "Badges a little larger; opposed slash removed"
+      },
+      {
+        "type": "upgraded",
+        "text": "Request a feature has no title bar"
+      },
+      {
+        "type": "fixed",
+        "text": "Filter box margin-top 2.48rem"
+      },
+      {
+        "type": "fixed",
+        "text": "Party graph is a 200px block"
+      }
+    ]
+  },
+  {
+    "version": "v3.18",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "fixed",
+        "text": "Statistics text is black"
+      },
+      {
+        "type": "fixed",
+        "text": "Hansard on the MP card opens the calendar and closes the card"
+      },
+      {
+        "type": "fixed",
+        "text": "Generation chip closes the MP panel before the generation note"
+      },
+      {
+        "type": "fixed",
+        "text": "Party graph shows the percent scale on the Y axis"
+      },
+      {
+        "type": "fixed",
+        "text": "Opposed badges are grey with a slash; tap a badge for its note"
+      },
+      {
+        "type": "upgraded",
+        "text": "Timeline cards use a darker left and bottom edge instead of the blue bar"
+      }
+    ]
+  },
+  {
+    "version": "v3.17",
+    "date": "8 Sep 2026",
+    "items": [
+      {
+        "type": "upgraded",
+        "text": "Feature form sends a note straight onto the public list"
+      },
+      {
+        "type": "upgraded",
+        "text": "No sign-in or service names on the request page"
+      }
+    ]
+  },
+  {
     "version": "v3.16",
     "date": "8 Sep 2026",
     "items": [
@@ -49,7 +137,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Poll line and month labels share the same March–November scale"
+        "text": "Poll line and month labels share the same March\u2013November scale"
       },
       {
         "type": "fixed",
@@ -107,7 +195,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "MP cards read busts-atlas.png using short-id aliases (luxon → christopher-luxon)"
+        "text": "MP cards read busts-atlas.png using short-id aliases (luxon \u2192 christopher-luxon)"
       },
       {
         "type": "upgraded",
@@ -125,7 +213,7 @@
     "items": [
       {
         "type": "upgraded",
-        "text": "News reel speed slider in the menu, default 50 px/s (50–100)"
+        "text": "News reel speed slider in the menu, default 50 px/s (50\u2013100)"
       },
       {
         "type": "fixed",
@@ -137,11 +225,11 @@
       },
       {
         "type": "fixed",
-        "text": "Removed the blue block behind In the news whilst … was a young adult"
+        "text": "Removed the blue block behind In the news whilst \u2026 was a young adult"
       },
       {
         "type": "fixed",
-        "text": "Party poll graph always mounts and refreshes from the latest Curia (1–3 Sep 2026)"
+        "text": "Party poll graph always mounts and refreshes from the latest Curia (1\u20133 Sep 2026)"
       }
     ]
   },
@@ -151,7 +239,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Bust atlas, badge atlas, and header image are files — no longer base64 in index.html"
+        "text": "Bust atlas, badge atlas, and header image are files \u2014 no longer base64 in index.html"
       }
     ]
   },
@@ -441,7 +529,7 @@
     "items": [
       {
         "type": "upgraded",
-        "text": "Every MP business card, including swipe placeholders, is 178px — Gerry Brownlee’s loaded card height"
+        "text": "Every MP business card, including swipe placeholders, is 178px \u2014 Gerry Brownlee\u2019s loaded card height"
       }
     ]
   },
@@ -541,7 +629,7 @@
       },
       {
         "type": "fixed",
-        "text": "Hansard calendar states the last sitting on file; 4–5 Sep 2026 were not House sitting days"
+        "text": "Hansard calendar states the last sitting on file; 4\u20135 Sep 2026 were not House sitting days"
       }
     ]
   },
@@ -551,7 +639,7 @@
     "items": [
       {
         "type": "upgraded",
-        "text": "Business card line “New Zealand Parliament” is smaller, one line, faded"
+        "text": "Business card line \u201cNew Zealand Parliament\u201d is smaller, one line, faded"
       },
       {
         "type": "upgraded",
@@ -565,7 +653,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Opening an MP panel shows only that member — the peek carousel no longer flashes neighbours"
+        "text": "Opening an MP panel shows only that member \u2014 the peek carousel no longer flashes neighbours"
       },
       {
         "type": "fixed",
@@ -781,7 +869,7 @@
       },
       {
         "type": "fixed",
-        "text": "Speaker-framed busts redrawn for Verrall, Grigg, Doocey, Andersen, O’Connor and Edmonds"
+        "text": "Speaker-framed busts redrawn for Verrall, Grigg, Doocey, Andersen, O\u2019Connor and Edmonds"
       }
     ]
   },
@@ -819,7 +907,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "ALL CAPS names such as RICARDO MENÉNDEZ MARCH are treated as the speaker"
+        "text": "ALL CAPS names such as RICARDO MEN\u00c9NDEZ MARCH are treated as the speaker"
       }
     ]
   },
@@ -1073,7 +1161,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Hansard portraits only match an exact unique name — no more shared Marama faces"
+        "text": "Hansard portraits only match an exact unique name \u2014 no more shared Marama faces"
       },
       {
         "type": "fixed",
@@ -1419,7 +1507,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Rolled back to v2.18 then reapplied only the safe fixes — MP panels unchanged"
+        "text": "Rolled back to v2.18 then reapplied only the safe fixes \u2014 MP panels unchanged"
       },
       {
         "type": "fixed",
@@ -1469,7 +1557,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Party graphs draw a March–November 2026 track with a visible line"
+        "text": "Party graphs draw a March\u2013November 2026 track with a visible line"
       },
       {
         "type": "fixed",
@@ -1487,7 +1575,7 @@
       },
       {
         "type": "fixed",
-        "text": "Timeline wrapper scrolls left/right again so year−40 can sit in the middle"
+        "text": "Timeline wrapper scrolls left/right again so year\u221240 can sit in the middle"
       },
       {
         "type": "fixed",
@@ -1501,7 +1589,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Opens with (current year − 40) in the middle of the window"
+        "text": "Opens with (current year \u2212 40) in the middle of the window"
       },
       {
         "type": "fixed",
@@ -1527,7 +1615,7 @@
       },
       {
         "type": "fixed",
-        "text": "One page scrollbar — timeline no longer has its own scroller"
+        "text": "One page scrollbar \u2014 timeline no longer has its own scroller"
       },
       {
         "type": "fixed",
@@ -1545,7 +1633,7 @@
       },
       {
         "type": "fixed",
-        "text": "Beta meets Gamma — no empty year between them"
+        "text": "Beta meets Gamma \u2014 no empty year between them"
       },
       {
         "type": "fixed",
@@ -1691,7 +1779,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Party rank sits in a hanging circle on each MP card — white number on a darker inner disc"
+        "text": "Party rank sits in a hanging circle on each MP card \u2014 white number on a darker inner disc"
       }
     ]
   },
@@ -1779,7 +1867,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Skill tree on each MP panel — schooling, work, House, other skills"
+        "text": "Skill tree on each MP panel \u2014 schooling, work, House, other skills"
       },
       {
         "type": "feature",
@@ -1793,7 +1881,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "New policy badges resized to 160×160 to match the rest of the set"
+        "text": "New policy badges resized to 160\u00d7160 to match the rest of the set"
       }
     ]
   },
@@ -1803,7 +1891,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Five new policy badges: School Phone Ban, Social Media Age-Limit, Youth Academies, Māori Wards, Defence Spend"
+        "text": "Five new policy badges: School Phone Ban, Social Media Age-Limit, Youth Academies, M\u0101ori Wards, Defence Spend"
       },
       {
         "type": "feature",
@@ -1927,7 +2015,7 @@
       },
       {
         "type": "fixed",
-        "text": "1930s added to the formative “what was normal” notes so Silent-era childhoods are covered"
+        "text": "1930s added to the formative \u201cwhat was normal\u201d notes so Silent-era childhoods are covered"
       },
       {
         "type": "fixed",
@@ -1941,7 +2029,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Generation windows now follow NZ-used bands: Silent 1928–1945, Baby Boomers 1946–1964, Generation X 1965–1980, Millennials 1981–1996, Generation Z 1997–2012, Generation Alpha from 2013"
+        "text": "Generation windows now follow NZ-used bands: Silent 1928\u20131945, Baby Boomers 1946\u20131964, Generation X 1965\u20131980, Millennials 1981\u20131996, Generation Z 1997\u20132012, Generation Alpha from 2013"
       },
       {
         "type": "fixed",
@@ -1979,7 +2067,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Strange / silly / outrageous notes rewritten in Gen X–Millennial voice, about ten public examples per member"
+        "text": "Strange / silly / outrageous notes rewritten in Gen X\u2013Millennial voice, about ten public examples per member"
       }
     ]
   },
@@ -2037,7 +2125,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Vertical MMP banner at 1996, text rotated 270° behind the cards, stopping at the top and bottom timelines"
+        "text": "Vertical MMP banner at 1996, text rotated 270\u00b0 behind the cards, stopping at the top and bottom timelines"
       }
     ]
   },
@@ -2179,7 +2267,7 @@
       },
       {
         "type": "feature",
-        "text": "Served cards no longer use a generation dot — the left bar fades from blue into that MP's generation colour"
+        "text": "Served cards no longer use a generation dot \u2014 the left bar fades from blue into that MP's generation colour"
       }
     ]
   },
@@ -2197,7 +2285,7 @@
       },
       {
         "type": "feature",
-        "text": "Party panel pulls Promises since … from party-offerings-proposed.json"
+        "text": "Party panel pulls Promises since \u2026 from party-offerings-proposed.json"
       }
     ]
   },
@@ -2233,7 +2321,7 @@
       },
       {
         "type": "feature",
-        "text": "Bundled data/party-offerings-2026.json for all seven parties — copy onto the workers repo to go live"
+        "text": "Bundled data/party-offerings-2026.json for all seven parties \u2014 copy onto the workers repo to go live"
       }
     ]
   },
@@ -2251,7 +2339,7 @@
       },
       {
         "type": "fixed",
-        "text": "2026 offerings still use the bundled On the paper list — the workers repo has no manifesto job yet"
+        "text": "2026 offerings still use the bundled On the paper list \u2014 the workers repo has no manifesto job yet"
       }
     ]
   },
@@ -2265,7 +2353,7 @@
       },
       {
         "type": "fixed",
-        "text": "Party poll line is drawn month-by-month from the 2023 result to Nov 2026 so the axis no longer jumps Oct 23 → Nov 25"
+        "text": "Party poll line is drawn month-by-month from the 2023 result to Nov 2026 so the axis no longer jumps Oct 23 \u2192 Nov 25"
       },
       {
         "type": "feature",
@@ -2311,7 +2399,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Gen Z ends 2025; Gen Alpha occupies 2025–2040 so Z is not stretched across empty decades"
+        "text": "Gen Z ends 2025; Gen Alpha occupies 2025\u20132040 so Z is not stretched across empty decades"
       },
       {
         "type": "fixed",
@@ -2337,7 +2425,7 @@
       },
       {
         "type": "feature",
-        "text": "Theme control is ☀ / ☽ — header on desktop, hamburger on phones"
+        "text": "Theme control is \u2600 / \u263d \u2014 header on desktop, hamburger on phones"
       }
     ]
   },
@@ -2453,7 +2541,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Menu: request a feature — pending on-device until approved in a build, then listed with votes"
+        "text": "Menu: request a feature \u2014 pending on-device until approved in a build, then listed with votes"
       },
       {
         "type": "feature",
@@ -2467,7 +2555,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Alliance party bar is red (Willie Jackson’s 1999–2002 card was rendering black)"
+        "text": "Alliance party bar is red (Willie Jackson\u2019s 1999\u20132002 card was rendering black)"
       },
       {
         "type": "fixed",
@@ -2489,7 +2577,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Polling graphs scale to each party’s own range and draw taller"
+        "text": "Polling graphs scale to each party\u2019s own range and draw taller"
       },
       {
         "type": "fixed",
@@ -2511,7 +2599,7 @@
       },
       {
         "type": "fixed",
-        "text": "Last 7 elections uses ✓ / ✕, drops the % total, and matches This election list type"
+        "text": "Last 7 elections uses \u2713 / \u2715, drops the % total, and matches This election list type"
       }
     ]
   },
@@ -2539,7 +2627,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Edge-scroll bound on page load — it had been nested inside the Reset button"
+        "text": "Edge-scroll bound on page load \u2014 it had been nested inside the Reset button"
       }
     ]
   },
@@ -2597,7 +2685,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Party page splits This election (7 Nov 2026) from Last 7 elections (2005–2023)"
+        "text": "Party page splits This election (7 Nov 2026) from Last 7 elections (2005\u20132023)"
       },
       {
         "type": "fixed",
@@ -2611,11 +2699,11 @@
     "items": [
       {
         "type": "fixed",
-        "text": "TOP no longer has fake 2014 rows or invented success % — founded 2016, 0 seats in 2017/20/23"
+        "text": "TOP no longer has fake 2014 rows or invented success % \u2014 founded 2016, 0 seats in 2017/20/23"
       },
       {
         "type": "fixed",
-        "text": "Cycle scores are now computed: toward = in government after that election; achieved = delivered ÷ promised on one documented metric"
+        "text": "Cycle scores are now computed: toward = in government after that election; achieved = delivered \u00f7 promised on one documented metric"
       }
     ]
   },
@@ -2625,11 +2713,11 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Legend click never bound on load — handler had been nested inside the Reset button"
+        "text": "Legend click never bound on load \u2014 handler had been nested inside the Reset button"
       },
       {
         "type": "feature",
-        "text": "Party briefing lists promises from 2014–2026 with toward % and achieved %"
+        "text": "Party briefing lists promises from 2014\u20132026 with toward % and achieved %"
       }
     ]
   },
@@ -2643,7 +2731,7 @@
       },
       {
         "type": "fixed",
-        "text": "Legend chips look clickable (border, hover ring, ›) and open the party briefing"
+        "text": "Legend chips look clickable (border, hover ring, \u203a) and open the party briefing"
       }
     ]
   },
@@ -2681,11 +2769,11 @@
     "items": [
       {
         "type": "feature",
-        "text": "PM handover list now runs the full chart: Savage → Fraser → Holland → Holyoake → Nash → Holyoake → Marshall → Kirk → Rowling → Muldoon and on"
+        "text": "PM handover list now runs the full chart: Savage \u2192 Fraser \u2192 Holland \u2192 Holyoake \u2192 Nash \u2192 Holyoake \u2192 Marshall \u2192 Kirk \u2192 Rowling \u2192 Muldoon and on"
       },
       {
         "type": "feature",
-        "text": "Each generation title shows that cohort’s share of the whole sitting House (all 123 MPs, not only cards on the map)"
+        "text": "Each generation title shows that cohort\u2019s share of the whole sitting House (all 123 MPs, not only cards on the map)"
       }
     ]
   },
@@ -2709,7 +2797,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "PM hover on coloured bar — axis had pointer-events:none and overflow:hidden clipping the tip"
+        "text": "PM hover on coloured bar \u2014 axis had pointer-events:none and overflow:hidden clipping the tip"
       },
       {
         "type": "fixed",
@@ -2717,7 +2805,7 @@
       },
       {
         "type": "feature",
-        "text": "Born mode shows boxed generation windows (Silent → Gen Z) on the timeline"
+        "text": "Born mode shows boxed generation windows (Silent \u2192 Gen Z) on the timeline"
       }
     ]
   },
@@ -2727,7 +2815,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Detail panel ‹ › buttons jump to the nearest MP left or right on the current Born/Served map"
+        "text": "Detail panel \u2039 \u203a buttons jump to the nearest MP left or right on the current Born/Served map"
       },
       {
         "type": "feature",
@@ -2749,7 +2837,7 @@
       },
       {
         "type": "feature",
-        "text": "Te Pāti Māori colour changed to dark crimson (#8B1A1A)"
+        "text": "Te P\u0101ti M\u0101ori colour changed to dark crimson (#8B1A1A)"
       }
     ]
   },
@@ -2777,7 +2865,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Reworded era copy that used “gay sex” to “same-sex relations”"
+        "text": "Reworded era copy that used \u201cgay sex\u201d to \u201csame-sex relations\u201d"
       },
       {
         "type": "feature",
@@ -2805,7 +2893,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "MP cards back under timeline descriptions (z-index 10–15; sticky era 25)"
+        "text": "MP cards back under timeline descriptions (z-index 10\u201315; sticky era 25)"
       },
       {
         "type": "fixed",
@@ -2823,7 +2911,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Prior/top-lane cards were under sticky era layer (z 25) with clickable era-bands — cards now z-index 30+"
+        "text": "Prior/top-lane cards were under sticky era layer (z 25) with clickable era-bands \u2014 cards now z-index 30+"
       },
       {
         "type": "fixed",
@@ -2837,7 +2925,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "openPanel opens #panel immediately then fills content — prior PMs (e.g. Helen Clark) no longer fail silently"
+        "text": "openPanel opens #panel immediately then fills content \u2014 prior PMs (e.g. Helen Clark) no longer fail silently"
       },
       {
         "type": "fixed",
@@ -2883,7 +2971,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Prior PMs (Muldoon–Clark) now have policy badges + Votes & stance detail like sitting MPs"
+        "text": "Prior PMs (Muldoon\u2013Clark) now have policy badges + Votes & stance detail like sitting MPs"
       },
       {
         "type": "feature",
@@ -2897,7 +2985,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Prior MP cards open like current MPs — shared click/touch handler, child pointer-events none"
+        "text": "Prior MP cards open like current MPs \u2014 shared click/touch handler, child pointer-events none"
       },
       {
         "type": "fixed",
@@ -2925,7 +3013,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Prior PM portraits regenerated in chibi/pixel avatar style matching sitting MPs (128×128)"
+        "text": "Prior PM portraits regenerated in chibi/pixel avatar style matching sitting MPs (128\u00d7128)"
       },
       {
         "type": "feature",
@@ -2947,7 +3035,7 @@
       },
       {
         "type": "feature",
-        "text": "Historical PM portraits from real photos (Muldoon–Clark), card-sized JPEG sprites"
+        "text": "Historical PM portraits from real photos (Muldoon\u2013Clark), card-sized JPEG sprites"
       },
       {
         "type": "feature",
@@ -2985,7 +3073,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Lane packing: PM cards top rows, then ranks 1–4; no overlap (push down)"
+        "text": "Lane packing: PM cards top rows, then ranks 1\u20134; no overlap (push down)"
       },
       {
         "type": "fixed",
@@ -3003,7 +3091,7 @@
       },
       {
         "type": "fixed",
-        "text": "PM card meta shows term range (e.g. 2017 – 2023) instead of “PM from ####”"
+        "text": "PM card meta shows term range (e.g. 2017 \u2013 2023) instead of \u201cPM from ####\u201d"
       }
     ]
   },
@@ -3073,7 +3161,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Max zoom-out limited to 300% (scale ≥ 1/3)"
+        "text": "Max zoom-out limited to 300% (scale \u2265 1/3)"
       },
       {
         "type": "fixed",
@@ -3131,7 +3219,7 @@
       },
       {
         "type": "feature",
-        "text": "Zoom scales cards/links only; min zoom 0.2× (500% out), max 1× original"
+        "text": "Zoom scales cards/links only; min zoom 0.2\u00d7 (500% out), max 1\u00d7 original"
       },
       {
         "type": "fixed",
@@ -3145,7 +3233,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Served→Born: remove link lines, then extra party cards, then slide remaining cards"
+        "text": "Served\u2192Born: remove link lines, then extra party cards, then slide remaining cards"
       },
       {
         "type": "fixed",
@@ -3159,7 +3247,7 @@
     "items": [
       {
         "type": "fixed",
-        "text": "Zoom in caps at original card size (1×); zoom out caps at full timeline width fit"
+        "text": "Zoom in caps at original card size (1\u00d7); zoom out caps at full timeline width fit"
       },
       {
         "type": "fixed",
@@ -3269,11 +3357,11 @@
       },
       {
         "type": "feature",
-        "text": "Born / Served slide toggle — positions by birth year or first entry to Parliament"
+        "text": "Born / Served slide toggle \u2014 positions by birth year or first entry to Parliament"
       },
       {
         "type": "feature",
-        "text": "MP cards animate horizontally when switching Born ↔ Served"
+        "text": "MP cards animate horizontally when switching Born \u2194 Served"
       }
     ]
   },
@@ -3301,7 +3389,7 @@
       },
       {
         "type": "feature",
-        "text": "Decade popup: “By decade’s end” section for what was still unchanged or unthinkable"
+        "text": "Decade popup: \u201cBy decade\u2019s end\u201d section for what was still unchanged or unthinkable"
       }
     ]
   },
@@ -3329,7 +3417,7 @@
     "items": [
       {
         "type": "feature",
-        "text": "Footer credit: Designed by FlavourThink Ltd. Copyright © 2026"
+        "text": "Footer credit: Designed by FlavourThink Ltd. Copyright \u00a9 2026"
       },
       {
         "type": "feature",
@@ -3345,7 +3433,7 @@
       },
       {
         "type": "fixed",
-        "text": "Release log close (×) control clarified top-right"
+        "text": "Release log close (\u00d7) control clarified top-right"
       }
     ]
   },
@@ -3465,11 +3553,11 @@
     "items": [
       {
         "type": "feature",
-        "text": "Detail card shows every decade overlapping formative years (ages ≈15–25)"
+        "text": "Detail card shows every decade overlapping formative years (ages \u224815\u201325)"
       },
       {
         "type": "fixed",
-        "text": "Removed “Recorded positions relative to later liberalising changes” section"
+        "text": "Removed \u201cRecorded positions relative to later liberalising changes\u201d section"
       }
     ]
   },
@@ -3493,7 +3581,7 @@
       },
       {
         "type": "fixed",
-        "text": "Terminology: “rape” reworded to “sexual assault” in era notes"
+        "text": "Terminology: \u201crape\u201d reworded to \u201csexual assault\u201d in era notes"
       }
     ]
   },

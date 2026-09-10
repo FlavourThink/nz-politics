@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Parliamentary Generational Atlas — New Zealand MPs by birth year · v3.19</title>
+  <title>Parliamentary Generational Atlas — New Zealand MPs by birth year · v3.20</title>
   <meta name="description" content="Interactive atlas of New Zealand’s 54th Parliament: sitting MPs by birth year and first term, generation windows, party records, and 2026 election promises. Designed by FlavourThink Ltd." />
   <meta name="keywords" content="New Zealand Parliament, 54th Parliament, NZ MPs, birth year timeline, generation Boomer Gen X Millennial, 2026 election, National Labour Green ACT NZ First Te Pāti Māori TOP, Hansard votes, MMP, Beehive, Wellington, FlavourThink" />
   <meta name="author" content="FlavourThink Ltd" />
@@ -63,6 +63,7 @@
   </script>
 
   <link rel="stylesheet" href="atlas.css" />
+  <link rel="stylesheet" href="chamber/chamber.css" />
 
 </head>
 <body>
@@ -178,6 +179,72 @@
   </aside>
 
   <!-- Mobile menu -->
+  
+  <section class="chamber-stage" id="chamberStage" aria-label="The Chamber">
+    <div class="chamber-view chamber-title on" id="chamberTitle">
+      <div class="chamber-kicker">A sitting · not a brawl</div>
+      <h2>The Chamber</h2>
+      <p>Walk the lobby and the Beehive. Briefs find you — polls, gallery sketches, water-cooler talk. Hold the room. One sitting. If you lose the floor, the ledger takes your name.</p>
+      <div class="chamber-pick">
+        <label class="chamber-field">Name
+          <input id="chamberName" maxlength="8" placeholder="8 letters" autocomplete="off" />
+        </label>
+        <label class="chamber-field">Member
+          <select id="chamberMp"></select>
+        </label>
+      </div>
+      <div class="chamber-actions">
+        <button type="button" class="chamber-btn primary" id="chamberStart">Take your seat</button>
+        <button type="button" class="chamber-btn" id="chamberContinue" hidden>Continue sitting</button>
+        <button type="button" class="chamber-btn" id="chamberBoardBtn">Standing ledger</button>
+        <button type="button" class="chamber-btn" id="chamberExit">Back to the atlas</button>
+      </div>
+    </div>
+    <div class="chamber-view chamber-overworld" id="chamberOverworld">
+      <div class="chamber-hall" id="chamberHall">
+        <div class="chamber-floor-label" id="chamberFloorName">Members' Lobby</div>
+        <button type="button" class="chamber-hotspot" aria-label="A brief"></button>
+        <button type="button" class="chamber-hotspot" aria-label="A brief"></button>
+        <button type="button" class="chamber-hotspot" aria-label="A brief"></button>
+        <div class="chamber-player" id="chamberPlayer"></div>
+      </div>
+      <div class="chamber-hud">
+        <span id="chamberRoundHud">Sitting 1</span>
+        <span>Arrows or swipe to walk · gold rings are briefs</span>
+        <span id="chamberScoreHud">Standing 0</span>
+      </div>
+    </div>
+    <div class="chamber-view chamber-battle" id="chamberBattle">
+      <div class="chamber-arena" id="chamberArena">
+        <div class="chamber-fx" id="chamberFx"></div>
+        <div class="chamber-foe">
+          <div class="chamber-bust" id="chamberFoeBust"></div>
+          <div id="chamberFoeName">Brief</div>
+          <div class="chamber-bar"><i id="chamberFoeBar"></i></div>
+        </div>
+        <div class="chamber-hero">
+          <div class="chamber-bust" id="chamberHeroBust"></div>
+          <div id="chamberHeroName">Member</div>
+          <div class="chamber-bar"><i id="chamberHeroBar"></i></div>
+        </div>
+      </div>
+      <div class="chamber-log" id="chamberLog"></div>
+      <div class="chamber-moves" id="chamberMoves"></div>
+    </div>
+    <div class="chamber-view chamber-board" id="chamberBoard">
+      <h2>Standing ledger</h2>
+      <p>One sitting. Name, member, standing, briefs held.</p>
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Member</th><th>Standing</th><th>Briefs</th></tr></thead>
+        <tbody id="chamberBoardBody"></tbody>
+      </table>
+      <div class="chamber-actions" style="margin-top:1rem">
+        <button type="button" class="chamber-btn" id="chamberBoardBack">Title</button>
+        <button type="button" class="chamber-btn" id="chamberExit2">Back to the atlas</button>
+      </div>
+    </div>
+  </section>
+
   <div class="menu-backdrop" id="menuBackdrop"></div>
   <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile menu">
     <button type="button" class="menu-close" id="menuClose" aria-label="Close menu">×</button>
@@ -186,6 +253,7 @@
     <button type="button" class="donate-btn" id="menuDonateBtn">Donate</button>
     <button type="button" class="donate-btn" id="menuVersionBtn" style="background:transparent;color:var(--accent);border:1px solid rgba(138,180,248,0.45);margin-top:0.25rem;">Version &amp; release log</button>
     <button type="button" class="donate-btn" id="menuFeatureBtn" style="background:transparent;color:var(--accent);border:1px solid color-mix(in srgb, var(--accent) 45%, transparent);margin-top:0.25rem;">Request a feature</button>
+    <button type="button" class="donate-btn" id="menuChamberBtn" style="background:transparent;color:var(--accent);border:1px solid color-mix(in srgb, var(--accent) 45%, transparent);margin-top:0.25rem;">The Chamber</button>
     <button type="button" class="donate-btn" id="menuHansardBtn" style="background:transparent;color:var(--accent);border:1px solid color-mix(in srgb, var(--accent) 45%, transparent);margin-top:0.25rem;">Hansard</button>
     <button type="button" class="theme-icon theme-icon-menu" id="themeToggleMenu" aria-label="Switch theme" title="Light or dark">☀</button>
     <label class="menu-speed" for="reelSpeed">News speed
@@ -226,7 +294,7 @@
     </div>
   <footer>
     <button type="button" class="version-chip" id="versionChip" title="Open release log" aria-label="Open release log">
-      <span id="versionLabel">v3.19</span>
+      <span id="versionLabel">v3.20</span>
       <span class="ver-date" id="versionDate">· 22 Aug 2026</span>
     </button>
     <span class="footer-meta">Designed by FlavourThink Ltd. · Copyright © 2026</span>

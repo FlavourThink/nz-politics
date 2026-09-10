@@ -1,4 +1,4 @@
-const BUILD = "v3.19";
+const BUILD = "v3.20";
     const FEATURE_API = "https://nz-politics-features.flavourthink.workers.dev";
     window.__mpPanelCache = window.__mpPanelCache || {};
     /* Live party feed — fill githubBase (raw URL prefix) to pull daily JSON.
